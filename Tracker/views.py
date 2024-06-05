@@ -29,7 +29,7 @@ def signUp(request):
             return redirect('login')
     else:
         form = SignUpForm()
-    return render(request, 'sign_up.html', {'form': form})
+    return render(request, 'signup.html', {'form': form})
 
 
 def loginView(request):
@@ -62,7 +62,6 @@ def addProduct(request):
             issue=form.save(commit=False)
             issue=request.user
             messages.success(request, 'Product added successfully')
-            # return render('home.html')
             return HttpResponse({'Product Added Successfully': True})
         else:
             messages.error(request, 'Product not added')
