@@ -65,6 +65,7 @@
 
         <div id="commentPopup" class="popup-form">
             <button class="close-btn" onclick="togglePopup('commentPopup')">&times;</button>
+            <h1>Add Comment</h1>
             <form id="commentForm">
                 {% csrf_token %}
                 <input type="hidden" name="issue_id" value="{{issue.id}}">
@@ -75,6 +76,7 @@
 
         <div id="feedbackPopup" class="popup-form">
             <button class="close-btn" onclick="togglePopup('feedbackPopup')">&times;</button>
+            <h1>Add Feedback </h1>
             <form id="feedbackForm">
                 {% csrf_token %}
                 <input type="hidden" name="issue_id" value="{{issue.id}}">
