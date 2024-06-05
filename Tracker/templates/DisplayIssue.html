@@ -1,39 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+
 </head>
 <body>
-    <h1>Issue Details</h1>
-        <div>{{issue.title}}</div>
-        <div>
-        <label>Description</label>
-        <p>{{issue.description}}</p>
+    <div class="issue-content">
+        <h1>Issue Details</h1>
+        <h3>{{issue.title}}</h3>
+            <p>Description:{{issue.description}}</p>
+            <p>Created_by:{{issue.created_by}}</p>
+            <p>Company Name:{{issue.company}}</p>
+            <p>Tags:{{issue.tags}}</p>
+            <p>View Count{{issue.viewcount}}</p>
+            <p>Suggestion Count{{issue.suggestioncount}}</p>
+            <p>Comment Count:{{issue.commentcount}}</p>
     </div>
-    <div>
-        <label>Created By</label>
-        <h3>{{issue.created_by}}</h3>
+    
+       
     </div>
-    <div>
-        <label>Company Name</label>
-        <p>{{issue.company}}</p>
+        <h1>Comments</h1>
+        {% if comments %}
+        {% for comment in comments %}
+        <p>{{comment.description}}</p>
+        <p>{{comment.user}}</p>
+        {% endfor %}
+        {% endif %}
+        <h1>FeedBacks</h1>
+        {% if feedback %}
+        {% for feed in feedback %}
+        <p>{{feed.description}}</p>
+        <p>{{feed.user}}</p>
+        {% endfor %}
+        {% endif %}
+        <button id="addComment">Add Comment</button>
+        <button id="addFeedback">Add Feedback</button>
     </div>
-        <div>
-    <label>Product Company</label>
-        <p>{{issue.company}}</p>
-    </div>
-        <label>Tags</label>
-        <p>{{issue.tags}}</p>
 
-        
-        <label>View Count</label>
-        <p>{{issue.count}}</p>
-        <label>Suggestion Count</label>
-        <p>{{issue.suggestioncount}}</p>
-        <label>Comment Count</label>
-        <p>{{issue.commentcount}}</p>
+    <!-- Comment Section -->
+    <div id="commentSection" style="display: none;">
+        <form id="commentForm">
+            {% csrf_token %}
+            <input type="hidden" name="issue_id" value="{{issue.id}}">
+            <textarea name="comment" placeholder="Enter your comment"></textarea>
+            <button type="submit">Submit Comment</button>
+        </form>
+    </div>
 
+    <!-- Feedback Section -->
+    <div id="feedbackSection" style="display: none;">
+        <form id="feedbackForm">
+            {% csrf_token %}
+            <input type="hidden" name="issue_id" value="{{issue.id}}">
+            <textarea name="feedback" placeholder="Enter your feedback"></textarea>
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </div>
+
+    <script>
+        // Toggle Comment Section
+        $("#addComment").click(function() {
+            $("#commentSection").toggle();
+        });
+
+        // Toggle Feedback Section
+        $("#addFeedback").click(function() {
+            $("#feedbackSection").toggle();
+        });
+
+        // Submit Comment
+        $("#commentForm").submit(function(event) {
+            event.preventDefault();
+            var formData = $(this).serialize();
+            $.post("{% url 'addcomment' %}", formData, function(response) {
+                // Handle response if needed
+                $("#commentSection").hide();
+            });
+        });
+
+        // Submit Feedback
+        $("#feedbackForm").submit(function(event) {
+            event.preventDefault();
+            var formData = $(this).serialize();
+            $.post("{% url 'addfeedback' %}", formData, function(response) {
+                // Handle response if needed
+                $("#feedbackSection").hide();
+                
+            });
+        });
+    </script>
 </body>
 </html>

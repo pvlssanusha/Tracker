@@ -17,3 +17,30 @@ class IssueSerializer(serializers.ModelSerializer):
         return obj.company.name if obj.company.name else None
     def get_product(self, obj):
         return obj.product.name if obj.product.name else None
+    
+class CommentSerializer(serializers.ModelSerializer):
+    issue= serializers.SerializerMethodField()
+    user =  serializers.SerializerMethodField()
+    class Meta:
+        model=Comment
+        fields="__all__"
+
+    def get_issue_by(self, obj):
+        return obj.issue.issuename if obj.issue.issuename else None 
+    def get_user(self, obj):
+        return obj.user.username if obj.user.username else None 
+
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    issue= serializers.SerializerMethodField()
+    user =  serializers.SerializerMethodField()
+    class Meta:
+        model=Feedback
+        fields="__all__"
+
+    def get_issue_by(self, obj):
+        return obj.issue.issuename if obj.issue.issuename else None 
+    def get_user(self, obj):
+        return obj.user.username if obj.user.username else None 
+
+

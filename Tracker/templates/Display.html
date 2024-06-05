@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
     <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
 </head>
 <body>
-    <div>
+    <div class="column">
         {% for issue in data %}
-        
+        <div class="card">
         <div><a href="{{issue.id}}">{{issue.issuename}}</a></div>
         <div>{{issue.description}}</div>
+    </div>
         
 
         {% endfor %}
