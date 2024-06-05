@@ -88,7 +88,7 @@ import json
 class IssueForm(forms.ModelForm):
     class Meta:
         model = Issue
-        fields = ['issuename', 'description', 'created_by', 'company', 'product', 'tags']
+        fields = ['issuename', 'description', 'company', 'product', 'tags']
         # widgets = {
         #    'tags': TagifyWidget(),
         # }

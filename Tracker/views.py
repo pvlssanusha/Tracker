@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 from django.contrib import messages
 from rest_framework import status
+from django.contrib.auth.decorators import login_required
 from .forms import *
 from .serializers import *
 def signUp(request):
@@ -53,12 +54,13 @@ def loginView(request):
 def home(request):
     return render(request, 'home.html')
 
-
+@login_required
 def addProduct(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)
         if form.is_valid():
-            form.save()
+            issue=form.save(commit=False)
+            issue=request.user
             messages.success(request, 'Product added successfully')
             # return render('home.html')
             return HttpResponse({'Product Added Successfully': True})
@@ -67,7 +69,7 @@ def addProduct(request):
     else:
         form=ProductForm()
         return render(request, 'Product.html', {'form': form, 'title': 'Add Product'})
-    
+@login_required
 def addIssue(request):
     if request.method == 'POST':
         form = IssueForm(request.POST)
@@ -82,7 +84,7 @@ def addIssue(request):
     else:
         form=IssueForm()
         return render(request, 'Issue.html', {'form': form, 'title': 'Register Issue'})
-    
+@login_required
 def getIssue(self,id):
     try:
         object=Issue.objects.get(id=id)
@@ -92,6 +94,7 @@ def getIssue(self,id):
     
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'},status=status.HTTP_404_NOT_FOUND)
+@login_required
 def getAllIssues(self):
     try:
         object=Issue.objects.all()
