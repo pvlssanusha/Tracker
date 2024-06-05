@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Issue{% endblock %}
+
+{% block content %}
+    <h1>Add Issue</h1>
+    
+    <!-- Display messages -->
+    {% if messages %}
+        <div class="container mt-4">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Issue</button>
+    </form>
+    {% load static %}
+
+    <!-- Include Tagify CSS and JS from local files -->
+    
+{% endblock %}

@@ -1,9 +1,10 @@
 from django.db import models
 import json
 from django.contrib.auth.models import AbstractUser
-
+import uuid
 # Company model
 class Company(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     url = models.URLField(max_length=255)
     email = models.EmailField(max_length=255)
@@ -27,6 +28,7 @@ class User(AbstractUser):
 
 # Product model
 class Product(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     url = models.URLField(max_length=255)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='products')
@@ -36,6 +38,7 @@ class Product(models.Model):
 
 # Issue model
 class Issue(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     STATUS_CHOICES = [
         ('open', 'Open'),
         ('closed', 'Closed'),
@@ -48,7 +51,7 @@ class Issue(models.Model):
     company = models.ForeignKey('Company', on_delete=models.CASCADE, related_name='issues')
     product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='issues', null=True, blank=True)
     tags = models.TextField()  # Store tags as a JSON list
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES,default='open')
     viewcount = models.PositiveIntegerField(default=0)
     suggestioncount = models.PositiveIntegerField(default=0)
     commentcount = models.PositiveIntegerField(default=0)
@@ -56,14 +59,10 @@ class Issue(models.Model):
     def __str__(self):
         return self.issuename
 
-    def set_tags(self, tag_list):
-        self.tags = json.dumps(tag_list)
-
-    def get_tags(self):
-        return json.loads(self.tags)
 
 # Comment model
 class Comment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
     description = models.TextField()
@@ -73,6 +72,7 @@ class Comment(models.Model):
 
 # Feedback model
 class Feedback(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='feedbacks')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='feedbacks')
     description = models.TextField()
@@ -84,6 +84,7 @@ class Feedback(models.Model):
 
 # ViewedBy model
 class ViewedBy(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='viewed_issues')
     timestamp = models.DateTimeField(auto_now_add=True)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='views')
