@@ -204,23 +204,14 @@ body {
 }
 
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    margin: 0;
-    padding: 0;
-    line-height: 1.6;
-}
-
 .issue-main {
-    max-width: 900px;
+    max-width: 1000px;
     margin: 40px auto;
     padding: 20px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
-
 
 .issue-container {
     margin-bottom: 40px;
@@ -257,16 +248,22 @@ body {
     margin-bottom: 15px;
 }
 
-
 .comments-feedback-container {
+    display: flex;
+    justify-content: space-between;
     margin-top: 30px;
 }
 
 .comments-feedback-container > div {
+    flex: 1;
+    margin-right: 15px;
     background-color: #f7f7f7;
     padding: 15px;
     border-radius: 8px;
-    margin-bottom: 20px;
+}
+
+.comments-feedback-container > div:last-child {
+    margin-right: 0;
 }
 
 .comments-feedback-container h1 {
@@ -278,39 +275,99 @@ body {
     align-items: center;
 }
 
-.comments-feedback-container p {
-    font-size: 16px;
-    margin-bottom: 10px;
+.comments-feedback-container h1 button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.comments-feedback-container h1 button:hover {
+    background-color: #0056b3;
+}
+
+.comment, .feedback {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.comment img, .feedback img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.comment p, .feedback p {
+    margin: 0;
+}
+
+.comment .user, .feedback .user {
+    font-weight: bold;
+    color: #333;
+}
+
+.comment .text, .feedback .text {
     color: #666;
 }
 
-
-.add-button {
-    background-color: transparent;
-    border: none;
-    color: #007bff;
-    font-size: 24px;
-    cursor: pointer;
-}
-
-.add-button:hover {
-    color: #0056b3;
+.comment .timestamp, .feedback .timestamp {
+    color: #999;
+    font-size: 12px;
 }
 
 
-#commentSection, #feedbackSection {
-    margin-top: 20px;
-    background-color: #f7f7f7;
+.popup-form {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: #fff;
     padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
+    z-index: 1000;
 }
 
-form textarea {
+.popup-form textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
     margin-bottom: 10px;
+}
+
+.popup-form button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.popup-form button:hover {
+    background-color: #0056b3;
+}
+
+.popup-form .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
 }
 
 
@@ -342,6 +399,23 @@ form textarea {
 @media (max-width: 768px) {
     .issue-details p {
         flex: 1 1 100%;
+    }
+
+    .comments-feedback-container {
+        flex-direction: column;
+    }
+
+    .comments-feedback-container > div {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    .comments-feedback-container > div:last-child {
+        margin-bottom: 0;
+    }
+
+    .popup-form {
+        width: 90%;
     }
 }
 
