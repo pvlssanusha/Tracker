@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
+from rest_framework.response import Response
 from django.contrib import messages
+from rest_framework import status
 from .forms import *
-
-def sign_up(request):
+from .serializers import *
+def signUp(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -29,7 +31,7 @@ def sign_up(request):
     return render(request, 'sign_up.html', {'form': form})
 
 
-def login_view(request):
+def loginView(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, request.POST)
         if form.is_valid():
@@ -52,7 +54,7 @@ def home(request):
     return render(request, 'home.html')
 
 
-def Add_Product(request):
+def addProduct(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)
         if form.is_valid():
@@ -66,7 +68,7 @@ def Add_Product(request):
         form=ProductForm()
         return render(request, 'Product.html', {'form': form, 'title': 'Add Product'})
     
-def Add_Issue(request):
+def addIssue(request):
     if request.method == 'POST':
         form = IssueForm(request.POST)
         if form.is_valid():
@@ -80,3 +82,23 @@ def Add_Issue(request):
     else:
         form=IssueForm()
         return render(request, 'Issue.html', {'form': form, 'title': 'Register Issue'})
+    
+def getIssue(self,id):
+    try:
+        object=Issue.objects.get(id=id)
+        data=IssueSerializer(object).data
+        #return Response({'data':IssueSerializer(object).data},status=status.HTTP_200_OK)
+        return render(self,'DisplayIssue.html',{'issue':data})
+    
+    except Issue.DoesNotExist:
+        return Response({'error': 'No Data Found'},status=status.HTTP_404_NOT_FOUND)
+def getAllIssues(self):
+    try:
+        object=Issue.objects.all()
+        data=IssueSerializer(object,many=True).data
+        print(data,"data")
+        return render(self,'Display.html',{'data':data})
+    
+    except Issue.DoesNotExist:
+        return Response({'error': 'No Data Found'},status=status.HTTP_404_NOT_FOUND)
+
