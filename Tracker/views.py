@@ -60,7 +60,6 @@ def addProduct(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Product added successfully')
-            # return render('home.html')
             return HttpResponse({'Product Added Successfully': True})
         else:
             messages.error(request, 'Product not added')
