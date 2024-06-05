@@ -1,26 +1,152 @@
+::-webkit-scrollbar {
+	width: 4px;
+	height: 4px;
+}
+
+::-webkit-scrollbar-track {
+	box-shadow: inset 0 0 4px #4d7580;
+	border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--color-primary);
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--color-primary);
+}
+
+* {
+	font-family: "Mulish", sans-serif;
+}
+
 body {
-    font-family: Arial, sans-serif;
+	margin: 0;
+	background-color: #f0f0f0;
 }
-header {
-    background-color: #f8f9fa;
-    padding: 10px 0;
-    text-align: center;
+
+.signup-main-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
+    background-color: #fafafa;
 }
-nav ul {
-    list-style-type: none;
+
+.inner-cont {
+	padding: 20px;
+	display: grid;
+	place-items: center;
+	grid-template-columns: 1fr 1fr;
+	background-color: #fafafa;
+	border: 20px solid #4d7580;
+	border-radius: 20px;
+	height: calc(100vh - 200px);
+	width: calc(100vw - 20%);
 }
-nav ul li {
-    display: inline;
-    margin: 0 10px;
+
+.tabs {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 20px;
 }
-main {
-    padding: 20px;
+
+.left-section {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
-footer {
-    text-align: center;
-    padding: 10px 0;
-    background-color: #f8f9fa;
-    position: fixed;
+
+.form-container {
+    flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	height: 90%;
+	overflow: auto;
+}
+
+.form-container h2 {
+	text-align: center;
+	font-family: "Bevan", serif;
+	font-weight: 300;
+	color: #4d7580;
+	margin-bottom: 10px;
+	font-size: 35px;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	width: max-content;
+	padding: 20px;
+	margin: 10px;
+}
+
+.form-group {
+	position: relative;
+	margin: 10px;
+}
+
+.form-group label {
+	color: #999;
+	font-size: 16px;
+	pointer-events: none;
+	transition: all 0.2s;
+	display: block;
+    
+}
+
+.form input[type="text"],
+.form input[type="password"],
+.form input[type="email"],
+.form input[type="url"]{
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	font-size: 16px;
+    margin-top: 10px;
+}
+.form select{
+    width: calc(100% + 20px);
+    padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	font-size: 16px;
+    margin-top: 10px;
+}
+
+.form textarea{
     width: 100%;
-    bottom: 0;
+    height: 100px;
+    padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	font-size: 16px;
+    margin-top: 10px;
+}
+
+.form-row {
+	display: flex;
+	gap: 50px;
+	justify-content: space-between;
+}
+
+.form-col {
+	flex: 1;
+}
+
+.form button[type="submit"] {
+	background-color: #4caf50;
+	color: white;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+	width: 150px;
+    margin: 0 auto;
 }

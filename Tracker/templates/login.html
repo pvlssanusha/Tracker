@@ -1,12 +1,31 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html>
+	<head>
+		{% load static %}
+		<title>Login</title>
+		<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Tangerine:wght@400;700&display=swap"
+			rel="stylesheet" />
+	</head>
+	<body>
+		<div class="signup-main-container">
+			<div class="inner-cont">
+				<div class="left-section">
+					<img src="{% static 'img/login.svg' %}" class="home-logo" />
+				</div>
 
-{% block title %}Login{% endblock %}
-
-{% block content %}
-<h2>Login</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
-{% endblock %}
+				<div class="form-container">
+					<h2>Log In</h2>
+					<form method="post" class="form">
+						{% csrf_token %} {{ form.as_p }}
+						<button type="submit">Log In</button>
+						<p>Create an account...<a href="{% url 'sign_up' %}">Sign Up</a></p>
+					</form>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
