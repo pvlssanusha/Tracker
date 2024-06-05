@@ -4,95 +4,127 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Issues</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
 
 </head>
 <body>
-    <div class="issue-container">
-        <h1>Issue Details</h1>
-        <h3>{{issue.title}}</h3>
-            <p>Description:{{issue.description}}</p>
-            <p>Created_by:{{issue.created_by}}</p>
-            <p>Company Name:{{issue.company}}</p>
-            <p>Tags:{{issue.tags}}</p>
-            <p>View Count{{issue.viewcount}}</p>
-            <p>Suggestion Count{{issue.suggestioncount}}</p>
-            <p>Comment Count:{{issue.commentcount}}</p>
-    </div>
-    
-       
-    </div>
-        <h1>Comments</h1>
-        {% if comments %}
-        {% for comment in comments %}
-        <p>{{comment.description}}</p>
-        <p>{{comment.user}}</p>
-        {% endfor %}
-        {% endif %}
-        <h1>FeedBacks</h1>
-        {% if feedback %}
-        {% for feed in feedback %}
-        <p>{{feed.description}}</p>
-        <p>{{feed.user}}</p>
-        {% endfor %}
-        {% endif %}
-        <button id="addComment">Add Comment</button>
-        <button id="addFeedback">Add Feedback</button>
-    </div>
+    <div class="issue-main">
+        <div class="issue-container">
+            <h1>Issue Details</h1>
+            <h3>{{issue.title}}</h3>
+            <p>Description: {{issue.description}}</p>
+            <div class="issue-details">
+                <p>Created by: <span class="text-bold">{{issue.created_by}}</span></p>
+                <p>Company Name: <span class="text-bold">{{issue.company}}</span></p>
+                <p>Tags: <span class="text-bold">{{issue.tags}}</span></p>
+                <p>View Count: <span class="text-bold">{{issue.viewcount}}</span></p>
+                <p>Suggestion Count: <span class="text-bold">{{issue.suggestioncount}}</span></p>
+                <p>Comment Count: <span class="text-bold">{{issue.commentcount}}</span></p>
+            </div>
+        </div>
 
-    <!-- Comment Section -->
-    <div id="commentSection" style="display: none;">
-        <form id="commentForm">
-            {% csrf_token %}
-            <input type="hidden" name="issue_id" value="{{issue.id}}">
-            <textarea name="comment" placeholder="Enter your comment"></textarea>
-            <button type="submit">Submit Comment</button>
-        </form>
-    </div>
+        <div class="comments-feedback-container">
+            <div id="commentsSection">
+                <h1>Comments <button id="addComment" class="add-button">+</button></h1>
+                <div id="commentsContainer">
+                    {% if comments %}
+                        {% for comment in comments %}
+                            <p>{{comment.description}}</p>
+                            <p class="text-muted">By {{comment.user}}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <ul class="pagination" id="commentsPagination"></ul>
+            </div>
 
-    <!-- Feedback Section -->
-    <div id="feedbackSection" style="display: none;">
-        <form id="feedbackForm">
-            {% csrf_token %}
-            <input type="hidden" name="issue_id" value="{{issue.id}}">
-            <textarea name="feedback" placeholder="Enter your feedback"></textarea>
-            <button type="submit">Submit Feedback</button>
-        </form>
-    </div>
+            <div id="feedbackSection">
+                <h1>Feedbacks <button id="addFeedback" class="add-button">+</button></h1>
+                <div id="feedbackContainer">
+                    {% if feedback %}
+                        {% for feed in feedback %}
+                            <p>{{feed.description}}</p>
+                            <p class="text-muted">By {{feed.user}}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <ul class="pagination" id="feedbackPagination"></ul>
+            </div>
+        </div>
 
+        <div id="commentSection" style="display: none;">
+            <form id="commentForm">
+                {% csrf_token %}
+                <input type="hidden" name="issue_id" value="{{issue.id}}">
+                <textarea name="comment" placeholder="Enter your comment"></textarea>
+                <button type="submit">Submit Comment</button>
+            </form>
+        </div>
+
+        <div id="feedbackSectionForm" style="display: none;">
+            <form id="feedbackForm">
+                {% csrf_token %}
+                <input type="hidden" name="issue_id" value="{{issue.id}}">
+                <textarea name="feedback" placeholder="Enter your feedback"></textarea>
+                <button type="submit">Submit Feedback</button>
+            </form>
+        </div>
+    </div>
     <script>
-        // Toggle Comment Section
-        $("#addComment").click(function() {
-            $("#commentSection").toggle();
-        });
+        $(document).ready(function () {
+            const itemsPerPage = 10;
 
-        // Toggle Feedback Section
-        $("#addFeedback").click(function() {
-            $("#feedbackSection").toggle();
-        });
+            function paginate(container, pagination, itemsPerPage) {
+                var items = container.children();
+                var numItems = items.length;
+                var numPages = Math.ceil(numItems / itemsPerPage);
 
-        // Submit Comment
-        $("#commentForm").submit(function(event) {
-            event.preventDefault();
-            var formData = $(this).serialize();
-            $.post("{% url 'addcomment' %}", formData, function(response) {
-                // Handle response if needed
-                $("#commentSection").hide();
+                pagination.html("");
+                for (var i = 1; i <= numPages; i++) {
+                    pagination.append("<li><a href='#' data-page='" + i + "'>" + i + "</a></li>");
+                }
+
+                items.hide();
+                items.slice(0, itemsPerPage).show();
+
+                pagination.find("a").click(function (e) {
+                    e.preventDefault();
+                    var page = $(this).data("page");
+                    var start = (page - 1) * itemsPerPage;
+                    var end = start + itemsPerPage;
+
+                    items.hide().slice(start, end).show();
+                });
+            }
+
+            paginate($("#commentsContainer"), $("#commentsPagination"), itemsPerPage);
+            paginate($("#feedbackContainer"), $("#feedbackPagination"), itemsPerPage);
+
+            $("#addComment").click(function () {
+                $("#commentSection").toggle();
             });
-        });
 
-        // Submit Feedback
-        $("#feedbackForm").submit(function(event) {
-            event.preventDefault();
-            var formData = $(this).serialize();
-            $.post("{% url 'addfeedback' %}", formData, function(response) {
-                // Handle response if needed
-                $("#feedbackSection").hide();
-                
+            $("#addFeedback").click(function () {
+                $("#feedbackSectionForm").toggle();
+            });
+
+            $("#commentForm").submit(function (event) {
+                event.preventDefault();
+                var formData = $(this).serialize();
+                $.post("{% url 'addcomment' %}", formData, function (response) {
+
+                    $("#commentSection").hide();
+                });
+            });
+
+            $("#feedbackForm").submit(function (event) {
+                event.preventDefault();
+                var formData = $(this).serialize();
+                $.post("{% url 'addfeedback' %}", formData, function (response) {
+                    $("#feedbackSectionForm").hide();
+                });
             });
         });
     </script>
