@@ -22,7 +22,7 @@
 					<form method="post" class="form">
 						{% csrf_token %} {{ form.as_p }}
 						<button type="submit">Log In</button>
-						<p>Create an account...<a href="{% url 'sign_up' %}">Sign Up</a></p>
+						<p>Create an account...<a href="{% url 'signup' %}">Sign Up</a></p>
 					</form>
 				</div>
 			</div>
