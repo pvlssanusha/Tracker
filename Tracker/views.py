@@ -28,7 +28,7 @@ def signUp(request):
             return redirect('login')
     else:
         form = SignUpForm()
-    return render(request, 'sign_up.html', {'form': form})
+    return render(request, 'signup.html', {'form': form})
 
 
 def loginView(request):
