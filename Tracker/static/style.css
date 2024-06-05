@@ -261,7 +261,7 @@ body {
 }
 
 .comments-feedback-container h1 {
-    font-size: 22px;
+    font-size: 25px;
     margin-bottom: 15px;
     color: #333;
     display: flex;
@@ -348,9 +348,7 @@ body {
 }
 
 .popup-form .close-btn {
-    position: absolute;
-	top:25px;
-    right: 10px;
+   
     background-color: red;
     color: #fff;
     border: none;
@@ -374,6 +372,12 @@ body {
 .popup-form .close-btn:hover {
 	background-color: red;
     transform: scale(1.1);
+}
+.popup-form h1{
+	font-size: 25px;
+	display: flex;
+    align-items: center;
+    justify-content: space-between;	
 }
 
 .pagination {
