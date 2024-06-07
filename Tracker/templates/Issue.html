@@ -12,3 +12,24 @@
 			</div>
 		</div>
 {% endblock %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#id_company').change(function() {
+            var url = "{% url 'load_products' %}";  
+            var companyId = $(this).val();  
+
+            $.ajax({
+                url: url,
+                data: {
+                    'company_id': companyId 
+                },
+                success: function(data) {
+                    $("#id_product").html(""); 
+                    $.each(data, function(key, value) {
+                        $("#id_product").append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });
+                }
+            });
+        });
+    });
+</script>
