@@ -64,7 +64,7 @@
         </div>
 
         <div id="commentPopup" class="popup-form">
-            <button class="close-btn" onclick="togglePopup('commentPopup')">&times;</button>
+            <h1>Add Comment <button class="close-btn" onclick="togglePopup('commentPopup')">&times;</button></h1>
             <form id="commentForm">
                 {% csrf_token %}
                 <input type="hidden" name="issue_id" value="{{issue.id}}">
@@ -74,7 +74,7 @@
         </div>
 
         <div id="feedbackPopup" class="popup-form">
-            <button class="close-btn" onclick="togglePopup('feedbackPopup')">&times;</button>
+            <h1>Add Feedback <button class="close-btn" onclick="togglePopup('feedbackPopup')">&times;</button></h1>
             <form id="feedbackForm">
                 {% csrf_token %}
                 <input type="hidden" name="issue_id" value="{{issue.id}}">
@@ -106,7 +106,7 @@
                     var page = $(this).data("page");
                     var start = (page - 1) * itemsPerPage;
                     var end = start + itemsPerPage;
-
+                    
                     items.hide().slice(start, end).show();
                 });
             }
