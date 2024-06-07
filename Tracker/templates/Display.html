@@ -1,23 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   
-    <title>Document</title>
-     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
-</head>
-<body>
-    <div class="column">
-        {% for issue in data %}
-        <div class="card">
-        <div><a href="{{issue.id}}">{{issue.issuename}}</a></div>
-        <div>{{issue.description}}</div>
-    </div>
-        
-
-        {% endfor %}
-    <div>
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Issues{% endblock %}
+{% block content %}
+        <div class="issue-main">
+            <div class="section-head">Issues</div>
+            
+		<div class="issues">
+            {% for issue in data %}
+            <a class="issue" href="{{ issue.id }}">
+                <div class="issue-title">{{ issue.issuename }}</div>
+                <div class="issue-desc">{{ issue.description }}</div>
+                <div class="issue-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-eye"></i> {{ issue.viewcount }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-comments"></i> {{ issue.commentcount }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-lightbulb"></i> {{ issue.suggestioncount }}
+                    </span>
+                    <span class="meta-item">Created by: {{ issue.created_by }}</span>
+                </div>
+            </a>
+            {% endfor %}
+             {% for issue in data %}
+            <a class="issue" href="{{ issue.id }}">
+                <div class="issue-title">{{ issue.issuename }}</div>
+                <div class="issue-desc">{{ issue.description }}</div>
+                <div class="issue-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-eye"></i> {{ issue.viewcount }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-comments"></i> {{ issue.commentcount }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-lightbulb"></i> {{ issue.suggestioncount }}
+                    </span>
+                    <span class="meta-item">Created by: {{ issue.created_by }}</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        <div class="add-issue"><a  href="/addissue/">Create New Issue</a></div>
+        </div>
+{% endblock %}
