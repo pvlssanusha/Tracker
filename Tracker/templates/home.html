@@ -1,11 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=<h1>, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Welcome User</h1>
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Issues{% endblock %}
+{% block content %}
+<div class="home-main-container">
+	<h1>Welcome to Issue Tracker</h1>
+	<p>
+		Issue Tracker helps teams track and manage issues efficiently, ensuring that
+		nothing falls through the cracks.
+	</p>
+	<a href="{% url 'issues' %}">
+		<button>View Issues</button>
+	</a>
+</div>
+{% endblock %}
