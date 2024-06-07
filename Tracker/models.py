@@ -16,7 +16,7 @@ class Company(models.Model):
 # User model
 class User(AbstractUser):
     username = models.CharField(max_length=255, unique=True)
-    image=models.ImageField(upload_to='images',default="C:/Users/Asus/OneDrive/Desktop/Empty-image.jpg")
+    image=models.ImageField(upload_to='images',default="/images/Empty-image.jpg")
     password = models.CharField(max_length=255)
     firstname = models.CharField(max_length=255)
     lastname = models.CharField(max_length=255)
