@@ -2,4 +2,4 @@
 **/venv/**
 **/django/**
 .env
-./db.sqlite
+db.sqlite
