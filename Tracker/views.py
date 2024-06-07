@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from rest_framework.response import Response
 from django.contrib import messages
 from rest_framework import status
@@ -13,7 +13,6 @@ def signUp(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            # Accessing individual cleaned data fields
             username = form.cleaned_data.get('username')
             firstname = form.cleaned_data.get('firstname')
             lastname = form.cleaned_data.get('lastname')
@@ -60,8 +59,8 @@ def addProduct(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)
         if form.is_valid():
-            issue=form.save(commit=False)
-            issue=request.user
+            form.save()
+            
             messages.success(request, 'Product added successfully')
             return HttpResponse({'Product Added Successfully': True})
         else:
@@ -151,4 +150,9 @@ def addFeedback(request):
         # Assuming you have a Feedback model and you want to create a new feedback
         Feedback.objects.create(issue=issue, user=request.user, description=feedback,timestamp=datetime.datetime.now())
         return redirect('issue', id=issue.id)
+    
+def load_products(request):
+    company_id = request.GET.get('company_id')
+    products = Product.objects.filter(company_id=company_id).all()
+    return JsonResponse(list(products.values('id', 'name')), safe=False)
 

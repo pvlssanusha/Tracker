@@ -1,28 +1,40 @@
-{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crea</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-{% block title %}Add Issue{% endblock %}
+</head>
+<body>
 
-{% block content %}
-    <h1>Add Issue</h1>
-    
-    <!-- Display messages -->
-    {% if messages %}
-        <div class="container mt-4">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-    
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Issue</button>
-    </form>
-    {% load static %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
 
-    <!-- Include Tagify CSS and JS from local files -->
-    
-{% endblock %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#id_company').change(function() {
+            var url = "{% url 'load_products' %}";  // Get the URL of the `load_products` view
+            var companyId = $(this).val();  // Get the selected company ID from the HTML input
+
+            $.ajax({
+                url: url,
+                data: {
+                    'company_id': companyId  // Add the company ID to the GET parameters
+                },
+                success: function(data) {
+                    $("#id_product").html("");  // Clear the existing options in the product dropdown
+                    $.each(data, function(key, value) {
+                        $("#id_product").append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
