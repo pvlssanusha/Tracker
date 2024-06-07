@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import *;
 class IssueAdmin(admin.ModelAdmin):
-    list_display = ('id','issuename','description','product','status','tags','created_by')
+    list_display = ('id','issuename','description','product','status','tags','created_by','company')
 # Register your models here.
 admin.site.register(User)
 admin.site.register(Company)

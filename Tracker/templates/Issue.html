@@ -15,25 +15,33 @@
 </form>
 
 <script type="text/javascript">
-    $(document).ready(function() {
-        $('#id_company').change(function() {
-            var url = "{% url 'load_products' %}";  // Get the URL of the `load_products` view
-            var companyId = $(this).val();  // Get the selected company ID from the HTML input
+   $(document).ready(function() {
+    $('#id_company').change(function() {
+        var url = "{% url 'load_products' %}";
+        var companyId = $(this).val();
 
-            $.ajax({
-                url: url,
-                data: {
-                    'company_id': companyId  // Add the company ID to the GET parameters
-                },
-                success: function(data) {
-                    $("#id_product").html("");  // Clear the existing options in the product dropdown
+        $.ajax({
+            url: url,
+            data: {
+                'company_id': companyId
+            },
+            success: function(data) {
+                $("#id_product").html("");
+                if (data.length > 1) {
+                    $.each(data, function(key, value) {
+                        $("#id_product").append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });
+                } else {
+                    $("#id_product").append('<option value="">---------</option>');
                     $.each(data, function(key, value) {
                         $("#id_product").append('<option value="' + value.id + '">' + value.name + '</option>');
                     });
                 }
-            });
+            }
         });
     });
+});
+
 </script>
 
 </body>

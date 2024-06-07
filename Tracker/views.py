@@ -75,6 +75,7 @@ def addIssue(request):
         if form.is_valid():
             issue=form.save(commit=False)
             issue.created_by=request.user
+            print(issue,"issue")
             issue.save()
             messages.success(request, 'Issue Registered successfully')
             # return render('home.html')
