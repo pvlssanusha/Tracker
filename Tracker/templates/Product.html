@@ -1,24 +1,14 @@
-{% extends 'base.html' %}
-
-{% block title %}{{ title }}{% endblock %}
-
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Add Product{% endblock %}
 {% block content %}
-    <h1>{{ title }}</h1>
-    
-    <!-- Display messages -->
-    {% if messages %}
-        <div class="container mt-4">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-    
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Product</button>
-    </form>
+		<div class="add-issue-main">
+			<div class="issue-form-container">
+				<h2>Add Product</h2>
+				<form method="post" class="form">
+					{% csrf_token %} {{ form.as_p }}
+					<button type="submit">Submit</button>
+				</form>
+			</div>
+		</div>
 {% endblock %}
