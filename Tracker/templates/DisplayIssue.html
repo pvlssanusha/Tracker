@@ -1,147 +1,175 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Issues</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
-<body>
-    <div class="issue-main">
-        <div class="issue-container">
-            <h1>Issue Details</h1>
-            <h3>{{issue.title}}</h3>
-            <p>Description: {{issue.description}}</p>
-            <div class="issue-details">
-                <p>Created by: <span class="text-bold">{{issue.created_by}}</span></p>
-                <p>Company Name: <span class="text-bold">{{issue.company}}</span></p>
-                <p>Tags: <span class="text-bold">{{issue.tags}}</span></p>
-                <p>View Count: <span class="text-bold">{{issue.viewcount}}</span></p>
-                <p>Suggestion Count: <span class="text-bold">{{issue.suggestioncount}}</span></p>
-                <p>Comment Count: <span class="text-bold">{{issue.commentcount}}</span></p>
-            </div>
-        </div>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Issues{% endblock %}
+{% block content %}
+		<div class="issue-main">
+			<div class="issue-container">
+				<h3>{{issue.issuename}}</h3>
+				<p>desc : {{issue.description}}</p>
+				<div class="issue-details">
+					<p>Created by: <span class="text-bold">{{issue.created_by}}</span></p>
+					<p>Company Name: <span class="text-bold">{{issue.company}}</span></p>
+					<p>Tags: <span class="text-bold">{{issue.tags}}</span></p>
+					<p>View Count: <span class="text-bold">{{issue.viewcount}}</span></p>
+					<p>
+						Suggestion Count:
+						<span class="text-bold">{{issue.suggestioncount}}</span>
+					</p>
+					<p>
+						Comment Count: <span class="text-bold">{{issue.commentcount}}</span>
+					</p>
+				</div>
+			</div>
+			<div class="comments-feedback-container">
+				<div id="commentsSection">
+					<h1>Comments <button id="addComment">+</button></h1>
+					<div id="commentsContainer">
+						{% if comments %}
+						<div class="list-group">
+							{% for comment in comments %}
+							<div href="#" class="comment-item">
+								<img
+									src="https://i.pinimg.com/564x/3d/91/09/3d910919cf4d41c1114457504dc29201.jpg" />
+								<div>
+									<div class="d-flex">
+										<h4>{{comment.user}}</h4>
+										<small>{{comment.timestamp}}</small>
+									</div>
+									<p class="mb-1">{{comment.description}}</p>
+								</div>
+							</div>
+							{% endfor %}
+						</div>
+						{% endif %}
+					</div>
+					<ul class="pagination" id="commentsPagination"></ul>
+				</div>
 
-        <div class="comments-feedback-container">
-            <div id="commentsSection">
-                <h1>Comments <button id="addComment">+</button></h1>
-                <div id="commentsContainer">
-                    {% if comments %}
-                        {% for comment in comments %}
-                            <div class="comment">
-                                <div>
-                                    <p class="user">{{comment.user}}</p>
-                                    <p class="text">{{comment.description}}</p>
-                                    <p class="timestamp">{{comment.timestamp}}</p>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <ul class="pagination" id="commentsPagination"></ul>
-            </div>
+				<div id="feedbackSection">
+					<h1>Feedbacks <button id="addFeedback">+</button></h1>
+					<div id="feedbackContainer">
+						{% if feedback %}
+						<div class="list-group">
+							{% for feed in feedback %}
+							<div href="#" class="feedback-item">
+								<img
+									src="https://i.pinimg.com/564x/3d/91/09/3d910919cf4d41c1114457504dc29201.jpg" />
+								<div>
+									<div class="d-flex">
+										<h4 class="mb-1">{{feed.user}}</h4>
+										<small>{{feed.timestamp}}</small>
+									</div>
+									<p class="mb-1">{{feed.description}}</p>
+								</div>
+							</div>
+							{% endfor %}
+						</div>
+						{% endif %}
+					</div>
+					<ul class="pagination" id="feedbackPagination"></ul>
+				</div>
+			</div>
 
-            <div id="feedbackSection">
-                <h1>Feedbacks <button id="addFeedback">+</button></h1>
-                <div id="feedbackContainer">
-                    {% if feedback %}
-                        {% for feed in feedback %}
-                            <div class="feedback">
-                                <div>
-                                    <p class="user">{{feed.user}}</p>
-                                    <p class="text">{{feed.description}}</p>
-                                    <p class="timestamp">{{feed.timestamp}}</p>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <ul class="pagination" id="feedbackPagination"></ul>
-            </div>
-        </div>
+			<div id="commentPopup" class="popup-form">
+				<h1>
+					Add Comment
+					<button class="close-btn" onclick="togglePopup('commentPopup')">
+						&times;
+					</button>
+				</h1>
+				<form id="commentForm">
+					{% csrf_token %}
+					<input type="hidden" name="issue_id" value="{{issue.id}}" />
+					<textarea name="comment" placeholder="Enter your comment"></textarea>
+					<button type="submit">Submit Comment</button>
+				</form>
+			</div>
 
-        <div id="commentPopup" class="popup-form">
-            <h1>Add Comment <button class="close-btn" onclick="togglePopup('commentPopup')">&times;</button></h1>
-            <form id="commentForm">
-                {% csrf_token %}
-                <input type="hidden" name="issue_id" value="{{issue.id}}">
-                <textarea name="comment" placeholder="Enter your comment"></textarea>
-                <button type="submit">Submit Comment</button>
-            </form>
-        </div>
+			<div id="feedbackPopup" class="popup-form">
+				<h1>
+					Add Feedback
+					<button class="close-btn" onclick="togglePopup('feedbackPopup')">
+						&times;
+					</button>
+				</h1>
+				<form id="feedbackForm">
+					{% csrf_token %}
+					<input type="hidden" name="issue_id" value="{{issue.id}}" />
+					<textarea
+						name="feedback"
+						placeholder="Enter your feedback"></textarea>
+					<button type="submit">Submit Feedback</button>
+				</form>
+			</div>
+		</div>
 
-        <div id="feedbackPopup" class="popup-form">
-            <h1>Add Feedback <button class="close-btn" onclick="togglePopup('feedbackPopup')">&times;</button></h1>
-            <form id="feedbackForm">
-                {% csrf_token %}
-                <input type="hidden" name="issue_id" value="{{issue.id}}">
-                <textarea name="feedback" placeholder="Enter your feedback"></textarea>
-                <button type="submit">Submit Feedback</button>
-            </form>
-        </div>
-    </div>
+		<script>
+			$(document).ready(function () {
+				const itemsPerPage = 5;
 
-    <script>
-        $(document).ready(function () {
-            const itemsPerPage = 5;
+				function paginate(container, pagination, itemsPerPage) {
+					var items = container.children();
+					var numItems = items.length;
+					var numPages = Math.ceil(numItems / itemsPerPage);
+					console.log(numItems);
+					pagination.html("");
+					for (var i = 1; i <= numPages; i++) {
+						pagination.append(
+							"<li><a href='#' data-page='" + i + "'>" + i + "</a></li>"
+						);
+					}
 
-            function paginate(container, pagination, itemsPerPage) {
-                var items = container.children();
-                var numItems = items.length;
-                var numPages = Math.ceil(numItems / itemsPerPage);
+					items.hide();
+					items.slice(0, itemsPerPage).show();
 
-                pagination.html("");
-                for (var i = 1; i <= numPages; i++) {
-                    pagination.append("<li><a href='#' data-page='" + i + "'>" + i + "</a></li>");
-                }
+					pagination.find("a").click(function (e) {
+						e.preventDefault();
+						var page = $(this).data("page");
+						var start = (page - 1) * itemsPerPage;
+						var end = start + itemsPerPage;
 
-                items.hide();
-                items.slice(0, itemsPerPage).show();
+						items.hide().slice(start, end).show();
+					});
+				}
 
-                pagination.find("a").click(function (e) {
-                    e.preventDefault();
-                    var page = $(this).data("page");
-                    var start = (page - 1) * itemsPerPage;
-                    var end = start + itemsPerPage;
-                    
-                    items.hide().slice(start, end).show();
-                });
-            }
+				paginate(
+					$("#commentsContainer .list-group"),
+					$("#commentsPagination"),
+					itemsPerPage
+				);
+				paginate(
+					$("#feedbackContainer .list-group"),
+					$("#feedbackPagination"),
+					itemsPerPage
+				);
 
-            paginate($("#commentsContainer"), $("#commentsPagination"), itemsPerPage);
-            paginate($("#feedbackContainer"), $("#feedbackPagination"), itemsPerPage);
+				$("#addComment").click(function () {
+					togglePopup("commentPopup");
+				});
 
-            $("#addComment").click(function () {
-                togglePopup('commentPopup');
-            });
+				$("#addFeedback").click(function () {
+					togglePopup("feedbackPopup");
+				});
 
-            $("#addFeedback").click(function () {
-                togglePopup('feedbackPopup');
-            });
+				$("#commentForm").submit(function (event) {
+					event.preventDefault();
+					var formData = $(this).serialize();
+					$.post("{% url 'addcomment' %}", formData, function (response) {
+						togglePopup("commentPopup");
+					});
+				});
 
-            $("#commentForm").submit(function (event) {
-                event.preventDefault();
-                var formData = $(this).serialize();
-                $.post("{% url 'addcomment' %}", formData, function (response) {
-                    togglePopup('commentPopup');
-                });
-            });
+				$("#feedbackForm").submit(function (event) {
+					event.preventDefault();
+					var formData = $(this).serialize();
+					$.post("{% url 'addfeedback' %}", formData, function (response) {
+						togglePopup("feedbackPopup");
+					});
+				});
+			});
 
-            $("#feedbackForm").submit(function (event) {
-                event.preventDefault();
-                var formData = $(this).serialize();
-                $.post("{% url 'addfeedback' %}", formData, function (response) {
-                    togglePopup('feedbackPopup');
-                });
-            });
-        });
-
-        function togglePopup(id) {
-            $("#" + id).toggle();
-        }
-    </script>
-</body>
-</html>
+			function togglePopup(id) {
+				$("#" + id).toggle();
+			}
+		</script>
+{% endblock %}

@@ -1,24 +1,22 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Crea</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-</head>
-<body>
-
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
-</form>
-
+{% block title %}Create Issue{% endblock %}
+{% block content %}
+		<div class="add-issue-main">
+			<div class="issue-form-container">
+				<h2>Create Issue</h2>
+				<form method="post" class="form">
+					{% csrf_token %} {{ form.as_p }}
+					<button type="submit">Submit</button>
+				</form>
+			</div>
+		</div>
+{% endblock %}
 <script type="text/javascript">
-   $(document).ready(function() {
-    $('#id_company').change(function() {
-        var url = "{% url 'load_products' %}";
-        var companyId = $(this).val();
+    $(document).ready(function() {
+        $('#id_company').change(function() {
+            var url = "{% url 'load_products' %}";  
+            var companyId = $(this).val();  
 
         $.ajax({
             url: url,
@@ -43,6 +41,3 @@
 });
 
 </script>
-
-</body>
-</html>

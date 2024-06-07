@@ -1,20 +1,52 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>{% block title %}Issue Tracker{% endblock %}</title>
-    {% load static %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
-</head>
-<body>
-    {% include 'header.html' %}
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-    <footer>
-        <p>&copy; 2024 My Site</p>
-    </footer>
-</body>
+	<head>
+		<title>{% block title %}Issue Tracker{% endblock %}</title>
+		{% load static %}
+		<link
+			rel="stylesheet"
+			href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Tangerine:wght@400;700&display=swap"
+			rel="stylesheet" />
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+        <style>
+			nav.navbar {
+				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+				padding: 10px 20px;
+				transition: background-color 0.3s ease;
+			}
+
+			nav.navbar a.navbar-brand:hover,
+			nav.navbar a.navbar-brand:focus {
+				color: #f0f0f0;
+			}
+            nav{
+                position:absolute;
+                height:80px;
+                top:0;
+            }
+            main{
+                position:absolute;
+                top:100px;
+                height:calc(100vh - 100px);
+                width:100vw;
+                overflow:auto;
+            }
+		</style>
+	</head>
+	<body>
+		<nav class="navbar fixed-top navbar-light bg-light">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="/">Issue Tracker</a>
+				</div>
+			</div>
+		</nav>
+		<main>{% block content %}{% endblock %}</main>
+	</body>
 </html>
