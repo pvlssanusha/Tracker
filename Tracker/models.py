@@ -10,17 +10,18 @@ class Company(models.Model):
     email = models.EmailField(max_length=255)
     bio = models.TextField()
     pic = models.ImageField(upload_to='company_pics/', null=True, blank=True)
-
     def __str__(self):
         return self.name
 
 # User model
 class User(AbstractUser):
     username = models.CharField(max_length=255, unique=True)
+    image=models.ImageField(upload_to='images',default="C:/Users/Asus/OneDrive/Desktop/Empty-image.jpg")
     password = models.CharField(max_length=255)
     firstname = models.CharField(max_length=255)
     lastname = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True)
+    enabled=models.BooleanField(default=False)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='users',null=True, blank=True)
 
     def __str__(self):
@@ -70,6 +71,8 @@ class Comment(models.Model):
     def __str__(self):
         return f'Comment by {self.user.username} on {self.issue.issuename}'
 
+
+
 # Feedback model
 class Feedback(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -85,9 +88,9 @@ class Feedback(models.Model):
 # ViewedBy model
 class ViewedBy(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='viewed_issues')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='vieweduser')
     timestamp = models.DateTimeField(auto_now_add=True)
-    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='views')
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='viewedissue')
 
     def __str__(self):
         return f'{self.user.username} viewed {self.issue.issuename}'
