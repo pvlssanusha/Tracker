@@ -54,7 +54,7 @@ def loginView(request):
 def home(request):
     return render(request, 'home.html')
 
-@login_required
+@login_required(login_url='login/')
 def addProduct(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)
@@ -68,7 +68,7 @@ def addProduct(request):
     else:
         form=ProductForm()
         return render(request, 'Product.html', {'form': form, 'title': 'Add Product'})
-@login_required
+@login_required(login_url='login/')
 def addIssue(request):
     if request.method == 'POST':
         form = IssueForm(request.POST)
@@ -86,36 +86,42 @@ def addIssue(request):
     else:
         form=IssueForm()
         return render(request, 'Issue.html', {'form': form, 'title': 'Register Issue'})
-@login_required
+@login_required(login_url='login/')
 def getIssue(self,id):
     try:
-        print("entered")
         object=Issue.objects.get(id=id)
-        object.viewcount+=1
+        try:
+            view=ViewedBy.objects.get(user=self.user,issue=object)
+            print(view,"view")
+        except:
+            print("entered into except")
+            ViewedBy.objects.create(user=self.user,issue=object)
+            object.viewcount+=1
         object.save()
         comments=None
         feedback=None
         try:
             comments=Comment.objects.filter(issue=object)
-            comments=CommentSerializer(comments,many=True).data
+            # comments=CommentSerializer(comments,many=True).data
         except:
             pass
         try:
             feedback=Feedback.objects.filter(issue=object)
-            feedback=FeedbackSerializer(feedback,many=True).data
+            # feedback=FeedbackSerializer(feedback,many=True).data
         except:
             pass
-        data=IssueSerializer(object).data
-        print("serilaizer")
-        print(comments)
-        print(feedback)
+        try:
+            viewedobjs=ViewedBy.objects.filter(user=self.user,issue=object)
+        except:
+            pass
 
-        #return Response({'data':IssueSerializer(object).data},status=status.HTTP_200_OK)
-        return render(self,'DisplayIssue.html',{'issue':data,'comments':comments,'feedback':feedback})
+
+        data=IssueSerializer(object).data
+        return render(self,'DisplayIssue.html',{'issue':data,'comments':comments,'feedback':feedback,'viewedby':viewedobjs})
     
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'},status=status.HTTP_404_NOT_FOUND)
-@login_required
+@login_required(login_url='login/')
 def getAllIssues(self):
     try:
         object=Issue.objects.all()
@@ -127,7 +133,7 @@ def getAllIssues(self):
         return Response({'error': 'No Data Found'},status=status.HTTP_404_NOT_FOUND)
     
 
-# @login_required
+@login_required(login_url='login/')
 def addComment(request):
     
     if request.method == 'POST':
@@ -139,9 +145,8 @@ def addComment(request):
         Comment.objects.create(issue=issue, user=request.user, description=comment)
         return redirect('issue', id=issue.id)
 
-@login_required
+@login_required(login_url='login/')
 def addFeedback(request):
-   
     if request.method == 'POST':
         print(request.POST)
         issue_id=request.POST.get('issue_id')
@@ -157,3 +162,4 @@ def load_products(request):
     products = Product.objects.filter(company_id=company_id).all()
     return JsonResponse(list(products.values('id', 'name')), safe=False)
 
+    
