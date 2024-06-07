@@ -1,48 +1,55 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Crea</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<head>
+		<title>Crea</title>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	</head>
+	<body>
+		<form method="post" enctype="multipart/form-data">
+			{% csrf_token %} {{ form.as_p }}
+			<button type="submit">Submit</button>
+		</form>
 
-</head>
-<body>
+		<script type="text/javascript">
+			$(document).ready(function () {
+				$("#id_company").change(function () {
+					var url = "{% url 'load_products' %}";
+					var companyId = $(this).val();
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
-</form>
-
-<script type="text/javascript">
-  $(document).ready(function() {
-    $('#id_company').change(function() {
-        var url = "{% url 'load_products' %}";
-        var companyId = $(this).val();
-
-        $.ajax({
-            url: url,
-            data: {
-                'company_id': companyId
-            },
-            success: function(data) {
-                $("#id_product").html("");
-                if (data.length > 1) {
-                    $.each(data, function(key, value) {
-                        $("#id_product").append('<option value="' + value.id + '">' + value.name + '</option>');
-                    });
-                } else {
-                    $("#id_product").append('<option value="">---------</option>');
-                    $.each(data, function(key, value) {
-                        $("#id_product").append('<option value="' + value.id + '">' + value.name + '</option>');
-                    });
-                }
-            }
-        });
-    });
-});
-
-</script>
-
-</body>
+					$.ajax({
+						url: url,
+						data: {
+							company_id: companyId,
+						},
+						success: function (data) {
+							$("#id_product").html("");
+							if (data.length > 1) {
+								$.each(data, function (key, value) {
+									$("#id_product").append(
+										'<option value="' +
+											value.id +
+											'">' +
+											value.name +
+											"</option>"
+									);
+								});
+							} else {
+								$("#id_product").append('<option value="">---------</option>');
+								$.each(data, function (key, value) {
+									$("#id_product").append(
+										'<option value="' +
+											value.id +
+											'">' +
+											value.name +
+											"</option>"
+									);
+								});
+							}
+						},
+					});
+				});
+			});
+		</script>
+	</body>
 </html>
