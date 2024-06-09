@@ -1,38 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>User Profile</title>
-    <style>
-        .profile {
-            max-width: 600px;
-            margin: auto;
-            padding: 1em;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .profile img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: auto;
-        }
-        .profile-info {
-            text-align: center;
-        }
-        .profile-info h2 {
-            margin-top: 0;
-        }
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 1em;
-        }
-        .stat {
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Add Product{% endblock %}
+{% block content %}
     <div class="profile">
         <div class="profile-info">
             <img src="{{ user.image.url }}" alt="{{ user.username }}">
@@ -73,5 +42,4 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

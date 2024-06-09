@@ -498,6 +498,7 @@ a{
 	width: max-content;
 	height: max-content;
 	overflow: auto;
+	margin: 0 auto;
 }
 
 .issue-form-container h2 {
@@ -622,6 +623,132 @@ a{
     background-color: #0056b3;
 }
 
+.errorlist {
+	width: 250px;
+}
+
+.profile {
+    display: flex;
+	align-items: center;
+    flex-wrap: wrap;
+    background-color: #fff;
+    padding: 30px;
+    margin: 40px 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-info {
+    flex: 1;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.profile-info a{
+	font-size: 16px;
+}
+
+.profile-info img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    object-fit: cover;
+    border: 3px solid #007BFF;
+}
+
+.profile-info h2 {
+    margin-top: 10px;
+    font-size: 28px;
+    color: #007BFF;
+}
+
+.profile-info p {
+    margin: 10px 0;
+    font-size: 18px;
+    color: #666;
+}
+
+.profile-info a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.profile-info a:hover {
+    text-decoration: underline;
+}
+
+.stats {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    text-align: center;
+}
+
+.stat {
+    flex: 1;
+}
+
+.stat h3 {
+    margin: 0;
+    font-size: 36px;
+    color: #007BFF;
+}
+
+.stat p {
+    margin: 10px 0 0;
+    font-size: 16px;
+    color: #999;
+}
+
+.profile-info p span {
+    font-weight: bold;
+}
+
+.stat h3 {
+    font-size: 48px;
+}
+
+.stat p {
+    font-size: 18px;
+    font-weight: 300;
+}
+
+.profile .right-section{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+}
+
+@media (max-width: 768px) {
+    .profile {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-info {
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .stats {
+        flex-direction: column;
+    }
+
+    .stat {
+        margin-bottom: 20px;
+    }
+}
 
 @media (max-width: 786px) {
 	.inner-cont {
@@ -762,4 +889,143 @@ a{
 		width: calc(100vw - 10px);
 		margin: 0px;
 	}
+}
+
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+
+.grid-container .full-width {
+    grid-column: span 3;
+}
+
+.company-info {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.company-info h2 {
+    font-size: 28px;
+    color: #007BFF;
+    margin-bottom: 20px;
+}
+
+.company-info p {
+    font-size: 16px;
+    margin: 10px 0;
+    color: #666;
+}
+
+.company-info a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.company-info a:hover {
+    text-decoration: underline;
+}
+
+.company-container .users,.company-container .products,.company-container .issues {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+	margin: 0px;
+    margin-bottom: 20px;
+}
+
+.company-container .users h2,.company-container .products h2,.company-container .issues h2 {
+    font-size: 24px;
+    color: #007BFF;
+    margin-bottom: 20px;
+}
+
+.company-container .users ul,.company-container .products ul,.company-container .issues ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.company-container .users li,.company-container .products li,.company-container .issues li {
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.company-container .users li:last-child,.company-container .products li:last-child,.company-container .issues li:last-child {
+    border-bottom: none;
+}
+
+.company-container .users li {
+    font-size: 16px;
+    color: #333;
+}
+
+.company-container .products li {
+    font-size: 16px;
+    color: #333;
+}
+
+.company-container .products li a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.company-container .products li a:hover {
+    text-decoration: underline;
+}
+
+.company-container .issues p {
+    font-size: 16px;
+    color: #666;
+}
+
+.company-container .issues li {
+    font-size: 16px;
+    color: #333;
+}
+
+.company-container .company-info p strong,
+.company-container .issues p strong {
+    font-weight: bold;
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    .grid-container {
+        display: block;
+    }
+    
+    .company-container .company-info,.company-container .users,.company-container .products,.company-container .issues {
+        padding: 15px;
+    }
+
+    .company-container .users li,.company-container .products li,.company-container .issues li {
+        font-size: 14px;
+    }
+}
+
+.filter-cont {
+	width: 100%;
+}
+
+.filter-cont .form{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	width : 100%;
+	gap:20px;
+	align-items: flex-end;
+}
+
+.filter-cont .form button {
+	height:40px;
+}
+
+.filter-cont .form select,.form input[type="text"] {
+	width: 10em;
 }

@@ -6,10 +6,14 @@
     <div class="section-head">Issues</div>
     
     <!-- Filter Form -->
-    <form method="get" action="">
+    <div class="filter-cont">
+    <form method="get" action="" class="form">
         {{ filter_form.as_p }}
+        <p>
         <button type="submit">Filter</button>
+        </p>
     </form>
+</div>
 
     <div class="issues">
         {% for issue in data %}
@@ -30,10 +34,6 @@
             </div>
         </a>
         {% endfor %}
-    </div>
-    
-    <div class="add-issue">
-        <a href="/addissue/">Create New Issue</a>
     </div>
 </div>
 {% endblock %}
