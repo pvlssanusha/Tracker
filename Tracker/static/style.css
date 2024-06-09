@@ -68,7 +68,10 @@ body {
 .left-section img {
 	width: 20rem;
 }
-
+.container-fluid{
+	display: flex;
+	flex-direction: row;
+}
 .form-container {
 	flex: 1;
 	display: flex;

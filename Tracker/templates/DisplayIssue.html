@@ -4,11 +4,12 @@
 {% block content %}
 		<div class="issue-main">
 			<div class="issue-container">
+				
 				<h3>{{issue.issuename}}</h3>
 				<p>desc : {{issue.description}}</p>
 				<div class="issue-details">
-					<p>Created by: <span class="text-bold">{{issue.created_by}}</span></p>
-					<p>Company Name: <span class="text-bold">{{issue.company}}</span></p>
+					<p>Created By:<a href="{% url 'getuser' issue.id %}">{{ issue.created_by}}</a></p>
+					<p>Company Name:<a href="{% url 'companydetails' companyid %}">{{issue.company}}</a></p>
 					<p>Tags: <span class="text-bold">{{issue.tags}}</span></p>
 					<p>View Count: <span class="text-bold">{{issue.viewcount}}</span></p>
 					<p>
@@ -18,6 +19,17 @@
 					<p>
 						Comment Count: <span class="text-bold">{{issue.commentcount}}</span>
 					</p>
+					<p>Issue Status:
+						
+						<span class="text-bold">{{issue.status}}</span>
+						{% if companyuser %}
+						<a href="{% url 'changeissuestatus' issue.id %}">
+							<button type="button">Change Status</button>
+						</a>
+						{% endif %} 
+					</p>
+
+					
 				</div>
 			</div>
 			<div id="viewedbySection">
@@ -45,6 +57,27 @@
 				<div id="commentsSection">
 					<h1>Comments <button id="addComment">+</button></h1>
 					<div id="commentsContainer">
+						{% if pinnedcomments %}
+						<div class="list-group">
+							{% for comment in pinnedcomments %}
+							<div href="#" class="comment-item">
+								<img
+									src="https://i.pinimg.com/564x/3d/91/09/3d910919cf4d41c1114457504dc29201.jpg" />
+								<div>
+									<div class="d-flex">
+										<h4>{{comment.user}}</h4>
+										<small>{{comment.timestamp}}</small>
+										<span class="pinned-symbol" title="Pinned">📌</span>
+
+									</div>
+									<p class="mb-1">{{comment.description}}</p>
+								</div>
+							</div>
+							{% endfor %}
+						</div>
+						{% endif %}
+
+
 						{% if comments %}
 						<div class="list-group">
 							{% for comment in comments %}
@@ -55,6 +88,7 @@
 									<div class="d-flex">
 										<h4>{{comment.user}}</h4>
 										<small>{{comment.timestamp}}</small>
+
 									</div>
 									<p class="mb-1">{{comment.description}}</p>
 								</div>
@@ -91,6 +125,9 @@
 					<ul class="pagination" id="feedbackPagination"></ul>
 				</div>
 			</div>
+			{% if value %}
+                <a href="{% url 'editissue' issue.id %}"><button>Edit Issue</button></a>
+            {% endif %}
 
 			<div id="commentPopup" class="popup-form">
 				<h1>
@@ -121,7 +158,10 @@
 						name="feedback"
 						placeholder="Enter your feedback"></textarea>
 					<button type="submit">Submit Feedback</button>
+					
 				</form>
+				
+				
 			</div>
 		</div>
 

@@ -4,8 +4,11 @@ class IssueAdmin(admin.ModelAdmin):
     list_display = ('id','issuename','description','product','status','tags','created_by','company')
 class ViewedByAdmin(admin.ModelAdmin):
     list_display=('id','timestamp','user','issue',)
+
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('id','username','email','password')
 # Register your models here.
-admin.site.register(User)
+admin.site.register(User,UserAdmin)
 admin.site.register(Company)
 admin.site.register(Issue,IssueAdmin)
 admin.site.register(Product)

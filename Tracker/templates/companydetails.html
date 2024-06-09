@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Company Details</title>
+</head>
+<body>
+    <h1>Company Details</h1>
+    
+    <div class="company-info">
+        <h2>{{ company.name }}</h2>
+
+        <p><strong>URL:</strong> <a href="{{ company.url }}">{{ company.url }}</a></p>
+        <p><strong>Email:</strong> {{ company.email }}</p>
+        <p><strong>Bio:</strong> {{ company.bio }}</p>
+    </div>
+    
+    <div class="users">
+        <h2>Users</h2>
+        <ul>
+            {% for user in users %}
+            <li>{{ user.firstname }} {{ user.lastname }} ({{ user.username }})</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="products">
+        <h2>Products</h2>
+        <ul>
+            {% for product in products %}
+            <li>Product Name: {{product.name  }}
+                <br>
+                Product URL: {{product.url  }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <div class="issues">
+        <h2>Issues</h2>
+        <p><strong>Total Issues Created:</strong> {{ issues_count }}</p>
+        <ul>
+            {% for issue in issues %}
+            <li>{{ issue.issuename }} - Status: {{ issue.status }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+</body>
+</html>

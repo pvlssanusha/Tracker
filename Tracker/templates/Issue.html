@@ -1,55 +1,48 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Crea</title>
-		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	</head>
-	<body>
-		<form method="post" enctype="multipart/form-data">
-			{% csrf_token %} {{ form.as_p }}
-			<button type="submit">Submit</button>
-		</form>
+<head>
+    <title>Crea</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <!-- Terms and Conditions -->
+    <div id="terms">
+        <h2>Terms and Conditions</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et lectus neque. Proin nec commodo arcu. Nullam fringilla lacinia diam, vel ultrices mauris consectetur at. Quisque sit amet ligula eget felis vestibulum pharetra. Donec vel fringilla ligula. Sed ut placerat sapien. Nam volutpat lacus eu velit dignissim, ut consectetur leo efficitur. Sed eu dapibus lorem. Phasellus sit amet elit sed magna dictum volutpat.</p>
+        <button id="acceptTerms">Accept Terms</button>
+    </div>
 
-		<script type="text/javascript">
-			$(document).ready(function () {
-				$("#id_company").change(function () {
-					var url = "{% url 'load_products' %}";
-					var companyId = $(this).val();
+    <!-- Issue Form (Initially Hidden) -->
+    <div id="issueForm" style="display: none;">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">Submit</button>
+        </form>
+    </div>
 
-					$.ajax({
-						url: url,
-						data: {
-							company_id: companyId,
-						},
-						success: function (data) {
-							$("#id_product").html("");
-							if (data.length > 1) {
-								$.each(data, function (key, value) {
-									$("#id_product").append(
-										'<option value="' +
-											value.id +
-											'">' +
-											value.name +
-											"</option>"
-									);
-								});
-							} else {
-								$("#id_product").append('<option value="">---------</option>');
-								$.each(data, function (key, value) {
-									$("#id_product").append(
-										'<option value="' +
-											value.id +
-											'">' +
-											value.name +
-											"</option>"
-									);
-								});
-							}
-						},
-					});
-				});
-			});
-		</script>
-	</body>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Function to toggle visibility of issue form
+            function toggleIssueForm(visible) {
+                if (visible) {
+                    $('#issueForm').show();
+                } else {
+                    $('#issueForm').hide();
+                }
+            }
+
+            // Initially hide issue form
+            toggleIssueForm(false);
+
+            // Handle click event on "Accept Terms" button
+            $('#acceptTerms').click(function () {
+                // Show issue form when terms are accepted
+                toggleIssueForm(true);
+                // Hide terms and conditions
+                $('#terms').hide();
+            });
+        });
+    </script>
+</body>
 </html>

@@ -15,13 +15,15 @@ class Company(models.Model):
 
 # User model
 class User(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=255, unique=True)
     image=models.ImageField(upload_to='images',default="/images/Empty-image.jpg")
     password = models.CharField(max_length=255)
     firstname = models.CharField(max_length=255)
     lastname = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True)
-    enabled=models.BooleanField(default=False)
+    companyuser=models.BooleanField(default=False)
+    enabled=models.BooleanField(default=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='users',null=True, blank=True)
 
     def __str__(self):
@@ -41,12 +43,14 @@ class Product(models.Model):
 class Issue(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     STATUS_CHOICES = [
-        ('open', 'Open'),
-        ('closed', 'Closed'),
-        ('in_progress', 'In Progress'),
+        ('created', 'Created'),
+        ('investigating', 'Investigating'),
+        ('fixed', 'Fixed'),
+        ('cannotfix','CannotFix')
     ]
     
     issuename = models.CharField(max_length=255)
+    enabled=models.BooleanField(default=True)
     description = models.TextField()
     created_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name='created_issues')
     company = models.ForeignKey('Company', on_delete=models.CASCADE, related_name='issues')
@@ -65,8 +69,10 @@ class Issue(models.Model):
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='comments')
+    enabled=models.BooleanField(default=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
     description = models.TextField()
+    pinned=models.BooleanField(default=False)
 
     def __str__(self):
         return f'Comment by {self.user.username} on {self.issue.issuename}'
@@ -78,6 +84,7 @@ class Feedback(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='feedbacks')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='feedbacks')
+    enabled=models.BooleanField(default=True)
     description = models.TextField()
     disabled = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)

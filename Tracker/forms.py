@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.hashers import make_password
 # from tagify import TagifyWidget
-
+from captcha.fields import CaptchaField
 from django import forms
+from django.contrib.auth.forms import PasswordChangeForm
 from .models import *
 
 class SignUpForm(forms.ModelForm):
@@ -21,6 +22,7 @@ class SignUpForm(forms.ModelForm):
     company_bio = forms.CharField(widget=forms.Textarea, required=False)
     company_pic = forms.ImageField(required=False)
     company_email=forms.EmailField(required=False)
+    captcha = CaptchaField()
 
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
@@ -176,5 +178,34 @@ class ProductForm(forms.ModelForm):
         self.fields['company'].required = False
         self.fields['company'].queryset = Company.objects.all()
 
+class CustomPasswordChangeForm(PasswordChangeForm):
+    class Meta:
+        model = User
+        fields = ['old_password', 'new_password1', 'new_password2']
 
 
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['firstname', 'lastname', 'email','username','image']  
+
+
+class EditIssueForm(forms.ModelForm):
+    class Meta:
+        model = Issue
+        fields = ['issuename', 'description', 'tags'] 
+
+class IssueStatusForm(forms.ModelForm):
+    class Meta:
+        model = Issue
+        fields = ['status']
+        widgets = {
+            'status': forms.Select(attrs={'class': 'form-control'})
+        }
+
+class IssueFilterForm(forms.Form):
+    status = forms.ChoiceField(choices=Issue.STATUS_CHOICES, required=False)
+    created_by = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
+    company = forms.ModelChoiceField(queryset=Company.objects.all(), required=False)
+    product = forms.ModelChoiceField(queryset=Product.objects.all(), required=False)
+    tags = forms.CharField(max_length=255, required=False)
