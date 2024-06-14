@@ -1026,6 +1026,6 @@ a{
 	height:40px;
 }
 
-.filter-cont .form select,.form input[type="text"] {
+.filter-cont .form select,.filter-cont .form input[type="text"] {
 	width: 10em;
 }
