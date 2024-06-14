@@ -69,11 +69,13 @@ def addIssue(request):
     if request.method == 'POST':
         form = IssueForm(request.POST)
         if form.is_valid():
+            print("entered")
             issue=form.save(commit=False)
             issue.created_by=request.user
             issue.save()
             messages.success(request, 'Issue Registered successfully')
-            return HttpResponse({'Issue Registered successfully': True})
+            return  HttpResponse({'Issue Registered Successfully': True})
+            
         else:
             messages.error(request, 'Issue Not Registered ')
             return  HttpResponse({'Issue Not Registered': True})

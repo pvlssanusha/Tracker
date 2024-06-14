@@ -56,7 +56,7 @@ class Issue(models.Model):
     company = models.ForeignKey('Company', on_delete=models.CASCADE, related_name='issues')
     product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='issues', null=True, blank=True)
     tags = models.TextField()  # Store tags as a JSON list
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES,default='open')
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES,default='created')
     viewcount = models.PositiveIntegerField(default=0)
     suggestioncount = models.PositiveIntegerField(default=0)
     commentcount = models.PositiveIntegerField(default=0)
