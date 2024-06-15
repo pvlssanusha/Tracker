@@ -298,3 +298,44 @@ def changeIssueStatus(request, issue_id):
     }
 
     return render(request, 'changeissuestatus.html', context)
+
+
+
+def supportForm(request):
+    if request.method == 'POST':
+        form = SupportQueryForm(request.POST)
+        if form.is_valid():
+            support=form.save(commit=False)
+            support.user=request.user
+            support.save()
+
+            return redirect('supportformsuccess')  # Redirect to a success page
+    else:
+        form = SupportQueryForm()
+    
+    return render(request, 'supportform.html', {'form': form})
+
+def supportFormSuccess(request):
+    return render(request, 'supportformsuccess.html')
+
+def hiringForm(request):
+    if request.method == 'POST':
+        form = HiringRequestForm(request.POST)
+        if form.is_valid():
+            hiring=form.save(commit=False)
+            hiring.user=request.user
+            hiring.save()
+            
+            return redirect('hiringformsuccess')  # Redirect to a success page
+    else:
+        form = HiringRequestForm()
+    
+    return render(request, 'hiringform.html', {'form': form})
+
+def supportList(request):
+    queries = SupportQuery.objects.all().order_by('-created_at')
+    return render(request, 'supportlist.html', {'queries': queries})
+
+def hiringList(request):
+    requests = HiringRequest.objects.all().order_by('-created_at')
+    return render(request, 'hiringlist.html', {'requests': requests})

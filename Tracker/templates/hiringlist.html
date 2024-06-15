@@ -1,0 +1,9 @@
+<!-- hiring_list.html -->
+
+<ul>
+    {% for request in requests %}
+        <li>{{ request.name }} - {{ request.created_at }}</li>
+        <p>{{ request.description }}</p>
+    {% endfor %}
+    </ul>
+    

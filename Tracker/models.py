@@ -101,3 +101,37 @@ class ViewedBy(models.Model):
 
     def __str__(self):
         return f'{self.user.username} viewed {self.issue.issuename}'
+    
+
+class SupportQuery(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    QUERY_TYPES = [
+        ('query', 'Query'),
+        ('feedback', 'Feedback'),
+        ('technical_issue', 'Technical Issue'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.CharField(max_length=20, choices=QUERY_TYPES)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.get_type_display()} - {self.created_at}"
+
+class HiringRequest(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    CHOICES = [
+        ('option1', 'option1'),
+        ('option2', 'option2'),
+        ('option3', 'option3'),
+    ]
+    name = models.CharField(max_length=100)
+    url = models.URLField()
+    options = models.CharField(max_length=100,choices=CHOICES)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    pinned = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"{self.name} - {self.created_at}"

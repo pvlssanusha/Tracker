@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.hashers import make_password
 from captcha.fields import CaptchaField
 from django.contrib.auth.forms import PasswordChangeForm
-from .models import User, Company, Product, Issue
+from .models import *
 
 class SignUpForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
@@ -201,3 +201,14 @@ class IssueFilterForm(forms.Form):
     company = forms.ModelChoiceField(queryset=Company.objects.all(), required=False)
     product = forms.ModelChoiceField(queryset=Product.objects.all(), required=False)
     tags = forms.CharField(max_length=255, required=False)
+
+
+class SupportQueryForm(forms.ModelForm):
+    class Meta:
+        model = SupportQuery
+        fields = ['type', 'message']
+
+class HiringRequestForm(forms.ModelForm):
+    class Meta:
+        model = HiringRequest
+        fields = ['name', 'url', 'options', 'description']

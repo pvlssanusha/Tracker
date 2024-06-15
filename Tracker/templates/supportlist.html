@@ -1,0 +1,10 @@
+<!-- support_list.html -->
+
+<ul>
+    {% for query in queries %}
+        <li>{{ query.type }} - {{ query.created_at }}</li>
+        <p>{{ query.message }}</p>
+        <!-- Add any additional details or actions here -->
+    {% endfor %}
+    </ul>
+    

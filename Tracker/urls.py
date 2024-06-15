@@ -21,4 +21,9 @@ urlpatterns = [
     path('editissue/<uuid:issue_id>/', editIssue, name='editissue'),
     path('companydetails/<uuid:company_id>/', companyDetails, name='companydetails'),
     path('issue/<uuid:issue_id>/changestatus/', changeIssueStatus, name='changeissuestatus'),
+    path('support/', supportForm, name='support'),
+    path('hiring/',hiringForm, name='hiring'),
+    path('supportlist/',supportList, name='supportlist'),
+    path('hiringlist/',hiringList, name='hiringlist'),
+    path('supportformsuccess/', supportFormSuccess, name='supportformsuccess'),
 ]
