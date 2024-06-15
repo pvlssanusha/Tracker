@@ -1,1 +1,1 @@
-# default_app_config = 'Tracker.apps.TrackerConfig'
+default_app_config = 'Tracker.apps.TrackerConfig'
