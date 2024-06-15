@@ -83,7 +83,8 @@ class ProductForm(forms.ModelForm):
         self.fields['company'].queryset = Company.objects.all()
 
 
-
+from django import forms
+from .models import Issue, Company, Product
 
 class IssueForm(forms.ModelForm):
     company_name = forms.CharField(max_length=100, required=False)
@@ -108,18 +109,24 @@ class IssueForm(forms.ModelForm):
         if 'company' in self.data:
             try:
                 company_id = int(self.data.get('company'))
-                self.fields['product'].queryset = Product.objects.filter(company_id=company_id)+Product.objects.none()
+                self.fields['product'].queryset = Product.objects.filter(company_id=company_id)
             except (ValueError, TypeError):
-                pass  # Invalid input; ignore and fallback to empty product queryset
-    
+                pass
 
     def clean(self):
         cleaned_data = super().clean()
-        password = cleaned_data.get("password")
-        confirm_password = cleaned_data.get("confirm_password")
+        company = cleaned_data.get("company")
+        product = cleaned_data.get("product")
+        company_name = cleaned_data.get("company_name")
+        product_name = cleaned_data.get("product_name")
 
-        if password and password != confirm_password:
-            raise forms.ValidationError("Password and confirm password do not match")
+        print(f"Cleaned Data: {cleaned_data}")
+
+        if not company and not company_name:
+            self.add_error('company_name', "Either select a company or provide new company details.")
+
+        if company and not product and not product_name:
+            self.add_error('product_name', "Either select a product or provide new product details.")
 
         return cleaned_data
 
@@ -128,7 +135,9 @@ class IssueForm(forms.ModelForm):
         company = self.cleaned_data.get('company')
         product = self.cleaned_data.get('product')
 
-        # Check if new company info is provided and create a new company if necessary
+        print(f"Saving Issue: {issue}")
+        print(f"Company: {company}, Product: {product}")
+
         if not company:
             company_name = self.cleaned_data.get('company_name')
             if company_name:
@@ -146,7 +155,6 @@ class IssueForm(forms.ModelForm):
                 )
                 issue.company = company
 
-        # Check if new product info is provided and create a new product if necessary
         if company and not product:
             product_name = self.cleaned_data.get('product_name')
             if product_name:
@@ -160,7 +168,7 @@ class IssueForm(forms.ModelForm):
 
         if commit:
             issue.save()
-        
+
         return issue
 
 

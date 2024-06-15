@@ -67,21 +67,15 @@ def addProduct(request):
 @login_required(login_url='/login/')
 def addIssue(request):
     if request.method == 'POST':
-        form = IssueForm(request.POST)
+        form = IssueForm(request.POST, request.FILES)
         if form.is_valid():
-            print("entered")
-            issue=form.save(commit=False)
-            issue.created_by=request.user
-            issue.save()
-            messages.success(request, 'Issue Registered successfully')
-            return  HttpResponse({'Issue Registered Successfully': True})
-            
+            form.save()
+            return redirect('issues')  # Redirect to a success page after form submission
         else:
-            messages.error(request, 'Issue Not Registered ')
-            return  HttpResponse({'Issue Not Registered': True})
+            print(f"Form errors: {form.errors}")  # Print form errors for debugging
     else:
-        form=IssueForm()
-        return render(request, 'Issue.html', {'form': form, 'title': 'Register Issue'})
+        form = IssueForm()
+    return render(request, 'Issue.html', {'form': form, 'title': 'Register Issue'})
 
 @login_required(login_url='/login/')
 def getIssue(self,id):
