@@ -20,101 +20,24 @@
         <div class="issue-form-container">
             <form method="post" class="form" enctype="multipart/form-data">
                 {% csrf_token %}
-                
-                <div class="form-group">
-                    {{ form.issuename.label_tag }}
-                    {{ form.issuename }}
-                    {% if form.issuename.errors %}
-                        <div class="error">{{ form.issuename.errors }}</div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    {{ form.description.label_tag }}
-                    {{ form.description }}
-                    {% if form.description.errors %}
-                        <div class="error">{{ form.description.errors }}</div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    {{ form.company.label_tag }}
-                    {{ form.company }}
-                    {% if form.company.errors %}
-                        <div class="error">{{ form.company.errors }}</div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group" id="div_id_company_name" style="display: none;">
-                    {{ form.company_name.label_tag }}
-                    {{ form.company_name }}
-                    {% if form.company_name.errors %}
-                        <div class="error">{{ form.company_name.errors }}</div>
-                    {% endif %}
-                </div>
-                <div class="form-group" id="div_id_company_url" style="display: none;">
-                    {{ form.company_url.label_tag }}
-                    {{ form.company_url }}
-                    {% if form.company_url.errors %}
-                        <div class="error">{{ form.company_url.errors }}</div>
-                    {% endif %}
-                </div>
-                <div class="form-group" id="div_id_company_email" style="display: none;">
-                    {{ form.company_email.label_tag }}
-                    {{ form.company_email }}
-                    {% if form.company_email.errors %}
-                        <div class="error">{{ form.company_email.errors }}</div>
-                    {% endif %}
-                </div>
-                <div class="form-group" id="div_id_company_bio" style="display: none;">
-                    {{ form.company_bio.label_tag }}
-                    {{ form.company_bio }}
-                    {% if form.company_bio.errors %}
-                        <div class="error">{{ form.company_bio.errors }}</div>
-                    {% endif %}
-                </div>
-                <div class="form-group" id="div_id_company_pic" style="display: none;">
-                    {{ form.company_pic.label_tag }}
-                    {{ form.company_pic }}
-                    {% if form.company_pic.errors %}
-                        <div class="error">{{ form.company_pic.errors }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group" id="div_id_product" style="display: none;">
-                    {{ form.product.label_tag }}
-                    {{ form.product }}
-                    {% if form.product.errors %}
-                        
-                        <div class="error">{{ form.product.errors }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group" id="div_id_product_name" style="display: none;">
-                    {{ form.product_name.label_tag }}
-                    {{ form.product_name }}
-                    {% if form.product_name.errors %}
-                        <div class="error">{{ form.product_name.errors }}</div>
-                    {% endif %}
-                </div>
-                <div class="form-group" id="div_id_product_url" style="display: none;">
-                    {{ form.product_url.label_tag }}
-                    {{ form.product_url }}
-                    {% if form.product_url.errors %}
-                        <div class="error">{{ form.product_url.errors }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.tags.label_tag }}
-                    {{ form.tags }}
-                    {% if form.tags.errors %}
-                        <div class="error">{{ form.tags.errors }}</div>
-                    {% endif %}
-                </div>
-
+                {{ form.as_p }}
                 <button type="submit">Submit</button>
             </form>
+            <!-- Display form errors -->
+            {% if form.errors %}
+                <div class="form-errors">
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
         </div>
     </div>
 
@@ -125,29 +48,25 @@
                 var productSelected = $("#id_product").val() !== "";
 
                 if (!companySelected) {
-                    $("#div_id_company_name").show();
-                    $("#div_id_company_url").show();
-                    $("#div_id_company_email").show();
-                    $("#div_id_company_bio").show();
-                    $("#div_id_company_pic").show();
-                    $("#div_id_product").hide();
-                    $("#div_id_product_name").hide();
-                    $("#div_id_product_url").hide();
+                    $("#id_company_name").closest('.form-group').show();
+                    $("#id_company_url").closest('.form-group').show();
+                    $("#id_company_email").closest('.form-group').show();
+                    $("#id_company_bio").closest('.form-group').show();
+                    $("#id_company_pic").closest('.form-group').show();
                 } else {
-                    $("#div_id_company_name").hide();
-                    $("#div_id_company_url").hide();
-                    $("#div_id_company_email").hide();
-                    $("#div_id_company_bio").hide();
-                    $("#div_id_company_pic").hide();
+                    $("#id_company_name").closest('.form-group').hide();
+                    $("#id_company_url").closest('.form-group').hide();
+                    $("#id_company_email").closest('.form-group').hide();
+                    $("#id_company_bio").closest('.form-group').hide();
+                    $("#id_company_pic").closest('.form-group').hide();
+                }
 
-                    $("#div_id_product").show();
-                    if (!productSelected) {
-                        $("#div_id_product_name").show();
-                        $("#div_id_product_url").show();
-                    } else {
-                        $("#div_id_product_name").hide();
-                        $("#div_id_product_url").hide();
-                    }
+                if (companySelected && !productSelected) {
+                    $("#id_product_name").closest('.form-group').show();
+                    $("#id_product_url").closest('.form-group').show();
+                } else {
+                    $("#id_product_name").closest('.form-group').hide();
+                    $("#id_product_url").closest('.form-group').hide();
                 }
             }
 
@@ -162,6 +81,7 @@
                     },
                     success: function (data) {
                         $("#id_product").html("");
+                        // Add an empty option first
                         $("#id_product").append('<option value="">---------</option>');
                         if (data.length > 0) {
                             $.each(data, function (key, value) {
@@ -183,10 +103,10 @@
             });
 
             $("#id_product").change(function () {
-
                 toggleFieldVisibility();
             });
 
+            // Function to toggle visibility of issue form
             function toggleIssueForm(visible) {
                 if (visible) {
                     $("#issueForm").show();
@@ -195,13 +115,18 @@
                 }
             }
 
+            // Initially hide issue form
             toggleIssueForm(false);
 
+            // Handle click event on "Accept Terms" button
             $("#acceptTerms").click(function () {
+                // Show issue form when terms are accepted
                 toggleIssueForm(true);
+                // Hide terms and conditions
                 $("#terms").hide();
             });
 
+            // Initial visibility based on default form values
             toggleFieldVisibility();
         });
     </script>

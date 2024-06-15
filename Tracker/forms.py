@@ -94,6 +94,7 @@ class IssueForm(forms.ModelForm):
     company_email = forms.EmailField(required=False)
     product_name = forms.CharField(max_length=100, required=False)
     product_url = forms.URLField(required=False)
+
     class Meta:
         model = Issue
         fields = ['issuename', 'description', 'company', 'product', 'tags']
@@ -110,22 +111,25 @@ class IssueForm(forms.ModelForm):
                 company_id = int(self.data.get('company'))
                 self.fields['product'].queryset = Product.objects.filter(company_id=company_id)
             except (ValueError, TypeError):
-                pass
+                pass  # Invalid input; ignore and fallback to empty product queryset
 
     def clean(self):
         cleaned_data = super().clean()
-        company = cleaned_data.get("company")
-        product = cleaned_data.get("product")
-        company_name = cleaned_data.get("company_name")
-        product_name = cleaned_data.get("product_name")
+        company = cleaned_data.get('company')
+        product = cleaned_data.get('product')
+        print(f"cleaned_data",cleaned_data)
 
-        print(f"Cleaned Data: {cleaned_data}")
+        if not company:
+            # If company is not selected, the following fields are required
+            for field in ['company_name', 'company_url', 'company_email', 'company_bio', 'company_pic']:
+                if not cleaned_data.get(field):
+                    self.add_error(field, f"{field.replace('_', ' ').capitalize()} is required if no company is selected.")
 
-        if not company and not company_name:
-            self.add_error('company_name', "Either select a company or provide new company details.")
-
-        if company and not product and not product_name:
-            self.add_error('product_name', "Either select a product or provide new product details.")
+        if company and not product:
+            # If company is selected but no product is selected, the following fields are required
+            for field in ['product_name', 'product_url']:
+                if not cleaned_data.get(field):
+                    self.add_error(field, f"{field.replace('_', ' ').capitalize()} is required if no product is selected.")
 
         return cleaned_data
 
@@ -134,14 +138,8 @@ class IssueForm(forms.ModelForm):
         company = self.cleaned_data.get('company')
         product = self.cleaned_data.get('product')
 
-        print(f"Saving Issue: {issue}")
-        print(f"Company: {company}, Product: {product}")
-
-        if company and product:
-            issue.company = company
-            issue.product = product
-
-        elif not company:
+        # Check if new company info is provided and create a new company if necessary
+        if not company:
             company_name = self.cleaned_data.get('company_name')
             if company_name:
                 company_url = self.cleaned_data.get('company_url')
@@ -158,6 +156,7 @@ class IssueForm(forms.ModelForm):
                 )
                 issue.company = company
 
+        # Check if new product info is provided and create a new product if necessary
         if company and not product:
             product_name = self.cleaned_data.get('product_name')
             if product_name:
@@ -171,8 +170,9 @@ class IssueForm(forms.ModelForm):
 
         if commit:
             issue.save()
-
+        
         return issue
+
 
 
 class ProductForm(forms.ModelForm):
