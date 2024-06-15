@@ -22,8 +22,8 @@ class SignUpForm(forms.ModelForm):
     company_email = forms.EmailField(required=False)
     captcha = CaptchaField()
 
-    def __init__(self, *args, **kwargs):
-        super(SignUpForm, self).__init__(*args, **kwargs)
+    def _init_(self, *args, **kwargs):
+        super(SignUpForm, self)._init_(*args, **kwargs)
         self.fields['company'].required = False
         self.fields['company'].queryset = Company.objects.all()
 
@@ -76,8 +76,8 @@ class ProductForm(forms.ModelForm):
             'company': forms.Select(attrs={'class': 'form-control'})
         }
 
-    def __init__(self, *args, **kwargs):
-        super(ProductForm, self).__init__(*args, **kwargs)
+    def _init_(self, *args, **kwargs):
+        super(ProductForm, self)._init_(*args, **kwargs)
         self.fields['company'].required = False
         self.fields['company'].queryset = Company.objects.all()
 
@@ -124,6 +124,12 @@ class IssueForm(forms.ModelForm):
                 if not cleaned_data.get(field):
                     self.add_error(field, f"{field.replace('_', ' ').capitalize()} is required if no product is selected.")
 
+        if company and product:
+            # Check if the selected company and product already exist
+            existing_issue = Issue.objects.filter(company=company, product=product).exists()
+            if existing_issue:
+                raise forms.ValidationError("An issue with the selected company and product already exists.")
+
         return cleaned_data
 
     def save(self, commit=True):
@@ -167,7 +173,7 @@ class IssueForm(forms.ModelForm):
             issue.save()
 
         return issue
-
+    
 class CustomPasswordChangeForm(PasswordChangeForm):
     class Meta:
         model = User
