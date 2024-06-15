@@ -20,7 +20,7 @@
 <!-- Issue Form (Initially Hidden) -->
 <div id="issueForm" style="display: none">
     <div class="issue-form-container">
-        <form id="addIssueForm" method="post" enctype="multipart/form-data">
+        <form id="addIssueForm" class="form" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit">Submit</button>
