@@ -326,7 +326,7 @@ def hiringForm(request):
             hiring.user=request.user
             hiring.save()
             
-            return redirect('hiringformsuccess')  # Redirect to a success page
+            return redirect('supportformsuccess')  # Redirect to a success page
     else:
         form = HiringRequestForm()
     

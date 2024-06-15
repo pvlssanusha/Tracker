@@ -205,10 +205,10 @@ class IssueFilterForm(forms.Form):
 
 class SupportQueryForm(forms.ModelForm):
     class Meta:
-        model = SupportQuery
+        model = Support
         fields = ['type', 'message']
 
 class HiringRequestForm(forms.ModelForm):
     class Meta:
-        model = HiringRequest
+        model = Hiring
         fields = ['name', 'url', 'options', 'description']

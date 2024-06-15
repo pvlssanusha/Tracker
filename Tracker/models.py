@@ -103,14 +103,15 @@ class ViewedBy(models.Model):
         return f'{self.user.username} viewed {self.issue.issuename}'
     
 
-class SupportQuery(models.Model):
+class Support(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     QUERY_TYPES = [
         ('query', 'Query'),
         ('feedback', 'Feedback'),
         ('technical_issue', 'Technical Issue'),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
     type = models.CharField(max_length=20, choices=QUERY_TYPES)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -118,7 +119,7 @@ class SupportQuery(models.Model):
     def __str__(self):
         return f"{self.get_type_display()} - {self.created_at}"
 
-class HiringRequest(models.Model):
+class Hiring(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     CHOICES = [
