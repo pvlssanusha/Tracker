@@ -68,15 +68,18 @@ def addProduct(request):
 @login_required(login_url='/login/')
 def addIssue(request):
     if request.method == 'POST':
+        print(f"POST data: {request.POST}")
+        print(f"FILES data: {request.FILES}")
+
         form = IssueForm(request.POST, request.FILES)
+        
         if form.is_valid():
             issue = form.save(commit=False)
-            issue.created_by = request.user  # Assign the current user as the creator
+            issue.created_by = request.user
             issue.save()
-
-            return redirect('issues')  # Redirect to a success page after form submission
+            return redirect('issues')
         else:
-            print(f"Form errors: {form.errors}")  # Print form errors for debugging
+            print(f"Form errors: {form.errors}")
     else:
         form = IssueForm()
     
@@ -120,10 +123,8 @@ def getIssue(self,id):
                 edit=True
         except:
             pass
-        print(edit,"ddd")
         data=IssueSerializer(object).data
         value=object.created_by==self.user
-        print(value)
         form=FeedbackForm()
 
         return render(self,'DisplayIssue.html',{'issue':data,'edit':edit,'form':form,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'viewedby':viewedobjs,'value':value,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
@@ -155,7 +156,6 @@ def getAllIssues(request):
                 issues = issues.filter(tags__icontains=tags)
 
         data = IssueSerializer(issues, many=True).data
-        print(data, "data")
         return render(request, 'Display.html', {'data': data, 'filter_form': filter_form})
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)

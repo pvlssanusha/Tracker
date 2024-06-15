@@ -104,15 +104,32 @@ class IssueForm(forms.ModelForm):
 
         if 'company' in self.data:
             try:
-                company_id = int(self.data.get('company'))
+                company_id = self.data.get('company')
                 self.fields['product'].queryset = Product.objects.filter(company_id=company_id)
             except (ValueError, TypeError):
                 pass
+        elif self.instance.pk:
+            try:
+                if self.instance.company:
+                    self.fields['product'].queryset = self.instance.company.product_set.all()
+            except Company.DoesNotExist:
+                self.fields['product'].queryset = Product.objects.none()
 
     def clean(self):
         cleaned_data = super().clean()
         company = cleaned_data.get('company')
-        product = cleaned_data.get('product')
+        product_list = self.data.getlist('product')
+        product = None
+
+
+        if product_list:
+            try:
+                product_id = product_list[0]
+                product = Product.objects.get(id=product_id)
+                cleaned_data['product'] = product
+            except (Product.DoesNotExist, IndexError):
+                self.add_error('product', "Selected product does not exist.")
+
 
         if not company:
             for field in ['company_name', 'company_url', 'company_email', 'company_bio', 'company_pic']:
@@ -125,10 +142,8 @@ class IssueForm(forms.ModelForm):
                     self.add_error(field, f"{field.replace('_', ' ').capitalize()} is required if no product is selected.")
 
         if company and product:
-            # Check if the selected company and product already exist
-            existing_issue = Issue.objects.filter(company=company, product=product).exists()
-            if existing_issue:
-                raise forms.ValidationError("An issue with the selected company and product already exists.")
+            if Issue.objects.filter(company=company, product=product).exists():
+                self.add_error(None, "An issue with the selected company and product already exists.")
 
         return cleaned_data
 
@@ -165,7 +180,7 @@ class IssueForm(forms.ModelForm):
                 product = Product.objects.create(
                     name=product_name,
                     url=product_url,
-                    company=company  # Assign the newly created company
+                    company=company
                 )
                 issue.product = product
 
@@ -173,6 +188,7 @@ class IssueForm(forms.ModelForm):
             issue.save()
 
         return issue
+    
     
 class CustomPasswordChangeForm(PasswordChangeForm):
     class Meta:
