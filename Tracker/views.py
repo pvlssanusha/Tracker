@@ -69,8 +69,8 @@ def addIssue(request):
     if request.method == 'POST':
         form = IssueForm(request.POST, request.FILES)
         if form.is_valid():
-            issue=form.save(commit=False)
-            issue.created_by=request.user
+            issue = form.save(commit=False)
+            issue.created_by = request.user  # Assign the current user as the creator
             issue.save()
 
             return redirect('issues')  # Redirect to a success page after form submission
@@ -78,8 +78,8 @@ def addIssue(request):
             print(f"Form errors: {form.errors}")  # Print form errors for debugging
     else:
         form = IssueForm()
+    
     return render(request, 'Issue.html', {'form': form, 'title': 'Register Issue'})
-
 @login_required(login_url='/login/')
 def getIssue(self,id):
     try:
