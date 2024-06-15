@@ -18,7 +18,8 @@
         nav.navbar {
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             padding: 10px 20px;
-            transition: background-color 0.3s ease;
+            transition: background 0.3s ease;
+            
         }
 
         main {
@@ -45,16 +46,17 @@
             text-decoration: none !important;
         }
 
-        .nav-item , .btn-link {
+        .nav-item, .btn-link {
             font-size: 18px !important;
-            color:black !important;
-            opacity : 0.7 !important;
+            color: black !important;
+            opacity: 0.7 !important;
+            margin-right:20px;
         }
 
-        .nav-item:hover , .btn-link:hover {
+        .nav-item:hover, .btn-link:hover {
             font-size: 18px !important;
-            color:black !important;
-            opacity : 1 !important;
+            color: black !important;
+            opacity: 1 !important;
         }
 
         .navbar-collapse {
@@ -63,6 +65,13 @@
 
         .navbar-brand {
             margin-right: auto;
+        }
+
+        .nav-item.active .nav-link {
+            font-weight: 800;
+            opacity: 1 !important;
+            color:black;
+            font-size:20px;
         }
     </style>
 </head>
@@ -78,25 +87,25 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
+                    <li class="nav-item {% if request.path == '/issues/' %}active{% endif %}">
                         <a class="nav-link" href="{% url 'issues' %}">Issues</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link"  href="/addissue/">Create New Issue</a>
+                    <li class="nav-item {% if request.path == '/addissue/' %}active{% endif %}">
+                        <a class="nav-link" href="/addissue/">Create New Issue</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item {% if request.path == 'profile'%}active{% endif %}">
                         <a class="nav-link" href="{% url 'getprofile' user.id %}">
                             Profile
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item {% if request.path == '/support/' %}active{% endif %}">
                         <a class="nav-link" href="{% url 'support' %}">
-                            Contact SUpport
+                            Contact
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item {% if request.path == '/hiring/' %}active{% endif %}">
                         <a class="nav-link" href="{% url 'hiring' %}">
-                            Hiring Support
+                            Hiring
                         </a>
                     </li>
                     <li class="nav-item">

@@ -4,16 +4,34 @@
 {% block title %}Add Issue{% endblock %}
 
 {% block content %}
-<div id="terms">
+<div id="terms" class="terms">
     <h2>Terms and Conditions</h2>
-    <p>
+    <ul>
+    <li>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et lectus
         neque. Proin nec commodo arcu. Nullam fringilla lacinia diam, vel
         ultrices mauris consectetur at. Quisque sit amet ligula eget felis
         vestibulum pharetra. Donec vel fringilla ligula. Sed ut placerat sapien.
         Nam volutpat lacus eu velit dignissim, ut consectetur leo efficitur. Sed
         eu dapibus lorem. Phasellus sit amet elit sed magna dictum volutpat.
-    </p>
+    </li>
+    <li>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et lectus
+        neque. Proin nec commodo arcu. Nullam fringilla lacinia diam, vel
+        ultrices mauris consectetur at. Quisque sit amet ligula eget felis
+        vestibulum pharetra. Donec vel fringilla ligula. Sed ut placerat sapien.
+        Nam volutpat lacus eu velit dignissim, ut consectetur leo efficitur. Sed
+        eu dapibus lorem. Phasellus sit amet elit sed magna dictum volutpat.
+    </li>
+    <li>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et lectus
+        neque. Proin nec commodo arcu. Nullam fringilla lacinia diam, vel
+        ultrices mauris consectetur at. Quisque sit amet ligula eget felis
+        vestibulum pharetra. Donec vel fringilla ligula. Sed ut placerat sapien.
+        Nam volutpat lacus eu velit dignissim, ut consectetur leo efficitur. Sed
+        eu dapibus lorem. Phasellus sit amet elit sed magna dictum volutpat.
+    </li>
+    </ul>
     <button id="acceptTerms">Accept Terms</button>
 </div>
 
@@ -21,6 +39,7 @@
 <div id="issueForm" style="display: none">
     <div class="issue-form-container">
         <form id="addIssueForm" class="form" method="post" enctype="multipart/form-data">
+            <h2>Create Issue</h2>
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit">Submit</button>

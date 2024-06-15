@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit Profile</title>
-</head>
-<body>
-    <h2>Edit Profile</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save Changes</button>
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Edit Feedback{% endblock %}
+{% block content %}
+<div class="issue-form-container">
+	<form method="post" class="form" enctype="multipart/form-data">
+        <h2>Edit Feedback</h2>
+		{% csrf_token %} {{ form.as_p }}
+		<button type="submit">Save Changes</button>
+	</form>
+</div>
+{% endblock %}

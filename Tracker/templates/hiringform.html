@@ -1,7 +1,10 @@
-<!-- hiring_form.html -->
-
-<form method="post">
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Hiring{% endblock %}
+{% block content %}
+<form method="post" class="form">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Submit</button>
 </form>
+{% endblock %}
