@@ -1,16 +1,12 @@
-<!-- edit_issue.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Issue</title>
-</head>
-<body>
-    <h2>Edit Issue</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save Changes</button>
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Edit Issue{% endblock %}
+{% block content %}
+<div class="issue-form-container">
+	<form method="post" class="form" enctype="multipart/form-data">
+        <h2>Edit Issue</h2>
+		{% csrf_token %} {{ form.as_p }}
+		<button type="submit">Save Changes</button>
+	</form>
+</div>
+{% endblock %}
