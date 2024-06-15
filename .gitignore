@@ -3,3 +3,8 @@
 **/django/**
 .env
 db.sqlite
+**/media/**
+**/images/**
+**/static/**
+**/migrations/**
+**/__pycache__/** 
