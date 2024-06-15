@@ -82,10 +82,17 @@ class Comment(models.Model):
 # Feedback model
 class Feedback(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    CHOICES = [
+        ('option1', 'option1'),
+        ('option2', 'option2'),
+        ('option3', 'option3'),
+    ]
+    options = models.CharField(max_length=100,choices=CHOICES)
+    bool=models.BooleanField(default=False)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name='feedbacks')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='feedbacks')
     enabled=models.BooleanField(default=True)
-    description = models.TextField()
+    comment = models.TextField()
     disabled = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 

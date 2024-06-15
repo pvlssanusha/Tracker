@@ -215,9 +215,12 @@ def getUser(request,id):
 @login_required(login_url='login/')
 def getProfile(request,id):
     user = get_object_or_404(User, id=id)
+    print("user")
     #user=issue.created_by
-    companyid=request.user.company.id
-    
+    try:
+        companyid=request.user.company.id
+    except:
+        companyid=None
     issues_created = Issue.objects.filter(created_by=user,enabled=True)
     issues_count = issues_created.count()
     suggestion_count = issues_created.aggregate(total_suggestions=models.Sum('suggestioncount'))['total_suggestions'] or 0
@@ -333,9 +336,9 @@ def hiringForm(request):
     return render(request, 'hiringform.html', {'form': form})
 
 def supportList(request):
-    queries = SupportQuery.objects.all().order_by('-created_at')
+    queries = Support.objects.all().order_by('-created_at')
     return render(request, 'supportlist.html', {'queries': queries})
 
 def hiringList(request):
-    requests = HiringRequest.objects.all().order_by('-created_at')
+    requests = Hiring.objects.all().order_by('-created_at')
     return render(request, 'hiringlist.html', {'requests': requests})
