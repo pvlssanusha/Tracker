@@ -138,7 +138,11 @@ class IssueForm(forms.ModelForm):
         print(f"Saving Issue: {issue}")
         print(f"Company: {company}, Product: {product}")
 
-        if not company:
+        if company and product:
+            issue.company = company
+            issue.product = product
+
+        elif not company:
             company_name = self.cleaned_data.get('company_name')
             if company_name:
                 company_url = self.cleaned_data.get('company_url')
