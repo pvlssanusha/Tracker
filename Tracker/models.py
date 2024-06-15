@@ -93,7 +93,6 @@ class Feedback(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='feedbacks')
     enabled=models.BooleanField(default=True)
     comment = models.TextField()
-    disabled = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -9,6 +9,7 @@ from rest_framework import status
 from django.contrib.auth.decorators import login_required
 from .forms import *
 from .serializers import *
+from django.db.models import Count
 import datetime
 def signUp(request):
     if request.method == 'POST':
@@ -80,6 +81,7 @@ def addIssue(request):
         form = IssueForm()
     
     return render(request, 'Issue.html', {'form': form, 'title': 'Register Issue'})
+
 @login_required(login_url='/login/')
 def getIssue(self,id):
     try:
@@ -110,11 +112,21 @@ def getIssue(self,id):
             viewedobjs=ViewedBy.objects.filter(issue=object)
         except:
             pass
+        edit=False
+        try:
+            feed=Feedback.objects.filter(issue=object,user=self.user)
+            print(len(feed))
+            if len(feed)>0:
+                edit=True
+        except:
+            pass
+        print(edit,"ddd")
         data=IssueSerializer(object).data
         value=object.created_by==self.user
         print(value)
+        form=FeedbackForm()
 
-        return render(self,'DisplayIssue.html',{'issue':data,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'viewedby':viewedobjs,'value':value,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
+        return render(self,'DisplayIssue.html',{'issue':data,'edit':edit,'form':form,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'viewedby':viewedobjs,'value':value,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'},status=status.HTTP_404_NOT_FOUND)
 
@@ -159,13 +171,31 @@ def addComment(request):
 
 @login_required(login_url='/login/')
 def addFeedback(request):
-    if request.method == 'POST':
-        print(request.POST)
-        issue_id=request.POST.get('issue_id')
-        issue=Issue.objects.get(id=issue_id)
-        feedback=request.POST.get('feedback')
-        Feedback.objects.create(issue=issue, user=request.user, description=feedback,timestamp=datetime.datetime.now())
-        return redirect('issue', id=issue.id)
+    issue_id = request.POST.get('issue_id')
+    issue = get_object_or_404(Issue, id=issue_id)
+
+    form = FeedbackForm(request.POST)
+
+    if form.is_valid():
+        feedback = form.save(commit=False)
+        feedback.issue = issue
+        feedback.user = request.user  # Assuming user is logged in
+        feedback.save()
+        return JsonResponse({'status': 'success', 'message': 'Feedback added successfully.'})
+    else:
+        return JsonResponse({'status': 'error', 'errors': form.errors})
+
+# Optionally, you may want to implement an edit_feedback view as well
+@login_required(login_url='/login/')
+def editFeedback(request, feedback_id):
+    feedback = get_object_or_404(Feedback, id=feedback_id)
+    form = FeedbackForm(request.POST, instance=feedback)
+
+    if form.is_valid():
+        form.save()
+        return JsonResponse({'status': 'success', 'message': 'Feedback updated successfully.'})
+    else:
+        return JsonResponse({'status': 'error', 'errors': form.errors})
 
 def load_products(request):
     company_id = request.GET.get('company_id')
@@ -262,22 +292,43 @@ def editIssue(request, issue_id):
         form = EditIssueForm(instance=issue)
     return render(request, 'editissue.html', {'form': form})
 
+def editFeedback(request, feedback_id):
+    feed = get_object_or_404(Feedback, id=feedback_id)
+    if request.method == 'POST':
+        form = EditFeedbackForm(request.POST, instance=feed)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Feedback updated successfully')
+            return redirect(reverse('issue', kwargs={'id': feed.issue.id}))  # Redirect to issue detail page after edit
+    else:
+        form = EditFeedbackForm(instance=feed)
+    return render(request, 'editfeedback.html', {'form': form})
+
 
 def companyDetails(request, company_id):
     company = get_object_or_404(Company, id=company_id)
-    users = User.objects.filter(company=company,companyuser=True,enabled=True)
-    products=Product.objects.filter(company=company)
-    print(users,"Users")
+    users = User.objects.filter(company=company, companyuser=True, enabled=True)
+    products = Product.objects.filter(company=company)
     issues = company.issues.all()
-    print(issues,"Issues")
-    issues_count = issues.count()
-    
+
+    # Get status choices from the Issue model (assuming it's a field named status_choices)
+    status_choices = dict(Issue.STATUS_CHOICES)
+
+    # Count issues per status
+    status_counts = issues.values('status').annotate(count=Count('id'))
+
+    # Count issues per tag
+    tag_counts = issues.values('tags').annotate(count=Count('id'))
+
     context = {
         'company': company,
         'users': users,
-        'issues_count': issues_count,
         'issues': issues,
-        'products':products
+        'issues_count': issues.count(),
+        'products': products,
+        'status_counts': status_counts,  # This provides per-status count
+        'tag_counts': tag_counts,  # This provides per-tag count
+        'status_choices': status_choices,  # Assuming these are available in your Issue model
     }
     
     return render(request, 'companydetails.html', context)

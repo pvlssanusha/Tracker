@@ -212,3 +212,12 @@ class HiringRequestForm(forms.ModelForm):
     class Meta:
         model = Hiring
         fields = ['name', 'url', 'options', 'description']
+
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ['options', 'bool', 'comment']
+class EditFeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ['options', 'bool', 'comment']

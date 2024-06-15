@@ -19,6 +19,7 @@ urlpatterns = [
     path('profile/<str:id>',getProfile,name='getprofile'),
     path('editprofile/', editProfile, name='editprofile'),
     path('editissue/<uuid:issue_id>/', editIssue, name='editissue'),
+    path('editfeedback/<uuid:feedback_id>/', editFeedback, name='editfeedback'),
     path('companydetails/<uuid:company_id>/', companyDetails, name='companydetails'),
     path('issue/<uuid:issue_id>/changestatus/', changeIssueStatus, name='changeissuestatus'),
     path('support/', supportForm, name='support'),

@@ -101,20 +101,38 @@
 				</div>
 
 				<div id="feedbackSection">
+					{% if not edit %}
 					<h1>Feedbacks <button id="addFeedback">+</button></h1>
+					{% else %}
+					<h1>Feedbacks </h1>
+					{% endif %}
+
+						
+
 					<div id="feedbackContainer">
 						{% if feedback %}
 						<div class="list-group">
 							{% for feed in feedback %}
+							
 							<div href="#" class="feedback-item">
 								<img
 									src="https://i.pinimg.com/564x/3d/91/09/3d910919cf4d41c1114457504dc29201.jpg" />
 								<div>
 									<div class="d-flex">
 										<h4 class="mb-1">{{feed.user}}</h4>
+
 										<small>{{feed.timestamp}}</small>
 									</div>
-									<p class="mb-1">{{feed.description}}</p>
+									<div>
+									<p >{{feed.options}}</p>
+									<p >{{feed.comment}}</p>
+									<p >{{feed.bool}}</p>
+								</div>
+
+									{% if userid == feed.user.id %}
+									<a href="{% url 'editfeedback' feed.id %}"><button>Edit Feedback</button></a>
+
+							{% endif %}
 								</div>
 							</div>
 							{% endfor %}
@@ -154,9 +172,7 @@
 				<form id="feedbackForm">
 					{% csrf_token %}
 					<input type="hidden" name="issue_id" value="{{issue.id}}" />
-					<textarea
-						name="feedback"
-						placeholder="Enter your feedback"></textarea>
+					{{ form.as_p }}
 					<button type="submit">Submit Feedback</button>
 					
 				</form>

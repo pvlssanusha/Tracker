@@ -32,9 +32,30 @@
             <div class="issues">
                 <h2>Issues</h2>
                 <p><strong>Total Issues Created:</strong> {{ issues_count }}</p>
+                <h3>Status Counts:</h3>
+<ul>
+    {% for status_choice, status_name in status_choices.items %}
+        <li>{{ status_name }}: 
+            {% for status_count in status_counts %}
+                {% if status_count.status == status_choice %}
+                    {{ status_count.count }}
+                {% endif %}
+            {% endfor %}
+        </li>
+    {% endfor %}
+</ul>
+
+<!-- Display tag counts -->
+<h3>Tag Counts:</h3>
+<ul>
+    {% for tag_count in tag_counts %}
+        <li>{{ tag_count.tags }}: {{ tag_count.count }}</li>
+    {% endfor %}
+</ul>
+<h3>Issue names</h3>
                 <ul>
                     {% for issue in issues %}
-                    <li>{{ issue.issuename }} - Status: {{ issue.status }}</li>
+                    <li>{{ issue.issuename }}</li>
                     {% endfor %}
                 </ul>
             </div>
