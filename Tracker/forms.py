@@ -99,19 +99,30 @@ class IssueForm(forms.ModelForm):
         model = Issue
         fields = ['issuename', 'description', 'company', 'product', 'tags']
 
-    def __init__(self, *args, **kwargs):
-        super(IssueForm, self).__init__(*args, **kwargs)
-        self.fields['company'].required = False
-        self.fields['product'].required = False
-        self.fields['company'].queryset = Company.objects.all()
-        self.fields['product'].queryset = Product.objects.none()
+def __init__(self, *args, **kwargs):
+    super(IssueForm, self).__init__(*args, **kwargs)
+    self.fields['company'].required = False
+    self.fields['product'].required = False
+    self.fields['company'].queryset = Company.objects.all()
+    self.fields['product'].queryset = Product.objects.none()
 
-        if 'company' in self.data:
-            try:
-                company_id = int(self.data.get('company'))
-                self.fields['product'].queryset = Product.objects.filter(company_id=company_id)
-            except (ValueError, TypeError):
-                pass  # Invalid input; ignore and fallback to empty product queryset
+    if self.instance and self.instance.pk:
+        if self.instance.company:
+            self.fields['product'].queryset = Product.objects.filter(company_id=self.instance.company.id)
+
+    if 'company' in self.data:
+        try:
+            company_id = int(self.data.get('company'))
+            self.fields['product'].queryset = Product.objects.filter(company_id=company_id)
+        except (ValueError, TypeError):
+            pass  # Invalid input; ignore and fallback to empty product queryset
+
+    if 'product' in self.data:
+        try:
+            product_id = int(self.data.get('product'))
+            self.fields['product'].initial = Product.objects.get(pk=product_id)
+        except (ValueError, TypeError, Product.DoesNotExist):
+            pass  # Invalid input; ignore and fallback to default initial value
 
     def clean(self):
         cleaned_data = super().clean()
