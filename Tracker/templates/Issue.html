@@ -85,6 +85,7 @@
                     {{ form.product.label_tag }}
                     {{ form.product }}
                     {% if form.product.errors %}
+                        
                         <div class="error">{{ form.product.errors }}</div>
                     {% endif %}
                 </div>
@@ -182,6 +183,7 @@
             });
 
             $("#id_product").change(function () {
+
                 toggleFieldVisibility();
             });
 

@@ -69,7 +69,10 @@ def addIssue(request):
     if request.method == 'POST':
         form = IssueForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            issue=form.save(commit=False)
+            issue.created_by=request.user
+            issue.save()
+
             return redirect('issues')  # Redirect to a success page after form submission
         else:
             print(f"Form errors: {form.errors}")  # Print form errors for debugging

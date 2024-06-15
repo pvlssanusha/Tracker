@@ -94,7 +94,6 @@ class IssueForm(forms.ModelForm):
     company_email = forms.EmailField(required=False)
     product_name = forms.CharField(max_length=100, required=False)
     product_url = forms.URLField(required=False)
-
     class Meta:
         model = Issue
         fields = ['issuename', 'description', 'company', 'product', 'tags']
