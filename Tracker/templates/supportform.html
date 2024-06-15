@@ -2,6 +2,8 @@
 {% load static %}
 {% block title %}Contact{% endblock %}
 {% block content %}
+<div class="contact-main">
+    <img src="{% static 'img/contactus.jpeg' %}"/>
 <div class="issue-form-container">
 <form method="post" class="form">
     <h2>Contact</h2>
@@ -9,5 +11,6 @@
     {{ form.as_p }}
     <button type="submit">Submit</button>
 </form>
+</div>
 </div>
 {% endblock %}

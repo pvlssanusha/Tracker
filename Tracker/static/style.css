@@ -1220,3 +1220,21 @@ a {
 .filter-cont .form input[type="text"] {
 	width: 10em;
 }
+
+.contact-main {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	flex-wrap: wrap;
+}
+
+.contact-main img{
+	width: 40%;
+}
+
+@media (max-width: 768px) {
+	.contact-main img{
+	width: 40%;
+}
+}

@@ -2,12 +2,15 @@
 {% load static %}
 {% block title %}Hiring{% endblock %}
 {% block content %}
+<div class="contact-main">
+    <img src="{% static 'img/hiring.jpg' %}"/>
 <div class="issue-form-container">
-    <form method="post" class="form">
-        <h2>Hiring</h2>
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
+<form method="post" class="form">
+    <h2>Hiring</h2>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+</div>
 </div>
 {% endblock %}
