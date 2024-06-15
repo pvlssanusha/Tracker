@@ -2,9 +2,12 @@
 {% load static %}
 {% block title %}Hiring{% endblock %}
 {% block content %}
-<form method="post" class="form">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
-</form>
+<div class="issue-form-container">
+    <form method="post" class="form">
+        <h2>Hiring</h2>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+</div>
 {% endblock %}

@@ -4,6 +4,7 @@
 {% block content %}
 <div class="issue-form-container">
 <form method="post" class="form">
+    <h2>Contact</h2>
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Submit</button>
