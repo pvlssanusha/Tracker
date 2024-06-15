@@ -43,33 +43,6 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            function toggleFieldVisibility() {
-                var companySelected = $("#id_company").val() !== "";
-                var productSelected = $("#id_product").val() !== "";
-
-                if (!companySelected) {
-                    $("#id_company_name").closest('.form-group').show();
-                    $("#id_company_url").closest('.form-group').show();
-                    $("#id_company_email").closest('.form-group').show();
-                    $("#id_company_bio").closest('.form-group').show();
-                    $("#id_company_pic").closest('.form-group').show();
-                } else {
-                    $("#id_company_name").closest('.form-group').hide();
-                    $("#id_company_url").closest('.form-group').hide();
-                    $("#id_company_email").closest('.form-group').hide();
-                    $("#id_company_bio").closest('.form-group').hide();
-                    $("#id_company_pic").closest('.form-group').hide();
-                }
-
-                if (companySelected && !productSelected) {
-                    $("#id_product_name").closest('.form-group').show();
-                    $("#id_product_url").closest('.form-group').show();
-                } else {
-                    $("#id_product_name").closest('.form-group').hide();
-                    $("#id_product_url").closest('.form-group').hide();
-                }
-            }
-
             $("#id_company").change(function () {
                 var url = "{% url 'load_products' %}";
                 var companyId = $(this).val();
@@ -99,11 +72,6 @@
                         console.log('Error loading products:', textStatus, errorThrown);
                     }
                 });
-                toggleFieldVisibility();
-            });
-
-            $("#id_product").change(function () {
-                toggleFieldVisibility();
             });
 
             // Function to toggle visibility of issue form
@@ -125,9 +93,6 @@
                 // Hide terms and conditions
                 $("#terms").hide();
             });
-
-            // Initial visibility based on default form values
-            toggleFieldVisibility();
         });
     </script>
 {% endblock %}
