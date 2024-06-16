@@ -18,6 +18,12 @@
             {% if user.company.bio %}
             <p><span>Company Bio:</span> {{ user.company.bio }}</p>
             {% endif %}
+	    <a class="fancy" href="{% url 'editprofile' %}">
+							<span class="top-key"></span>
+							<span class="text">Edit Profile</span>
+							<span class="bottom-key-1"></span>
+							<span class="bottom-key-2"></span>
+						</a>
         </div>
         <div class="stats">
             <div class="stat">
