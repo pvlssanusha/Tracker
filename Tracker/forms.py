@@ -101,8 +101,9 @@ class IssueForm(forms.ModelForm):
         self.fields['product'].required = False
         self.fields['company'].queryset = Company.objects.all()
         self.fields['product'].queryset = Product.objects.none()
+        
 
-        if 'company' in self.data:
+        if 'company' in self.data and self.data.get('company') != '':
             try:
                 company_id = self.data.get('company')
                 self.fields['product'].queryset = Product.objects.filter(company_id=company_id)
@@ -115,6 +116,7 @@ class IssueForm(forms.ModelForm):
             except Company.DoesNotExist:
                 self.fields['product'].queryset = Product.objects.none()
 
+
     def clean(self):
         cleaned_data = super().clean()
         company = cleaned_data.get('company')
@@ -122,7 +124,7 @@ class IssueForm(forms.ModelForm):
         product = None
 
 
-        if product_list:
+        if product_list and product_list[0] != '':
             try:
                 product_id = product_list[0]
                 product = Product.objects.get(id=product_id)
@@ -140,10 +142,6 @@ class IssueForm(forms.ModelForm):
             for field in ['product_name', 'product_url']:
                 if not cleaned_data.get(field):
                     self.add_error(field, f"{field.replace('_', ' ').capitalize()} is required if no product is selected.")
-
-        if company and product:
-            if Issue.objects.filter(company=company, product=product).exists():
-                self.add_error(None, "An issue with the selected company and product already exists.")
 
         return cleaned_data
 
@@ -180,7 +178,7 @@ class IssueForm(forms.ModelForm):
                 product = Product.objects.create(
                     name=product_name,
                     url=product_url,
-                    company=company
+                    company=company 
                 )
                 issue.product = product
 
@@ -188,8 +186,6 @@ class IssueForm(forms.ModelForm):
             issue.save()
 
         return issue
-    
-    
 class CustomPasswordChangeForm(PasswordChangeForm):
     class Meta:
         model = User
