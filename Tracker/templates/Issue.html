@@ -131,7 +131,7 @@
                 success: function (data) {
                     console.log("Form submitted successfully");
                     // Optionally redirect after successful submission
-                    // window.location.href = "{% url 'issues' %}";
+                    window.location.href = "{% url 'issues' %}";
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.error("Form submission error:", errorThrown);
