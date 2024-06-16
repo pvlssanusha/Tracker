@@ -118,7 +118,6 @@ def getIssue(self,id):
         edit=False
         try:
             feed=Feedback.objects.filter(issue=object,user=self.user)
-            print(len(feed))
             if len(feed)>0:
                 edit=True
         except:
@@ -127,7 +126,7 @@ def getIssue(self,id):
         value=object.created_by==self.user
         form=FeedbackForm()
 
-        return render(self,'DisplayIssue.html',{'issue':data,'edit':edit,'form':form,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'viewedby':viewedobjs,'value':value,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
+        return render(self,'DisplayIssue.html',{'issue':data,'edit':edit,'form':form,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'feedbackCount':len(feedback),'viewedby':viewedobjs,'value':value,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'},status=status.HTTP_404_NOT_FOUND)
 
