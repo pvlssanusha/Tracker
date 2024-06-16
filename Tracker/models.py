@@ -48,7 +48,7 @@ class Issue(models.Model):
         ('fixed', 'Fixed'),
         ('cannotfix','CannotFix')
     ]
-    
+
     issuename = models.CharField(max_length=255)
     enabled=models.BooleanField(default=True)
     description = models.TextField()
@@ -58,7 +58,7 @@ class Issue(models.Model):
     tags = models.TextField()  # Store tags as a JSON list
     status = models.CharField(max_length=50, choices=STATUS_CHOICES,default='created')
     viewcount = models.PositiveIntegerField(default=0)
-    suggestioncount = models.PositiveIntegerField(default=0)
+    feedbackcount = models.PositiveIntegerField(default=0)
     commentcount = models.PositiveIntegerField(default=0)
 
     def __str__(self):
@@ -107,7 +107,7 @@ class ViewedBy(models.Model):
 
     def __str__(self):
         return f'{self.user.username} viewed {self.issue.issuename}'
-    
+
 
 class Support(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -117,11 +117,11 @@ class Support(models.Model):
         ('feedback', 'Feedback'),
         ('technical_issue', 'Technical Issue'),
     ]
-    
+
     type = models.CharField(max_length=20, choices=QUERY_TYPES)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return f"{self.get_type_display()} - {self.created_at}"
 
@@ -139,6 +139,6 @@ class Hiring(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     pinned = models.BooleanField(default=False)
-    
+
     def __str__(self):
         return f"{self.name} - {self.created_at}"

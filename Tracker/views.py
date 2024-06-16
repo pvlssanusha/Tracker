@@ -1,3 +1,5 @@
+
+
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth import authenticate, login,update_session_auth_hash
 from django.contrib.auth.forms import AuthenticationForm
@@ -72,7 +74,7 @@ def addIssue(request):
         print(f"FILES data: {request.FILES}")
 
         form = IssueForm(request.POST, request.FILES)
-        
+
         if form.is_valid():
             issue = form.save(commit=False)
             issue.created_by = request.user
@@ -82,7 +84,7 @@ def addIssue(request):
             print(f"Form errors: {form.errors}")
     else:
         form = IssueForm()
-    
+
     return render(request, 'Issue.html', {'form': form, 'title': 'Register Issue'})
 
 @login_required(login_url='/login/')
@@ -166,6 +168,10 @@ def addComment(request):
         issue=Issue.objects.get(id=issue_id)
         comment=request.POST.get('comment')
         Comment.objects.create(issue=issue, user=request.user, description=comment)
+        Comment.objects.create(issue=issue, user=request.user, description=comment)
+        issue.commentcount = len(Comment.objects.filter(issue=issue,enabled=True))
+        issue.save()
+        return redirect(reverse('issue', kwargs={'id': issue_id}))
         return redirect('issue', id=issue.id)
 
 @login_required(login_url='/login/')
@@ -180,6 +186,9 @@ def addFeedback(request):
         feedback.issue = issue
         feedback.user = request.user  # Assuming user is logged in
         feedback.save()
+        issue.feedbackcount = len(Feedback.objects.filter(issue=issue,enabled=True))
+        print("count",issue.feedbackcount)
+        issue.save()
         return JsonResponse({'status': 'success', 'message': 'Feedback added successfully.'})
     else:
         return JsonResponse({'status': 'error', 'errors': form.errors})
@@ -223,20 +232,27 @@ def change_password(request):
 def getUser(request,id):
     issue = get_object_or_404(Issue, id=id)
     user=issue.created_by
-    companyid=request.user.company.id
+    companyid=None
+    company=False
+    try:
+        companyid=request.user.company.id
+        company=True
+    except:
+        pass
     issues_created = Issue.objects.filter(created_by=user,enabled=True)
     issues_count = issues_created.count()
-    suggestion_count = issues_created.aggregate(total_suggestions=models.Sum('suggestioncount'))['total_suggestions'] or 0
+    # feedback_count = len(Feedback.objects.filter(user=user,enabled=True))
     comment_count = issues_created.aggregate(total_comments=models.Sum('commentcount'))['total_comments'] or 0
     view_count = issues_created.aggregate(total_views=models.Sum('viewcount'))['total_views'] or 0
 
     context = {
         'user': user,
         'issues_count': issues_count,
-        'suggestion_count': suggestion_count,
+        # 'feedback_count': feedback_count,
         'comment_count': comment_count,
         'view_count': view_count,
         'companyid':companyid,
+        'company':company
     }
     return render(request, 'userprofile.html', context)
 
@@ -246,23 +262,25 @@ def getProfile(request,id):
     user = get_object_or_404(User, id=id)
     print("user")
     #user=issue.created_by
+    company=False
     try:
         companyid=request.user.company.id
+        company=True
     except:
         companyid=None
     issues_created = Issue.objects.filter(created_by=user,enabled=True)
     issues_count = issues_created.count()
-    suggestion_count = issues_created.aggregate(total_suggestions=models.Sum('suggestioncount'))['total_suggestions'] or 0
+    # feedback_count = len(Feedback.objects.filter(user=user,enabled=True))
     comment_count = issues_created.aggregate(total_comments=models.Sum('commentcount'))['total_comments'] or 0
     view_count = issues_created.aggregate(total_views=models.Sum('viewcount'))['total_views'] or 0
 
     context = {
         'user': user,
         'issues_count': issues_count,
-        'suggestion_count': suggestion_count,
         'comment_count': comment_count,
         'view_count': view_count,
         'companyid':companyid,
+        'company':company
     }
     return render(request, 'edituserprofile.html', context)
 
@@ -329,7 +347,7 @@ def companyDetails(request, company_id):
         'tag_counts': tag_counts,  # This provides per-tag count
         'status_choices': status_choices,  # Assuming these are available in your Issue model
     }
-    
+
     return render(request, 'companydetails.html', context)
 
 
@@ -365,7 +383,7 @@ def supportForm(request):
             return redirect('supportformsuccess')  # Redirect to a success page
     else:
         form = SupportQueryForm()
-    
+
     return render(request, 'supportform.html', {'form': form})
 
 def supportFormSuccess(request):
@@ -378,11 +396,11 @@ def hiringForm(request):
             hiring=form.save(commit=False)
             hiring.user=request.user
             hiring.save()
-            
+
             return redirect('supportformsuccess')  # Redirect to a success page
     else:
         form = HiringRequestForm()
-    
+
     return render(request, 'hiringform.html', {'form': form})
 
 def supportList(request):
