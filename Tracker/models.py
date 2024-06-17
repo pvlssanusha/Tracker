@@ -28,6 +28,14 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+    @property
+    def custom_username(self):
+        if self.is_staff:  # Assuming admin users are flagged with is_staff
+            return f"{self.username} (Admin)"
+        elif self.companyuser:
+            return f"{self.username} (CompanyUser)"
+        else:
+            return self.username
 
 # Product model
 class Product(models.Model):
@@ -52,14 +60,16 @@ class Issue(models.Model):
     issuename = models.CharField(max_length=255)
     enabled=models.BooleanField(default=True)
     description = models.TextField()
-    created_by = models.ForeignKey('User', on_delete=models.CASCADE, related_name='created_issues')
-    company = models.ForeignKey('Company', on_delete=models.CASCADE, related_name='issues')
-    product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='issues', null=True, blank=True)
+    created_by = models.ForeignKey('User', on_delete=models.CASCADE,)
+    company = models.ForeignKey('Company', on_delete=models.CASCADE,)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE, null=True, blank=True)
     tags = models.TextField()  # Store tags as a JSON list
     status = models.CharField(max_length=50, choices=STATUS_CHOICES,default='created')
     viewcount = models.PositiveIntegerField(default=0)
     feedbackcount = models.PositiveIntegerField(default=0)
     commentcount = models.PositiveIntegerField(default=0)
+    private=models.BooleanField(default=False)
+    pinned=models.BooleanField(default=False)
 
     def __str__(self):
         return self.issuename
@@ -94,6 +104,7 @@ class Feedback(models.Model):
     enabled=models.BooleanField(default=True)
     comment = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    pinned=models.BooleanField(default=False)
 
     def __str__(self):
         return f'Feedback by {self.user.username} on {self.issue.issuename}'

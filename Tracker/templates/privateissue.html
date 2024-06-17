@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Issues{% endblock %}
+{% block content %}
+<div class="issue-main">
+    <div class="section-head">Issues</div>
+
+    <!-- Filter Form -->
+    <div class="filter-cont">
+    <form method="get" action="" class="form">
+        {{ filter_form.as_p }}
+        <p>
+        <button type="submit">Filter</button>
+        </p>
+    </form>
+</div>
+
+    <div class="issues">
+        {% for issue in data %}
+        <a class="issue" href="{{issue.id}}">
+            <div class="issue-title">{{ issue.issuename }}</div>
+            <div class="issue-desc">{{ issue.description }}</div>
+            <div class="issue-meta">
+                <span class="meta-item">
+                    <i class="fas fa-eye"></i> {{ issue.viewcount }}
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-comments"></i> {{ issue.commentcount }}
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-lightbulb"></i> {{ issue.feedbackcount }}
+                </span>
+                                   
+                <span class="meta-item">Created by:  {% if userid == issue.created_by.id  %}
+										
+                    <h4>{{user.username}}(Owner)</h4>
+                    {% else %}
+                    <h4 class="mb-1">{{issue.created_by.custom_username}}</h4>
+                    {% endif %}</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -213,6 +213,7 @@ body {
 	width: 60vw;
 	background: #f6f5f2;
 	padding: 20px;
+	height:fit-content;
 	margin: 0 auto;
 	text-decoration: none;
 	border-radius: 10px;

@@ -16,8 +16,41 @@
 </div>
 
     <div class="issues">
+        {% if user.company %}
+        <a class="issue" href="{% url 'privateissues' %}">View Private Issues</a>
+        {% endif %}
+
+          {% for issue in data %}
+          {% if issue.pinned %}
+            <a class="issue" href="{{issue.id}}">
+
+            <div class="issue-title">{{ issue.issuename }}</div>
+            <h3>Pinned</h3>
+            <div class="issue-desc">{{ issue.description }}</div>
+            <div class="issue-meta">
+                <span class="meta-item">
+                    <i class="fas fa-eye"></i> {{ issue.viewcount }}
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-comments"></i> {{ issue.commentcount }}
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-lightbulb"></i> {{ issue.feedbackcount }}
+                </span>
+                                   
+                <span class="meta-item">Created by:  {% if userid == issue.created_by.id  %}
+										
+                    <h4>{{user.username}}(Owner)</h4>
+                    {% else %}
+                    <h4 class="mb-1">{{issue.created_by.custom_username}}</h4>
+                    {% endif %}</span>
+            </div>
+        </a>
+        {% endif %}
+        {% endfor %}
         {% for issue in data %}
-        <a class="issue" href="{{ issue.id }}">
+        {% if not issue.pinned %}
+        <a class="issue" href="{{issue.id}}">
             <div class="issue-title">{{ issue.issuename }}</div>
             <div class="issue-desc">{{ issue.description }}</div>
             <div class="issue-meta">
@@ -30,10 +63,25 @@
                 <span class="meta-item">
                     <i class="fas fa-lightbulb"></i> {{ issue.feedbackcount }}
                 </span>
-                <span class="meta-item">Created by: {{ issue.created_by }}</span>
+                <span class="meta-item">
+                    <i class="fas fa-lightbulb"></i> {{ issue.status }}
+                </span>
+                                   
+                <span class="meta-item">Created by:<p>
+                    {% if userid == issue.created_by.id  %}				
+                    <h4>{{user.username}}(Owner)</h4>
+                    {% else %}
+                    <h4 class="mb-1">{{issue.created_by.custom_username}}</h4>
+                    {% endif %}
+                </p>
+                
+            </span>
             </div>
         </a>
+        {% endif %}
         {% endfor %}
+
+        
     </div>
 </div>
 {% endblock %}

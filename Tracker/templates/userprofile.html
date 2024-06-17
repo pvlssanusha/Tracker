@@ -4,8 +4,8 @@
 {% block content %}
     <div class="profile">
         <div class="profile-info">
-            <img src="{{ user.image.url }}" alt="{{ user.username }}">
-            <h2>{{ user.username }}</h2>
+            <img src="{{ user.image.url }}" alt="{{ user.custom_username }}">
+            <h2>{{ user.custom_username }}</h2>
             <p><span>First Name:</span>{{ user.firstname }} </p>
             <p><span>Last  Name:</span>{{ user.lastname }}</p>
             <p><span>Email     :</span> {{ user.email }}</p>

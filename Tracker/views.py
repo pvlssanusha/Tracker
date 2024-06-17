@@ -124,18 +124,22 @@ def getIssue(self,id):
                 edit=True
         except:
             pass
-        data=IssueSerializer(object).data
-        value=object.created_by==self.user
+        #data=IssueSerializer(object).data
+        print(object.created_by,self.user,object.created_by.is_superuser)
+        if object.created_by==self.user or self.user.is_superuser==True:
+            value=True
+        else:
+            value=False
         form=FeedbackForm()
 
-        return render(self,'DisplayIssue.html',{'issue':data,'edit':edit,'form':form,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'feedbackCount':len(feedback),'viewedby':viewedobjs,'value':value,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
+        return render(self,'DisplayIssue.html',{'issue':object,'edit':edit,'form':form,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'feedbackCount':len(feedback),'viewedby':viewedobjs,'value':value,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'},status=status.HTTP_404_NOT_FOUND)
 
 @login_required(login_url='/login/')
 def getAllIssues(request):
     try:
-        issues = Issue.objects.all()
+        issues = Issue.objects.filter(private=False)
         filter_form = IssueFilterForm(request.GET)
 
         if filter_form.is_valid():
@@ -156,8 +160,8 @@ def getAllIssues(request):
             if tags:
                 issues = issues.filter(tags__icontains=tags)
 
-        data = IssueSerializer(issues, many=True).data
-        return render(request, 'Display.html', {'data': data, 'filter_form': filter_form})
+        # data = IssueSerializer(issues, many=True).data
+        return render(request, 'Display.html', {'data': issues, 'filter_form': filter_form,'userid':request.user.id})
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -323,30 +327,48 @@ def editFeedback(request, feedback_id):
 
 
 def companyDetails(request, company_id):
+    context={}
     company = get_object_or_404(Company, id=company_id)
-    users = User.objects.filter(company=company, companyuser=True, enabled=True)
-    products = Product.objects.filter(company=company)
-    issues = company.issues.all()
+    context['company'] = company
+    try:
+        users = User.objects.filter(company=company, companyuser=True, enabled=True)
+        context['users'] = users
+    except:
+        users=None 
+    try:
+        products = Product.objects.filter(company=company)
+        context['products'] = products
+    except:
+        products=None
+    try:
+        issues = Issue.objects.filter(company=company)
+        context['issues_count']= issues.count()
 
-    # Get status choices from the Issue model (assuming it's a field named status_choices)
-    status_choices = dict(Issue.STATUS_CHOICES)
+        # Get status choices from the Issue model (assuming it's a field named status_choices)
+        status_choices = dict(Issue.STATUS_CHOICES)
+        context['status_choices']=status_choices
 
-    # Count issues per status
-    status_counts = issues.values('status').annotate(count=Count('id'))
+        # Count issues per status
+        status_counts = issues.values('status').annotate(count=Count('id'))
+        context['status_counts']=status_counts
 
-    # Count issues per tag
-    tag_counts = issues.values('tags').annotate(count=Count('id'))
+        # Count issues per tag
+        tag_counts = issues.values('tags').annotate(count=Count('id'))
+        context['tag_counts']=tag_counts
+        context['issues']=issues
+    except:
+        issues = None
 
-    context = {
-        'company': company,
-        'users': users,
-        'issues': issues,
-        'issues_count': issues.count(),
-        'products': products,
-        'status_counts': status_counts,  # This provides per-status count
-        'tag_counts': tag_counts,  # This provides per-tag count
-        'status_choices': status_choices,  # Assuming these are available in your Issue model
-    }
+    # context = {
+    #     'company': company,
+    #     'users': users,
+    #     'issues': issues,
+    #     'issues_count': issues.count(),
+    #     'products': products,
+    #     'status_counts': status_counts,  # This provides per-status count
+    #     'tag_counts': tag_counts,  # This provides per-tag count
+    #     'status_choices': status_choices,  # Assuming these are available in your Issue model
+    # }
 
     return render(request, 'companydetails.html', context)
 
@@ -410,3 +432,33 @@ def supportList(request):
 def hiringList(request):
     requests = Hiring.objects.all().order_by('-created_at')
     return render(request, 'hiringlist.html', {'requests': requests})
+
+
+def viewPrivateIssues(request):
+    user=request.user
+    try:
+        privateissues=Issue.objects.filter(company=user.company,private=True)
+        filter_form = IssueFilterForm(request.GET)
+        if filter_form.is_valid():
+            status = filter_form.cleaned_data.get('status')
+            created_by = filter_form.cleaned_data.get('created_by')
+            company = filter_form.cleaned_data.get('company')
+            product = filter_form.cleaned_data.get('product')
+            tags = filter_form.cleaned_data.get('tags')
+
+            if status:
+                issues = issues.filter(status=status)
+            if created_by:
+                issues = issues.filter(created_by=created_by)
+            if company:
+                issues = issues.filter(company=company)
+            if product:
+                issues = issues.filter(product=product)
+            if tags:
+                issues = issues.filter(tags__icontains=tags)
+
+        # data = IssueSerializer(issues, many=True).data
+        return render(request, 'privateissue.html', {'data': privateissues, 'filter_form': filter_form,'userid':request.user.id,'user':user})
+    except:
+        return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
+    
