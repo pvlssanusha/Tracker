@@ -13,8 +13,8 @@ urlpatterns = [
     path('issues/', getAllIssues, name='issues'),
     path('privateissues/',viewPrivateIssues, name='privateissues'),
     path('privateissues/<str:id>',getIssue, name='privateissues'),
-    path('addcomment/',addComment, name='addcomment'),
-    path('addfeedback/',addFeedback, name='addfeedback'),
+    # path('addcomment/',addComment, name='addcomment'),
+    # path('addfeedback/',addFeedback, name='addfeedback'),
     path('ajax/load-products/',load_products, name='load_products'),
     path('changepassword/', change_password, name='changepassword'),
     path('user/<str:id>',getUser,name='getuser'),
@@ -29,4 +29,6 @@ urlpatterns = [
     path('supportlist/',supportList, name='supportlist'),
     path('hiringlist/',hiringList, name='hiringlist'),
     path('supportformsuccess/', supportFormSuccess, name='supportformsuccess'),
+      path('issue/<str:issue_id>/addcomment/', add_comment, name='addcomment'),
+    path('issue/<str:issue_id>/addfeedback/', add_feedback, name='addfeedback')
 ]

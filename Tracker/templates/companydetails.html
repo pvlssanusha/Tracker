@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Add Product{% endblock %}
+{% block title %}Company Details{% endblock %}
 {% block content %}
     <div class="company-container">
         <div class="grid-container">
@@ -18,47 +18,76 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="products">
-                <h2>Products</h2>
+            <div class="issues">
+                <h2>Satistics for all Issues</h2>
+                <p><strong>Total Issues Created:</strong> {{ issues_count }}</p>
+                <h3>Total issues grouped by status</h3>
                 <ul>
-                    {% for product in products %}
-                    <li>Product Name: {{product.name}}
-                        <br>
-                        Product URL: <a href="{{ product.url }}">{{ product.url }}</a>
-                    </li>
+                    {% for status_choice, status_name in status_choices.items %}
+                        <li>{{ status_name }}: 
+                            {% for status_count in status_counts %}
+                                {% if status_count.status == status_choice %}
+                                    {{ status_count.count }}
+                                {% endif %}
+                            {% endfor %}
+                        </li>
                     {% endfor %}
                 </ul>
-            </div>
-            <div class="issues">
-                <h2>Issues</h2>
-                <p><strong>Total Issues Created:</strong> {{ issues_count }}</p>
-                <h3>Status Counts:</h3>
-<ul>
-    {% for status_choice, status_name in status_choices.items %}
-        <li>{{ status_name }}: 
-            {% for status_count in status_counts %}
-                {% if status_count.status == status_choice %}
-                    {{ status_count.count }}
-                {% endif %}
-            {% endfor %}
-        </li>
-    {% endfor %}
-</ul>
 
-<!-- Display tag counts -->
-<h3>Tag Counts:</h3>
-<ul>
-    {% for tag_count in tag_counts %}
-        <li>{{ tag_count.tags }}: {{ tag_count.count }}</li>
-    {% endfor %}
-</ul>
-<h3>Issue names</h3>
+                <!-- Display tag counts -->
+                <h3>Total Issues Grouped by Tags:</h3>
+                <ul>
+                    {% for tag_count in tag_counts %}
+                        <li>{{ tag_count.tags }}: {{ tag_count.count }}</li>
+                    {% endfor %}
+                </ul>
+                
+                <h3>Issue Names</h3>
                 <ul>
                     {% for issue in issues %}
                     <li>{{ issue.issuename }}</li>
                     {% endfor %}
                 </ul>
             </div>
+            <div class="products">
+                
+                <ul>
+                    {% for product in products %}
+                    <li>
+                        <h2>Statistics for all issues for {{ product.name }} </h2>
+                        <strong>Product Name:</strong> {{ product.name }}<br>
+                        <strong>Product URL:</strong> <a href="{{ product.url }}">{{ product.url }}</a><br>
+                        <strong>Total Issues:</strong> 
+                        {% for product_stat in product_stats %}
+                            {% if product_stat.product.id == product.id %}
+                                {{ product_stat.total_issues }}
+                            {% endif %}
+                        {% endfor %}
+                        <br>
+                        <strong>Status Counts:</strong>
+                        <ul>
+                            {% for product_stat in product_stats %}
+                                {% if product_stat.product.id == product.id %}
+                                    {% for status, count in product_stat.status_counts.items %}
+                                        <li>{{ status }}: {{ count }}</li>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                        <ul>
+                            {% for product_stat in product_stats %}
+                                {% if product_stat.product.id == product.id %}
+                                    {% for tag, count in product_stat.tag_counts.items %}
+                                        <li>{{ tag }}: {{ count }}</li>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+           
         </div>
     </div>
 {% endblock %}

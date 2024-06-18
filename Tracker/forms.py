@@ -3,6 +3,7 @@ from django.contrib.auth.hashers import make_password
 from captcha.fields import CaptchaField
 from django.contrib.auth.forms import PasswordChangeForm
 from .models import *
+from django.utils.safestring import mark_safe
 
 class SignUpForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
@@ -26,6 +27,9 @@ class SignUpForm(forms.ModelForm):
         super(SignUpForm, self)._init_(*args, **kwargs)
         self.fields['company'].required = False
         self.fields['company'].queryset = Company.objects.all()
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -80,6 +84,9 @@ class ProductForm(forms.ModelForm):
         super(ProductForm, self)._init_(*args, **kwargs)
         self.fields['company'].required = False
         self.fields['company'].queryset = Company.objects.all()
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
 
 
 class IssueForm(forms.ModelForm):
@@ -101,6 +108,11 @@ class IssueForm(forms.ModelForm):
         self.fields['product'].required = False
         self.fields['company'].queryset = Company.objects.all()
         self.fields['product'].queryset = Product.objects.none()
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
+
+        
         
 
         if 'company' in self.data and self.data.get('company') != '':
@@ -115,6 +127,8 @@ class IssueForm(forms.ModelForm):
                     self.fields['product'].queryset = self.instance.company.product_set.all()
             except Company.DoesNotExist:
                 self.fields['product'].queryset = Product.objects.none()
+
+        
 
 
     def clean(self):
@@ -196,12 +210,22 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['firstname', 'lastname', 'email', 'username', 'image']
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
 
 
 class EditIssueForm(forms.ModelForm):
     class Meta:
         model = Issue
         fields = ['issuename', 'description', 'tags']
+    def __init__(self, *args, **kwargs):
+        super(EditIssueForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
 
 
 class IssueStatusForm(forms.ModelForm):
@@ -211,7 +235,11 @@ class IssueStatusForm(forms.ModelForm):
         widgets = {
             'status': forms.Select(attrs={'class': 'form-control'})
         }
-
+    def __init__(self, *args, **kwargs):
+        super(IssueStatusForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
 
 class IssueFilterForm(forms.Form):
     status = forms.ChoiceField(choices=Issue.STATUS_CHOICES, required=False)
@@ -225,17 +253,57 @@ class SupportQueryForm(forms.ModelForm):
     class Meta:
         model = Support
         fields = ['type', 'message']
+    def __init__(self, *args, **kwargs):
+        super(SupportQueryForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
 
 class HiringRequestForm(forms.ModelForm):
     class Meta:
         model = Hiring
         fields = ['name', 'url', 'options', 'description']
+    def __init__(self, *args, **kwargs):
+        super(HiringRequestForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
 
 class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         fields = ['options', 'bool', 'comment']
+    def __init__(self, *args, **kwargs):
+        super(FeedbackForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
 class EditFeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         fields = ['options', 'bool', 'comment']
+    def __init__(self, *args, **kwargs):
+        super(EditFeedbackForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['description']
+    def __init__(self, *args, **kwargs):
+        super(CommentForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
+
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ['options', 'bool', 'comment']
+    def __init__(self, *args, **kwargs):
+        super(FeedbackForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')

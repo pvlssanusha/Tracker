@@ -20,39 +20,24 @@
         <a class="issue" href="{% url 'privateissues' %}">View Private Issues</a>
         {% endif %}
 
-          {% for issue in data %}
-          {% if issue.pinned %}
-            <a class="issue" href="{{issue.id}}">
-
-            <div class="issue-title">{{ issue.issuename }}</div>
-            <h3>Pinned</h3>
-            <div class="issue-desc">{{ issue.description }}</div>
-            <div class="issue-meta">
-                <span class="meta-item">
-                    <i class="fas fa-eye"></i> {{ issue.viewcount }}
-                </span>
-                <span class="meta-item">
-                    <i class="fas fa-comments"></i> {{ issue.commentcount }}
-                </span>
-                <span class="meta-item">
-                    <i class="fas fa-lightbulb"></i> {{ issue.feedbackcount }}
-                </span>
-                                   
-                <span class="meta-item">Created by:  {% if userid == issue.created_by.id  %}
-										
-                    <h4>{{user.username}}(Owner)</h4>
-                    {% else %}
-                    <h4 class="mb-1">{{issue.created_by.custom_username}}</h4>
-                    {% endif %}</span>
-            </div>
-        </a>
-        {% endif %}
-        {% endfor %}
         {% for issue in data %}
-        {% if not issue.pinned %}
-        <a class="issue" href="{{issue.id}}">
+        {% if issue.pinned %}
+        <div class="issue" >
             <div class="issue-title">{{ issue.issuename }}</div>
             <div class="issue-desc">{{ issue.description }}</div>
+            <div class="issue-spacing">
+                
+                <div><a  href="{% url 'addfeedback' issue.id %}">Give Feedback</a></div>
+                <div><a  href="{% url 'addcomment' issue.id %}">Add comment</a></div>
+                <div><a  href="{{ issue.id }}">View Issue</a></div>
+                <div><a class="fancy" href="{% url 'changeissuestatus' issue.id %}">
+                    <span class="top-key"></span>
+                    <span class="text">Change Status</span>
+                    <span class="bottom-key-1"></span>
+                    <span class="bottom-key-2"></span>
+                </a></div>
+                <div> <p>Company Name:<a href="{% url 'companydetails' issue.company.id %}">{{issue.company}}</a></p></div>
+        </div>
             <div class="issue-meta">
                 <span class="meta-item">
                     <i class="fas fa-eye"></i> {{ issue.viewcount }}
@@ -61,23 +46,79 @@
                     <i class="fas fa-comments"></i> {{ issue.commentcount }}
                 </span>
                 <span class="meta-item">
-                    <i class="fas fa-lightbulb"></i> {{ issue.feedbackcount }}
+                    <div class="feedback-stats">
+                        <p>Option 1 Count: {{ issue.option1_count }}</p>
+                        <p>Option 2 Count: {{ issue.option2_count }}</p>
+                        <p>Option 3 Count: {{ issue.option3_count }}</p>
+                        <p>Bool True Count: {{ issue.bool_true_count }}</p>
+                        <p>Bool False Count: {{ issue.bool_false_count }}</p>
+                    </div>
                 </span>
                 <span class="meta-item">
-                    <i class="fas fa-lightbulb"></i> {{ issue.status }}
-                </span>
-                                   
-                <span class="meta-item">Created by:<p>
-                    {% if userid == issue.created_by.id  %}				
-                    <h4>{{user.username}}(Owner)</h4>
+                    <h3>Status {{ issue.status }}</h1> 
+                </span>                     
+                <p>Created By:<a href="{% url 'getuser' issue.id %}">
+                    {% if userid == issue.created_by.id  %}
+                        <h4>{{user.username}}(Owner)</h4>
                     {% else %}
-                    <h4 class="mb-1">{{issue.created_by.custom_username}}</h4>
+                        <h4 class="mb-1">{{issue.created_by.custom_username}}</h4>
                     {% endif %}
-                </p>
+                </a></p>
                 
             </span>
             </div>
-        </a>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        {% for issue in data %}
+        {% if not issue.pinned %}
+        <div class="issue" >
+            <div class="issue-title">{{ issue.issuename }}</div>
+            <div class="issue-desc">{{ issue.description }}</div>
+            <div class="issue-spacing">
+                
+                <div><a  href="{% url 'addfeedback' issue.id %}">Give Feedback</a></div>
+                <div><a  href="{% url 'addcomment' issue.id %}">Add comment</a></div>
+                <div><a  href="{{ issue.id }}">View Issue</a></div>
+                <div><a class="fancy" href="{% url 'changeissuestatus' issue.id %}">
+                    <span class="top-key"></span>
+                    <span class="text">Change Status</span>
+                    <span class="bottom-key-1"></span>
+                    <span class="bottom-key-2"></span>
+                </a></div>
+                <div> <p>Company Name:<a href="{% url 'companydetails' issue.company.id %}">{{issue.company}}</a></p></div>
+        </div>
+            <div class="issue-meta">
+                <span class="meta-item">
+                    <i class="fas fa-eye"></i> {{ issue.viewcount }}
+                </span>
+                <span class="meta-item">
+                    <i class="fas fa-comments"></i> {{ issue.commentcount }}
+                </span>
+                <span class="meta-item">
+                    <div class="feedback-stats">
+                        <p>Option 1 Count: {{ issue.option1_count }}</p>
+                        <p>Option 2 Count: {{ issue.option2_count }}</p>
+                        <p>Option 3 Count: {{ issue.option3_count }}</p>
+                        <p>Bool True Count: {{ issue.bool_true_count }}</p>
+                        <p>Bool False Count: {{ issue.bool_false_count }}</p>
+                    </div>
+                </span>
+                <span class="meta-item">
+                    <h3>Status {{ issue.status }}</h1> 
+                </span>                     
+                <p>Created By:<a href="{% url 'getuser' issue.id %}">
+                    {% if userid == issue.created_by.id  %}
+                        <h4>{{user.username}}(Owner)</h4>
+                    {% else %}
+                        <h4 class="mb-1">{{issue.created_by.custom_username}}</h4>
+                    {% endif %}
+                </a></p>
+                
+            </span>
+            </div>
+        </div>
         {% endif %}
         {% endfor %}
 

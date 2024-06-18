@@ -11,7 +11,7 @@ from rest_framework import status
 from django.contrib.auth.decorators import login_required
 from .forms import *
 from .serializers import *
-from django.db.models import Count
+from django.db.models import Count,Q
 import datetime
 def signUp(request):
     if request.method == 'POST':
@@ -161,43 +161,46 @@ def getAllIssues(request):
                 issues = issues.filter(tags__icontains=tags)
 
         # data = IssueSerializer(issues, many=True).data
+        issues = issues.annotate(
+            option1_count=Count('feedbacks', filter=Q(feedbacks__options='option1')),
+            option2_count=Count('feedbacks', filter=Q(feedbacks__options='option2')),
+            option3_count=Count('feedbacks', filter=Q(feedbacks__options='option3')),
+            bool_true_count=Count('feedbacks', filter=Q(feedbacks__bool=True)),
+            bool_false_count=Count('feedbacks', filter=Q(feedbacks__bool=False))
+        )
         return render(request, 'Display.html', {'data': issues, 'filter_form': filter_form,'userid':request.user.id})
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
+    
 
-@login_required(login_url='/login/')
-def addComment(request):
-    if request.method == 'POST':
-        issue_id=request.POST.get('issue_id')
-        issue=Issue.objects.get(id=issue_id)
-        comment=request.POST.get('comment')
-        Comment.objects.create(issue=issue, user=request.user, description=comment)
-        Comment.objects.create(issue=issue, user=request.user, description=comment)
-        issue.commentcount = len(Comment.objects.filter(issue=issue,enabled=True))
-        issue.save()
-        return redirect(reverse('issue', kwargs={'id': issue_id}))
-        return redirect('issue', id=issue.id)
-
-@login_required(login_url='/login/')
-def addFeedback(request):
-    issue_id = request.POST.get('issue_id')
+def add_comment(request, issue_id):
     issue = get_object_or_404(Issue, id=issue_id)
-
-    form = FeedbackForm(request.POST)
-
-    if form.is_valid():
-        feedback = form.save(commit=False)
-        feedback.issue = issue
-        feedback.user = request.user  # Assuming user is logged in
-        feedback.save()
-        issue.feedbackcount = len(Feedback.objects.filter(issue=issue,enabled=True))
-        print("count",issue.feedbackcount)
-        issue.save()
-        return JsonResponse({'status': 'success', 'message': 'Feedback added successfully.'})
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.issue = issue
+            comment.user = request.user
+            comment.save()
+            return redirect(reverse('issue', kwargs={'id': issue_id}))
+            
     else:
-        return JsonResponse({'status': 'error', 'errors': form.errors})
-
-# Optionally, you may want to implement an edit_feedback view as well
+        form = CommentForm()
+    return render(request, 'addcomment.html', {'form': form, 'issue': issue})
+def add_feedback(request, issue_id):
+    issue = get_object_or_404(Issue, id=issue_id)
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            feedback = form.save(commit=False)
+            feedback.issue = issue
+            feedback.user = request.user
+            feedback.save()
+            return redirect(reverse('issue', kwargs={'id': issue_id}))
+            return redirect('issue', id=issue.id)
+    else:
+        form = FeedbackForm()
+    return render(request, 'addfeedback.html', {'form': form, 'issue': issue})
 @login_required(login_url='/login/')
 def editFeedback(request, feedback_id):
     feedback = get_object_or_404(Feedback, id=feedback_id)
@@ -327,49 +330,63 @@ def editFeedback(request, feedback_id):
 
 
 def companyDetails(request, company_id):
-    context={}
+    context = {}
     company = get_object_or_404(Company, id=company_id)
     context['company'] = company
+    
     try:
         users = User.objects.filter(company=company, companyuser=True, enabled=True)
         context['users'] = users
     except:
-        users=None 
+        context['users'] = None
+    
     try:
         products = Product.objects.filter(company=company)
         context['products'] = products
     except:
-        products=None
+        context['products'] = None
+
     try:
         issues = Issue.objects.filter(company=company)
-        context['issues_count']= issues.count()
-
-        # Get status choices from the Issue model (assuming it's a field named status_choices)
+        context['issues_count'] = issues.count()
+        
+        # Get status choices from the Issue model
         status_choices = dict(Issue.STATUS_CHOICES)
-        context['status_choices']=status_choices
-
+        context['status_choices'] = status_choices
+        
         # Count issues per status
         status_counts = issues.values('status').annotate(count=Count('id'))
-        context['status_counts']=status_counts
-
+        context['status_counts'] = status_counts
+        
         # Count issues per tag
         tag_counts = issues.values('tags').annotate(count=Count('id'))
-        context['tag_counts']=tag_counts
-        context['issues']=issues
+        context['tag_counts'] = tag_counts
+        
+        context['issues'] = issues
+        
+        # Specific statistics for each product
+        product_stats = []
+        for product in products:
+            product_issues = issues.filter(product=product)
+            product_status_counts = product_issues.values('status').annotate(count=Count('id'))
+            product_tags_counts = product_issues.values('tags').annotate(count=Count('id'))
+            
+            product_stat = {
+                'product': product,
+                'total_issues': product_issues.count(),
+                'status_counts': {
+                    status: product_issues.filter(status=status).count() for status in status_choices.keys()
+                },
+                # 'tag_counts':{
+                #     tag: product_issues.filter(tags=tag).count() for tag in tag_counts
+                # }
+            }
+            product_stats.append(product_stat)
+        
+        context['product_stats'] = product_stats
+        
     except:
-        issues = None
-
-    # context = {
-    #     'company': company,
-    #     'users': users,
-    #     'issues': issues,
-    #     'issues_count': issues.count(),
-    #     'products': products,
-    #     'status_counts': status_counts,  # This provides per-status count
-    #     'tag_counts': tag_counts,  # This provides per-tag count
-    #     'status_choices': status_choices,  # Assuming these are available in your Issue model
-    # }
-
+        context['issues'] = None
     return render(request, 'companydetails.html', context)
 
 

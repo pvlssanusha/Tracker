@@ -2,314 +2,226 @@
 {% load static %}
 {% block title %}Issues{% endblock %}
 {% block content %}
-		<div class="display-issue-main">
-			<div class="issue-container">
-				
-				<h3>{{issue.issuename}}</h3>
-				<p>desc : {{issue.description}}</p>
-				<div class="issue-details">
-					<p>Created By:<a href="{% url 'getuser' issue.id %}">{{ issue.created_by}}</a></p>
-					<p>Company Name:<a href="{% url 'companydetails' companyid %}">{{issue.company}}</a></p>
-					<p>Tags: <span class="text-bold">{{issue.tags}}</span></p>
-					<p id="viewCount" class="view-btn">Views: <span class="text-bold" >{{issue.viewcount}}</span></p>
-					<p>
-						Feedbacks:
-						<span class="text-bold">{{feedbackCount}}</span>
-					</p>
-					<p>
-						Comments: <span class="text-bold">{{issue.commentcount}}</span></p>
-					<p>Issue Status:
-						<span class="text-bold">{{issue.status}}</span></p>
-						<div class="issue-btns">
-						{% if companyuser %}
-						<a class="fancy" href="{% url 'changeissuestatus' issue.id %}">
-							<span class="top-key"></span>
-							<span class="text">Change Status</span>
-							<span class="bottom-key-1"></span>
-							<span class="bottom-key-2"></span>
-						</a>
-						{% endif %}
-						{% if value %}
-						<a class="fancy" href="{% url 'editissue' issue.id %}">
-							<span class="top-key"></span>
-							<span class="text">Edit Issue</span>
-							<span class="bottom-key-1"></span>
-							<span class="bottom-key-2"></span>
-						</a>
-						{% endif %} 
-					</div>
+    <div class="display-issue-main">
+        <div class="issue-container">
+            <h3>{{issue.issuename}}</h3>
+            <p>desc : {{issue.description}}</p>
+            <div class="issue-details">
+                <p>Created By:<a href="{% url 'getuser' issue.id %}">{{ issue.created_by}}</a></p>
+                <p>Company Name:<a href="{% url 'companydetails' companyid %}">{{issue.company}}</a></p>
+                <p>Tags: <span class="text-bold">{{issue.tags}}</span></p>
+                <p id="viewCount" class="view-btn">Views: <span class="text-bold" >{{issue.viewcount}}</span></p>
+                <p>
+                    Feedbacks:
+                    <span class="text-bold">{{feedbackCount}}</span>
+                </p>
+                <p>
+                    Comments: <span class="text-bold">{{issue.commentcount}}</span></p>
+                <p>Issue Status:
+                    <span class="text-bold">{{issue.status}}</span></p>
+                <div class="issue-btns">
+                    {% if companyuser %}
+                    <a class="fancy" href="{% url 'changeissuestatus' issue.id %}">
+                        <span class="top-key"></span>
+                        <span class="text">Change Status</span>
+                        <span class="bottom-key-1"></span>
+                        <span class="bottom-key-2"></span>
+                    </a>
+                    {% endif %}
+                    {% if value %}
+                    <a class="fancy" href="{% url 'editissue' issue.id %}">
+                        <span class="top-key"></span>
+                        <span class="text">Edit Issue</span>
+                        <span class="bottom-key-1"></span>
+                        <span class="bottom-key-2"></span>
+                    </a>
+                    {% endif %} 
+                </div>
+            </div>
+        </div>
+        <div id="viewedbySectionPopup" class="popup-form" style="display: none;">
+            <h1>
+                Viewed By
+                <button class="close-btn" onclick="togglePopup('viewedbySectionPopup')">
+                    &times;
+                </button>
+            </h1>
+            <div id="viewedbySection">
+                {% if viewedby %}
+                <div class="list-group">
+                    {% for view in viewedby %}
+                    <div href="#" class="feedback-item">
+                        <img src="{% get_media_prefix %}{{view.user.image}}" />
+                        <div>
+                            <div>
+                                <h4 class="mb-1">{{view.user}}</h4>
+                                <small>{{view.timestamp}}</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="comments-feedback-container">
+            <div id="commentsSection">
+                <h1>Comments <a id="addComment" href="{% url 'addcomment' issue.id %}">+</a></h1>
+                <div id="commentsContainer">
+                    {% if pinnedcomments %}
+                    <div class="list-group">
+                        {% for comment in pinnedcomments %}
+                        <div href="#" class="comment-item">
+                            <img src="https://i.pinimg.com/564x/3d/91/09/3d910919cf4d41c1114457504dc29201.jpg" />
+                            <div>
+                                <div class="d-flex">
+                                    <h4>{{comment.user.custom_username}}</h4>
+                                    <small>{{comment.timestamp}}</small>
+                                    <h3>Pinned by</h3>
+                                </div>
+                                <p class="mb-1">{{comment.description}}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if comments %}
+                    <div class="list-group">
+                        {% for comment in comments %}
+                        <div href="#" class="comment-item">
+                            <img src="https://i.pinimg.com/564x/3d/91/09/3d910919cf4d41c1114457504dc29201.jpg" />
+                            <div>
+                                <div class="d-flex">
+                                    {% if comment.user.id == issue.created_by.id %}
+                                    <h4>{{comment.user.username}}(Owner)</h4>
+                                    {% else %}
+                                    <h4>{{comment.user.custom_username}}</h4>
+                                    {% endif %}
+                                    <small>{{comment.timestamp}}</small>
+                                </div>
+                                <p class="mb-1">{{comment.description}}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <ul class="pagination" id="commentsPagination"></ul>
+            </div>
+            <div id="feedbackSection">
+                {% if not edit %}
+                <h1>Feedbacks <a id="addFeedback" href="{% url 'addfeedback' issue.id %}">+</a></h1>
+                {% else %}
+                <h1>Feedbacks </h1>
+                {% endif %}
+                <div id="feedbackContainer">
+                    {% if feedback %}
+                    <div class="list-group">
+                        {% for feed in feedback %}
+                            {% if feed.pinned %}
+                            <div href="#" class="feedback-item">
+                                <img src="https://i.pinimg.com/564x/3d/91/09/3d910919cf4d41c1114457504dc29201.jpg" />
+                                <div>
+                                    <div class="d-flex">
+                                        {% if feed.user.id == issue.created_by.id %}
+                                        <h4>{{feed.user.username}}(Owner)</h4>
+                                        {% else %}
+                                        <h4 class="mb-1">{{feed.user.custom_username}}</h4>
+                                        {% endif %}
+                                        <h2>Pinned</h2>
+                                        <small>{{feed.timestamp}}</small>
+                                    </div>
+                                    <div class="d-flex">
+                                        <p><span class="text-bold">option :</span>{{feed.options}}</p>
+                                        <p><span class="text-bold">bool :</span> {{feed.bool}}</p>
+                                    </div>
+                                    <p><span class="text-bold">comment :</span> {{feed.comment}}</p>
+                                    {% if userid == feed.user.id %}
+                                    <a href="{% url 'editfeedback' feed.id %}">Edit Feedback</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% for feed in feedback %}
+                            {% if not feed.pinned %}
+                            <div href="#" class="feedback-item">
+                                <img src="https://i.pinimg.com/564x/3d/91/09/3d910919cf4d41c1114457504dc29201.jpg" />
+                                <div>
+                                    <div class="d-flex">
+                                        {% if feed.user.id == issue.created_by.id %}
+                                        <h4>{{feed.user.username}}(Owner)</h4>
+                                        {% else %}
+                                        <h4 class="mb-1">{{feed.user.custom_username}}</h4>
+                                        {% endif %}
+                                        <small>{{feed.timestamp}}</small>
+                                    </div>
+                                    <div class="d-flex">
+                                        <p><span class="text-bold">option :</span>{{feed.options}}</p>
+                                        <p><span class="text-bold">bool :</span> {{feed.bool}}</p>
+                                    </div>
+                                    <p><span class="text-bold">comment :</span> {{feed.comment}}</p>
+                                    {% if userid == feed.user.id %}
+                                    <a href="{% url 'editfeedback' feed.id %}">Edit Feedback</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <ul class="pagination" id="feedbackPagination"></ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            const itemsPerPage = 5;
 
-					
-				</div>
-			</div>
-			<div id="viewedbySectionPopup" class="popup-form" style="display: none;">
-				<h1>
-					Viewed By
-					<button class="close-btn" onclick="togglePopup('viewedbySectionPopup')">
-						&times;
-					</button>
-				</h1>
-				<div id="viewedbySection">
-					{% if viewedby %}
-					<div class="list-group">
-						{% for view in viewedby %}
-						<div href="#" class="feedback-item">
-							<img
-								src="{% get_media_prefix %}{{view.user.image}}" />
-							<div>
-								<div>
-									<h4 class="mb-1">{{view.user}}</h4>
-									<small>{{view.timestamp}}</small>
-								</div>
-							</div>
-						</div>
-						{% endfor %}
-					</div>
-					{% endif %}
-				</div>
-			</div>
-			<div class="comments-feedback-container">
-				<div id="commentsSection">
-					<h1>Comments <button id="addComment">+</button></h1>
-					<div id="commentsContainer">
-						{% if pinnedcomments %}
-						<div class="list-group">
-							{% for comment in pinnedcomments %}
-							<div href="#" class="comment-item">
-								<img
-									src="https://i.pinimg.com/564x/3d/91/09/3d910919cf4d41c1114457504dc29201.jpg" />
-								<div>
-									<div class="d-flex">
-										
-										<h4>{{comment.user.custom_username}}</h4>
-										<small>{{comment.timestamp}}</small>
-										<h3>Pinned by</h3>
+            function paginate(container, pagination, itemsPerPage) {
+                var items = container.children();
+                var numItems = items.length;
+                var numPages = Math.ceil(numItems / itemsPerPage);
+                console.log(numItems);
+                pagination.html("");
+                for (var i = 1; i <= numPages; i++) {
+                    pagination.append(
+                        "<li><a href='#' data-page='" + i + "'>" + i + "</a></li>"
+                    );
+                }
 
-									</div>
-									<p class="mb-1">{{comment.description}}</p>
-								</div>
-							</div>
-							{% endfor %}
-						</div>
-						{% endif %}
+                items.hide();
+                items.slice(0, itemsPerPage).show();
 
+                pagination.find("a").click(function (e) {
+                    e.preventDefault();
+                    var page = $(this).data("page");
+                    var start = (page - 1) * itemsPerPage;
+                    var end = start + itemsPerPage;
 
-						{% if comments %}
-						<div class="list-group">
-							{% for comment in comments %}
-							<div href="#" class="comment-item">
-								<img
-									src="https://i.pinimg.com/564x/3d/91/09/3d910919cf4d41c1114457504dc29201.jpg" />
-								<div>
-									<div class="d-flex">
-										
-										
-										{% if comment.user.id == issue.created_by.id  %}
-										
-										<h4>{{comment.user.username}}(Owner)</h4>
-										{% else %}
-										<h4>{{comment.user.custom_username}}</h4>
-										{% endif %}
-										<small>{{comment.timestamp}}</small>
+                    items.hide().slice(start, end).show();
+                });
+            }
 
-									</div>
-									<p class="mb-1">{{comment.description}}</p>
-								</div>
-							</div>
-							{% endfor %}
-						</div>
-						{% endif %}
-					</div>
-					<ul class="pagination" id="commentsPagination"></ul>
-				</div>
+            paginate(
+                $("#commentsContainer .list-group"),
+                $("#commentsPagination"),
+                itemsPerPage
+            );
+            paginate(
+                $("#feedbackContainer .list-group"),
+                $("#feedbackPagination"),
+                itemsPerPage
+            );
 
-				<div id="feedbackSection">
-					{% if not edit %}
-					<h1>Feedbacks <button id="addFeedback">+</button></h1>
-					{% else %}
-					<h1>Feedbacks </h1>
-					{% endif %}
+            $("#viewCount").click(function () {
+                togglePopup("viewedbySectionPopup");
+            });
+        });
 
-						
-
-					<div id="feedbackContainer">
-						{% if feedback %}
-						<div class="list-group">
-							{% for feed in feedback %}
-								{% if feed.pinned %}
-							<div href="#" class="feedback-item">
-								<img
-									src="https://i.pinimg.com/564x/3d/91/09/3d910919cf4d41c1114457504dc29201.jpg" />
-								<div>
-									<div class="d-flex">
-										{% if feed.user.id == issue.created_by.id  %}
-				
-										<h4>{{feed.user.username}}(Owner)</h4>
-										
-										{% else %}
-										<h4 class="mb-1">{{feed.user.custom_username}}</h4>
-										{% endif %}
-										<h2>Pinned</h2>
-										<small>{{feed.timestamp}}</small>
-									</div>
-									<div class="d-flex">
-									<p><span class="text-bold">option :</span>{{feed.options}}</p>
-									<p><span class="text-bold">bool :</span> {{feed.bool}}</p>
-									</div>
-								<p><span class="text-bold">comment :</span> {{feed.comment}}</p>
-
-									{% if userid == feed.user.id %}
-									<a href="{% url 'editfeedback' feed.id %}">Edit Feedback</a>
-									{% endif %}
-									{% endif %}
-									
-									{% endfor %}
-									{% for feed in feedback %}
-
-									{% if not feed.pinned %}
-									<div href="#" class="feedback-item">
-										<img
-											src="https://i.pinimg.com/564x/3d/91/09/3d910919cf4d41c1114457504dc29201.jpg" />
-										<div>
-											<div class="d-flex">
-												{% if feed.user.id == issue.created_by.id  %}
-												
-												<h4>{{feed.user.username}}(Owner)</h4>
-												{% else %}
-												<h4 class="mb-1">{{feed.user.custom_username}}</h4>
-												{% endif %}
-												
-												<small>{{feed.timestamp}}</small>
-											</div>
-											<div class="d-flex">
-											<p><span class="text-bold">option :</span>{{feed.options}}</p>
-											<p><span class="text-bold">bool :</span> {{feed.bool}}</p>
-											</div>
-										<p><span class="text-bold">comment :</span> {{feed.comment}}</p>
-		
-											{% if userid == feed.user.id %}
-											<a href="{% url 'editfeedback' feed.id %}">Edit Feedback</a>
-		
-
-							{% endif %}
-							{% endif %}
-								</div>
-							</div>
-							{% endfor %}
-						</div>
-						
-						{% endif %}
-					</div>
-					<ul class="pagination" id="feedbackPagination"></ul>
-				</div>
-			</div>
-			
-
-			<div id="commentPopup" class="popup-form">
-				<h1>
-					Add Comment
-					<button class="close-btn" onclick="togglePopup('commentPopup')">
-						&times;
-					</button>
-				</h1>
-				<form id="commentForm">
-					{% csrf_token %}
-					<input type="hidden" name="issue_id" value="{{issue.id}}" />
-					<textarea name="comment" placeholder="Enter your comment"></textarea>
-					<button type="submit">Submit Comment</button>
-				</form>
-			</div>
-
-			<div id="feedbackPopup" class="popup-form">
-				<h1>
-					Add Feedback
-					<button class="close-btn" onclick="togglePopup('feedbackPopup')">
-						&times;
-					</button>
-				</h1>
-				<div class="feedback-form-container">
-				<form class="form" id="feedbackForm">
-					{% csrf_token %}
-					<input type="hidden" name="issue_id" value="{{issue.id}}" />
-					{{ form.as_p }}
-					<button type="submit">Submit Feedback</button>
-				</form>
-			</div>
-				
-			</div>
-		</div>
-
-		<script>
-			$(document).ready(function () {
-				const itemsPerPage = 5;
-
-				function paginate(container, pagination, itemsPerPage) {
-					var items = container.children();
-					var numItems = items.length;
-					var numPages = Math.ceil(numItems / itemsPerPage);
-					console.log(numItems);
-					pagination.html("");
-					for (var i = 1; i <= numPages; i++) {
-						pagination.append(
-							"<li><a href='#' data-page='" + i + "'>" + i + "</a></li>"
-						);
-					}
-
-					items.hide();
-					items.slice(0, itemsPerPage).show();
-
-					pagination.find("a").click(function (e) {
-						e.preventDefault();
-						var page = $(this).data("page");
-						var start = (page - 1) * itemsPerPage;
-						var end = start + itemsPerPage;
-
-						items.hide().slice(start, end).show();
-					});
-				}
-
-				paginate(
-					$("#commentsContainer .list-group"),
-					$("#commentsPagination"),
-					itemsPerPage
-				);
-				paginate(
-					$("#feedbackContainer .list-group"),
-					$("#feedbackPagination"),
-					itemsPerPage
-				);
-
-				$("#addComment").click(function () {
-					togglePopup("commentPopup");
-				});
-
-				$("#addFeedback").click(function () {
-					togglePopup("feedbackPopup");
-				});
-
-				$("#commentForm").submit(function (event) {
-					event.preventDefault();
-					var formData = $(this).serialize();
-					$.post("{% url 'addcomment' %}", formData, function (response) {
-						togglePopup("commentPopup");
-					});
-				});
-
-				$("#feedbackForm").submit(function (event) {
-					event.preventDefault();
-					var formData = $(this).serialize();
-					$.post("{% url 'addfeedback' %}", formData, function (response) {
-						togglePopup("feedbackPopup");
-					});
-				});
-
-				$("#viewCount").click(function () {
-					togglePopup("viewedbySectionPopup");
-				});
-			});
-
-			function togglePopup(id) {
-				$("#" + id).toggle();
-			}
-		</script>
+        function togglePopup(id) {
+            $("#" + id).toggle();
+        }
+    </script>
 {% endblock %}
