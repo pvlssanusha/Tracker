@@ -138,7 +138,9 @@
                                     <p><span class="text-bold">comment :</span> {{feed.comment}}</p>
                                     {% if userid == feed.user.id %}
                                     <a href="{% url 'editfeedback' feed.id %}">Edit Feedback</a>
+                                   
                                     {% endif %}
+                                    <a href="{% url 'getlogs' feed.id %}">View Feedbacklog</a>
                                 </div>
                             </div>
                             {% endif %}
@@ -163,7 +165,9 @@
                                     <p><span class="text-bold">comment :</span> {{feed.comment}}</p>
                                     {% if userid == feed.user.id %}
                                     <a href="{% url 'editfeedback' feed.id %}">Edit Feedback</a>
+                                   
                                     {% endif %}
+                                    <a href="{% url 'getlogs' feed.id %}">View Feedbacklog</a>
                                 </div>
                             </div>
                             {% endif %}

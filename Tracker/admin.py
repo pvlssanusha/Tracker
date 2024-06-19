@@ -10,6 +10,8 @@ class UserAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(User,UserAdmin)
 admin.site.register(Company)
+admin.site.register(FeedbackLogs)
+admin.site.register(HiringComment)
 admin.site.register(Issue,IssueAdmin)
 admin.site.register(Product)
 admin.site.register(Comment)
