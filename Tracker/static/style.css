@@ -355,7 +355,6 @@ a {
 .issues .issue {
 	cursor: pointer;
 	transition: 400ms;
-	height: 600px;
 }
 
 .issue .status{
@@ -381,25 +380,26 @@ a {
 }
 
 .filter-cont {
-	width: 200px;
+	width: 300px;
+	height: calc(100vh - 80px);
+	overflow-y: auto;
 }
 
 .filter-cont .form {
 	display: flex;
 	flex-direction: column;
 	width: 200px;
-	gap: 20px;
+	justify-content: center;
 	align-items: flex-end;
 }
 
 .filter-cont .form button {
-	height: 40px;
 	background-color: #007bff;
 }
 
 .filter-cont .form select,
 .filter-cont .form input[type="text"] {
-	width: 10em;
+	width: 160px;
 }
 
 .issue-desc {
@@ -853,6 +853,12 @@ a {
 
 /* Issue.html */
 
+.create-issue-main{
+	height: 100%;
+	overflow: auto;
+	padding: 20px;
+}
+
 .add-issue-main {
 	display: flex;
 	align-items: center;
@@ -871,13 +877,13 @@ a {
 	width: max-content;
 	height: max-content;
 	overflow: auto;
-	margin: 0 auto;
+	margin: 20px auto;
 }
 
 .issue-form-container h2 {
 	text-align: center;
 	font-weight: 800;
-	color: #4d7580;
+	color: #007bff;
 	margin-bottom: 10px;
 	font-size: 30px;
 }
@@ -961,7 +967,8 @@ a {
 .terms h2 {
 	font-size: 24px;
 	margin-bottom: 20px;
-	color: #333;
+	color: #007bff;
+	font-weight: 700;
 	text-align: center;
 }
 
@@ -975,7 +982,7 @@ a {
 	margin-bottom: 15px;
 	line-height: 1.6;
 	color: #555;
-	font-size: 12px;
+	font-size: 16px;
 }
 
 #acceptTerms {
@@ -1055,6 +1062,17 @@ a {
 	border-radius: 12px;
 }
 
+.user-profile-details{
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+	padding: 20px;
+	border-radius: 20px;
+	display: flex;
+	flex-direction: column;
+    align-items: flex-start;
+	padding-top: 50px;
+	width: 60%;
+}
+
 .profile-info {
 	flex: 1;
 	padding: 20px;
@@ -1073,7 +1091,7 @@ a {
 	width: 150px;
 	height: 150px;
 	border-radius: 50%;
-	margin-bottom: 20px;
+	margin-bottom: -50px;
 	object-fit: cover;
 	border: 3px solid #007bff;
 }
@@ -1278,23 +1296,23 @@ a {
 		margin-bottom: 20px;
 	}
 	.issue-form-container {
-		width: calc(100vw - 20px);
+		width: 100%;
 	}
 	.issue-form-container .form input[type="text"],
 	.issue-form-container .form input[type="password"],
 	.issue-form-container .form input[type="email"],
 	.issue-form-container .form input[type="url"],
 	.issue-form-container .form select {
-		width: calc(100vw - 40px);
+		width: 100%;
 	}
 
 	.issue-form-container .form textarea {
-		width: calc(100vw - 40px);
+		width: 100%;
 		height: 80px;
 	}
 
 	.issue-form-container .form {
-		width: calc(100vw - 10px);
+		width: 100%;
 		margin: 0px;
 	}
 }

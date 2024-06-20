@@ -139,7 +139,7 @@ def getIssue(self,id):
 @login_required(login_url='/login/')
 def getAllIssues(request):
     try:
-        issues = Issue.objects.filter(private=False).order_by()
+        issues = Issue.objects.filter(private=False).order_by('-created_at')
         filter_form = IssueFilterForm(request.GET)
 
         if filter_form.is_valid():
@@ -150,15 +150,15 @@ def getAllIssues(request):
             tags = filter_form.cleaned_data.get('tags')
 
             if status:
-                issues = issues.filter(status=status)
+                issues = issues.filter(status=status).order_by('-created_at')
             if created_by:
-                issues = issues.filter(created_by=created_by)
+                issues = issues.filter(created_by=created_by).order_by('-created_at')
             if company:
-                issues = issues.filter(company=company)
+                issues = issues.filter(company=company).order_by('-created_at')
             if product:
-                issues = issues.filter(product=product)
+                issues = issues.filter(product=product).order_by('-created_at')
             if tags:
-                issues = issues.filter(tags__icontains=tags)
+                issues = issues.filter(tags__icontains=tags).order_by('-created_at')
 
         issues = issues.annotate(
             option1_count=Count('feedbacks', filter=Q(feedbacks__options='option1')),
