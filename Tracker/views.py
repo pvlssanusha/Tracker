@@ -512,11 +512,25 @@ def supportList(request):
 
 
 def hiringList(request):
-    hiring_objects = Hiring.objects.all().order_by('-created_at')
-    hiringcomments=HiringComment.objects.all()
-    
-    return render(request, 'hiringlist.html', {'requests': hiring_objects, 'comments': hiringcomments})
+    all_hirings = Hiring.objects.all().order_by('-created_at')
+    hiringcomments = HiringComment.objects.all()
 
+    # Separate pinned and non-pinned items
+    pinned_hirings = [hiring for hiring in all_hirings if hiring.pinned]
+    non_pinned_hirings = [hiring for hiring in all_hirings if not hiring.pinned]
+
+    # Combine pinned and non-pinned hirings for pagination
+    combined_hirings = pinned_hirings + non_pinned_hirings
+    paginator = Paginator(combined_hirings, 5)  # Show 5 hiring requests per page
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'hiringlist.html', {
+        'pinned_hirings': pinned_hirings,
+        'page_obj': page_obj,
+        'comments': hiringcomments
+    })
 
 
 def viewPrivateIssues(request):

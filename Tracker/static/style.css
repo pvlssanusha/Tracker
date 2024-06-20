@@ -1165,6 +1165,148 @@ a {
 	width: 50%;
 }
 
+
+/* hirings.html */
+.hiring-list-main{
+	height: 100%;
+	padding: 20px;
+	overflow: auto;
+}
+
+
+.hiring-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.hiring-item {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 5px;
+	width: 80%;
+	margin: 10px auto;
+}
+
+.hiring-item .pinned{
+	float: right;
+	background-color: #ccc;
+	border-radius: 10px;
+	padding: 5px 10px;
+}
+
+
+.hiring-name {
+    font-size: 20px;
+    margin-bottom: 10px;
+	color: #007bff;
+}
+
+.hiring-description, .hiring-url, .hiring-options {
+    margin-right: 16px;
+	font-size: 16px;
+	font-weight: 700;
+}
+
+.hiring-description span, .hiring-url span, .hiring-options span{
+    font-weight: 400;
+	font-size: 12px;
+}
+
+.hiring-comments {
+    margin-top: 5px;
+}
+
+.comment-description {
+    margin-left: 20px;
+    font-style: italic;
+}
+
+.hiring-comment-title{
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.hiring-item .meta-info{
+	display: flex;
+	flex-wrap: wrap;
+}
+
+
+.add-comment-link {
+    display: inline-block;
+    color: #007bff;
+    text-decoration: none;
+	margin-left: 16px;
+}
+
+.fill-form-link{
+	border:1px solid #007bff;
+	color: #007bff;
+	padding: 5px 10px;
+	display: flex;
+	height: max-content;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10px;
+	margin-top: 20px;
+	font-size: 16px;
+}
+
+.hiring-list-head{
+	display: flex;
+	justify-content: flex-end;
+	gap:20px;
+	flex-wrap: wrap;
+	align-items: flex-end;
+}
+
+.fill-form-link:hover{
+	font-weight: 700;
+}
+
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination .step-links {
+    display: flex;
+    gap: 10px;
+}
+
+.pagination a {
+    color: #007bff;
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+	font-size: 12px;
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease;
+}
+
+.pagination a:hover {
+    background-color: #e2e6ea;
+}
+
+.pagination .current {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #e9ecef;
+    font-weight: bold;
+}
+
+.pagination a:disabled {
+    color: #6c757d;
+    background-color: #e9ecef;
+    pointer-events: none;
+}
+
+
 @media (max-width: 768px) {
 	.profile {
 		flex-direction: column;

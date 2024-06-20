@@ -1,54 +1,55 @@
-<!-- hiring_list.html -->
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Add Issue{% endblock %}
+{% block title %}Hirings{% endblock %}
 
 {% block content %}
-
-<ul>
-    {% for request in requests %}
-    <div>
-      {% if request.pinned %}
-        <li>Name :{{ request.name }} - {{ request.created_at }}</li>
-        <p>Description :{{ request.description }}</p>
-        <p>URL :{{ request.description }}</p>
-        <p>Option  :{{ request.options}}</p>
-        <h1>Comments</h1>
-        {% for comment in comments %}
-          {%if request.id == comment.hiring.id %}
-
-            <p>{{comment.description}}</p>
-          {% endif %}
-          {% endfor %}
-      
-        <a id="addComment" href="{% url 'addhiringcomment' request.id %}">Add comment</a></h1>
+<div class="hiring-list-main">
+  <div class="hiring-list-head">
+  
+  <a class="fill-form-link" href="{% url 'hiring' %}">Fill a form for Hiring</a>
+  </div>
+<ul class="hiring-list">
+    {% for request in page_obj %}
+    <div class="hiring-item">
+        {% if request.pinned %}
+        <span class="pinned">Pinned</span>
+        {% endif %}
+        <li class="hiring-name">Name: {{ request.name }} - {{ request.created_at }}</li>
+        <div class="meta-info">
+          <p class="hiring-description"><span>Description:</span> {{ request.description }}</p>
+          <p class="hiring-url"><span>URL:</span> {{ request.url }}</p>
+          <p class="hiring-options"><span>Option:</span> {{ request.options }}</p>
+        </div>
+        <p class="hiring-comment-title">Comments <a class="add-comment-link" href="{% url 'addhiringcomment' request.id %}">Add comment</a></p>
+        <div class="hiring-comments">
+            {% for comment in comments %}
+            {% if request.id == comment.hiring.id %}
+            <p class="comment-description">{{ comment.description }}</p>
+            {% endif %}
+            {% endfor %}
+        </div>
+        
     </div>
-    {% endif %}
     {% endfor %}
-    {% for request in requests %}
-    <div>
-      {% if not  request.pinned %}
-        <li>Name :{{ request.name }} - {{ request.created_at }}</li>
-        <p>Description :{{ request.description }}</p>
-        <p>URL :{{ request.description }}</p>
-        <p>Option  :{{ request.options}}</p>
-        <h1>Comments</h1>
-        {% for comment in comments %}
-          {%if request.id == comment.hiring.id %}
-
-            <p>{{comment.description}}</p>
-          {% endif %}
-          {% endfor %}
-      
-        <a id="addComment" href="{% url 'addhiringcomment' request.id %}">Add comment</a></h1>
-    </div>
-    {% endif %}
-    {% endfor %}
-    <a class="nav-link" href="{% url 'hiring' %}">Fill a form for Hiring </a>
-
-
 </ul>
 
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+</div>
 {% endblock %}
-    
