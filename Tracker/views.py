@@ -1,5 +1,3 @@
-
-
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth import authenticate, login,update_session_auth_hash
 from django.contrib.auth.forms import AuthenticationForm
@@ -13,6 +11,7 @@ from .forms import *
 from .serializers import *
 from django.db.models import Count,Q
 import datetime
+from django.core.paginator import Paginator
 def signUp(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -139,7 +138,7 @@ def getIssue(self,id):
 @login_required(login_url='/login/')
 def getAllIssues(request):
     try:
-        issues = Issue.objects.filter(private=False)
+        issues = Issue.objects.filter(private=False).order_by()
         filter_form = IssueFilterForm(request.GET)
 
         if filter_form.is_valid():
@@ -160,7 +159,6 @@ def getAllIssues(request):
             if tags:
                 issues = issues.filter(tags__icontains=tags)
 
-        # data = IssueSerializer(issues, many=True).data
         issues = issues.annotate(
             option1_count=Count('feedbacks', filter=Q(feedbacks__options='option1')),
             option2_count=Count('feedbacks', filter=Q(feedbacks__options='option2')),
@@ -168,10 +166,20 @@ def getAllIssues(request):
             bool_true_count=Count('feedbacks', filter=Q(feedbacks__bool=True)),
             bool_false_count=Count('feedbacks', filter=Q(feedbacks__bool=False))
         )
-        return render(request, 'Display.html', {'data': issues, 'filter_form': filter_form,'userid':request.user.id})
+
+        paginator = Paginator(issues, 5)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        print(page_obj)
+
+        return render(request, 'Display.html', {
+            'page_obj': page_obj,
+            'filter_form': filter_form,
+            'userid': request.user.id
+        })
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
-    
+
 
 def add_comment(request, issue_id):
     issue = get_object_or_404(Issue, id=issue_id)

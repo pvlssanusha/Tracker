@@ -2,127 +2,149 @@
 {% load static %}
 {% block title %}Issues{% endblock %}
 {% block content %}
-<div class="issue-main">
-    <div class="section-head">Issues</div>
-
-    <!-- Filter Form -->
+<div class="display-main">
     <div class="filter-cont">
-    <form method="get" action="" class="form">
-        {{ filter_form.as_p }}
-        <p>
-        <button type="submit">Filter</button>
-        </p>
-    </form>
-</div>
+        <div class="showfilterbtnn">X</div>
+        <form method="get" action="" class="form">
+            {{ filter_form.as_p }}
+            <p>
+                <button type="submit">Filter</button>
+            </p>
+        </form>
+    </div>
+    <div class="issue-main">
+        <div class="section-head">Issues</div>
+        <div class="showfilterbtn">Apply Filters</div>
+        <div class="issues">
+            {% if user.company %}
+            <a class="issue" href="{% url 'privateissues' %}">View Private Issues</a>
+            {% endif %}
 
-    <div class="issues">
-        {% if user.company %}
-        <a class="issue" href="{% url 'privateissues' %}">View Private Issues</a>
-        {% endif %}
-
-        {% for issue in data %}
-        {% if issue.pinned %}
-        <div class="issue" >
-            <div class="issue-title">{{ issue.issuename }}</div>
-            <div class="issue-desc">{{ issue.description }}</div>
-            <div class="issue-spacing">
-                
-                <div><a  href="{% url 'addfeedback' issue.id %}">Give Feedback</a></div>
-                <div><a  href="{% url 'addcomment' issue.id %}">Add comment</a></div>
-                <div><a  href="{{ issue.id }}">View Issue</a></div>
-                <div><a class="fancy" href="{% url 'changeissuestatus' issue.id %}">
-                    <span class="top-key"></span>
-                    <span class="text">Change Status</span>
-                    <span class="bottom-key-1"></span>
-                    <span class="bottom-key-2"></span>
-                </a></div>
-                <div> <p>Company Name:<a href="{% url 'companydetails' issue.company.id %}">{{issue.company}}</a></p></div>
-        </div>
-            <div class="issue-meta">
-                <span class="meta-item">
-                    <i class="fas fa-eye"></i> {{ issue.viewcount }}
-                </span>
-                <span class="meta-item">
-                    <i class="fas fa-comments"></i> {{ issue.commentcount }}
-                </span>
+            {% for issue in page_obj %}
+            {% if issue.pinned %}
+            <div class="issue">
+                <span class="pinned">Pinned</span>
+                <div class="issue-title">{{ issue.issuename }} </div>
+                <div class="issue-meta-details">
+                    {% if userid == issue.created_by.id %}
+                        <p><span>Created By:</span>  <a href="{% url 'getuser' issue.id %}">{{ user.username }}(Owner)</a></p>
+                    {% else %}
+                        <p><span>Created By:</span> <a href="{% url 'getuser' issue.id %}"> {{ issue.created_by.custom_username }}</a></p>
+                    {% endif %}
+                    <p><span>Company :</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.company }}</a></p>
+                    <p><span>Status:</span> {{ issue.status }}</p>
+                </div>
+                <div class="issue-desc">{{ issue.description }}</div>
                 <span class="meta-item">
                     <div class="feedback-stats">
-                        <p>Option 1 Count: {{ issue.option1_count }}</p>
-                        <p>Option 2 Count: {{ issue.option2_count }}</p>
-                        <p>Option 3 Count: {{ issue.option3_count }}</p>
-                        <p>Bool True Count: {{ issue.bool_true_count }}</p>
-                        <p>Bool False Count: {{ issue.bool_false_count }}</p>
+                        <p>Option 1 : {{ issue.option1_count }}</p>
+                        <p>Option 2 : {{ issue.option2_count }}</p>
+                        <p>Option 3 : {{ issue.option3_count }}</p>
+                        <p>Bool True : {{ issue.bool_true_count }}</p>
+                        <p>Bool False : {{ issue.bool_false_count }}</p>
                     </div>
                 </span>
-                <span class="meta-item">
-                    <h3>Status {{ issue.status }}</h1> 
-                </span>                     
-                <p>Created By:<a href="{% url 'getuser' issue.id %}">
-                    {% if userid == issue.created_by.id  %}
-                        <h4>{{user.username}}(Owner)</h4>
-                    {% else %}
-                        <h4 class="mb-1">{{issue.created_by.custom_username}}</h4>
-                    {% endif %}
-                </a></p>
-                
-            </span>
+                <div class="issue-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-eye"></i> {{ issue.viewcount }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-comments"></i> {{ issue.commentcount }}
+                    </span>
+                    <div class="issue-spacing">
+                        <div><a href="{% url 'addfeedback' issue.id %}">Give Feedback</a></div>
+                        <div><a href="{% url 'addcomment' issue.id %}">Add comment</a></div>
+                        <div><a href="{% url 'changeissuestatus' issue.id %}">Change Status</a></div>
+                    </div>
+                </div>
+                <div>
+                    <a class="view-issue-btn" href="{{ issue.id }}">
+                        <span class="text">View Issue</span>
+                    </a>
+                </div>
             </div>
-        </div>
-        {% endif %}
-        {% endfor %}
+            {% endif %}
+            {% endfor %}
 
-        {% for issue in data %}
-        {% if not issue.pinned %}
-        <div class="issue" >
-            <div class="issue-title">{{ issue.issuename }}</div>
-            <div class="issue-desc">{{ issue.description }}</div>
-            <div class="issue-spacing">
-                
-                <div><a  href="{% url 'addfeedback' issue.id %}">Give Feedback</a></div>
-                <div><a  href="{% url 'addcomment' issue.id %}">Add comment</a></div>
-                <div><a  href="{{ issue.id }}">View Issue</a></div>
-                <div><a class="fancy" href="{% url 'changeissuestatus' issue.id %}">
-                    <span class="top-key"></span>
-                    <span class="text">Change Status</span>
-                    <span class="bottom-key-1"></span>
-                    <span class="bottom-key-2"></span>
-                </a></div>
-                <div> <p>Company Name:<a href="{% url 'companydetails' issue.company.id %}">{{issue.company}}</a></p></div>
-        </div>
-            <div class="issue-meta">
-                <span class="meta-item">
-                    <i class="fas fa-eye"></i> {{ issue.viewcount }}
-                </span>
-                <span class="meta-item">
-                    <i class="fas fa-comments"></i> {{ issue.commentcount }}
-                </span>
+            {% for issue in page_obj %}
+            {% if not issue.pinned %}
+            <div class="issue">
+                <div class="issue-title">{{ issue.issuename }} </div>
+                <div class="issue-meta-details">
+                    {% if userid == issue.created_by.id %}
+                        <p><span>Created By:</span>  <a href="{% url 'getuser' issue.id %}">{{ user.username }}(Owner)</a></p>
+                    {% else %}
+                        <p><span>Created By:</span> <a href="{% url 'getuser' issue.id %}"> {{ issue.created_by.custom_username }}</a></p>
+                    {% endif %}
+                    <p><span>Company :</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.company }}</a></p>
+                    <p><span>Status:</span> {{ issue.status }}</p>
+                </div>
+                <div class="issue-desc">{{ issue.description }}</div>
                 <span class="meta-item">
                     <div class="feedback-stats">
-                        <p>Option 1 Count: {{ issue.option1_count }}</p>
-                        <p>Option 2 Count: {{ issue.option2_count }}</p>
-                        <p>Option 3 Count: {{ issue.option3_count }}</p>
-                        <p>Bool True Count: {{ issue.bool_true_count }}</p>
-                        <p>Bool False Count: {{ issue.bool_false_count }}</p>
+                        <p>Option 1 : {{ issue.option1_count }}</p>
+                        <p>Option 2 : {{ issue.option2_count }}</p>
+                        <p>Option 3 : {{ issue.option3_count }}</p>
+                        <p>Bool True : {{ issue.bool_true_count }}</p>
+                        <p>Bool False : {{ issue.bool_false_count }}</p>
                     </div>
                 </span>
-                <span class="meta-item">
-                    <h3>Status {{ issue.status }}</h1> 
-                </span>                     
-                <p>Created By:<a href="{% url 'getuser' issue.id %}">
-                    {% if userid == issue.created_by.id  %}
-                        <h4>{{user.username}}(Owner)</h4>
-                    {% else %}
-                        <h4 class="mb-1">{{issue.created_by.custom_username}}</h4>
-                    {% endif %}
-                </a></p>
-                
-            </span>
+                <div class="issue-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-eye"></i> {{ issue.viewcount }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-comments"></i> {{ issue.commentcount }}
+                    </span>
+                    <div class="issue-spacing">
+                        <div><a href="{% url 'addfeedback' issue.id %}">Give Feedback</a></div>
+                        <div><a href="{% url 'addcomment' issue.id %}">Add comment</a></div>
+                        <div><a href="{% url 'changeissuestatus' issue.id %}">Change Status</a></div>
+                    </div>
+                </div>
+                <div>
+                    <a class="view-issue-btn" href="{{ issue.id }}">
+                        <span class="text">View Issue</span>
+                    </a>
+                </div>
             </div>
+            {% endif %}
+            {% endfor %}
         </div>
-        {% endif %}
-        {% endfor %}
-
-        
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
     </div>
 </div>
+
+<script>
+    document.querySelector('.showfilterbtn').addEventListener('click', function() {
+        var filterCont = document.querySelector('.filter-cont');
+        if (filterCont.style.display === 'none' || filterCont.style.display === '') {
+            filterCont.style.display = 'block';
+        } else {
+            filterCont.style.display = 'none';
+        }
+    });
+    document.querySelector('.showfilterbtnn').addEventListener('click', function() {
+        var filterCont = document.querySelector('.filter-cont');
+        if (filterCont.style.display === 'none' || filterCont.style.display === '') {
+            filterCont.style.display = 'block';
+        } else {
+            filterCont.style.display = 'none';
+        }
+    });
+</script>
 {% endblock %}
