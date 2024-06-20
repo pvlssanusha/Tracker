@@ -70,6 +70,7 @@ class Issue(models.Model):
     commentcount = models.PositiveIntegerField(default=0)
     private=models.BooleanField(default=False)
     pinned=models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.issuename

@@ -126,6 +126,18 @@ class IssueForm(forms.ModelForm):
         self.fields['product'].required = False
         self.fields['company'].queryset = Company.objects.all()
         self.fields['product'].queryset = Product.objects.none()
+        
+        self.fields['company'].widget.attrs.update({'class': 'company'})
+        self.fields['product'].widget.attrs.update({'class': 'product'})
+        self.fields['product_name'].widget.attrs.update({'class': 'product-data'})
+        self.fields['product_url'].widget.attrs.update({'class': 'product-data'})
+        self.fields['company_name'].widget.attrs.update({'class': 'company-data'})
+        self.fields['company_url'].widget.attrs.update({'class': 'company-data'})
+        self.fields['company_bio'].widget.attrs.update({'class': 'company-data'})
+        self.fields['company_pic'].widget.attrs.update({'class': 'company-data'})
+        self.fields['company_email'].widget.attrs.update({'class': 'company-data'})
+
+        
         for field_name, field in self.fields.items():
             if field.required:
                 field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')

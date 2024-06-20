@@ -4,6 +4,7 @@
 {% block title %}Add Issue{% endblock %}
 
 {% block content %}
+<div class="create-issue-main">
 <div id="terms" class="terms">
     <h2>Terms and Conditions</h2>
     <ul>
@@ -66,7 +67,7 @@
 <div id="loader" style="display: none;">
     <img src="{% static 'path/to/loader.gif' %}" alt="Loading...">
 </div>
-
+</div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -152,5 +153,50 @@
             });
         });
     });
+</script>
+
+
+<script>
+    document.querySelector('.company').addEventListener('change', function() {
+    if(!this.value){
+        const elements = document.querySelectorAll('.company-data');
+        elements.forEach(element => {
+            const parent = element.parentElement;
+            if (parent) {
+                parent.style.display = 'block';
+            }
+        });
+    }
+    if (this.value && this.value!='') {
+        const elements = document.querySelectorAll('.company-data');
+        elements.forEach(element => {
+            const parent = element.parentElement;
+            if (parent) {
+                parent.style.display = 'none';
+            }
+        });
+    }
+});
+
+document.querySelector('.product').addEventListener('change', function() {
+    if(!this.value){
+        const elements = document.querySelectorAll('.product-data');
+        elements.forEach(element => {
+            const parent = element.parentElement;
+            if (parent) {
+                parent.style.display = 'block';
+            }
+        });
+    }
+    if (this.value && this.value!='') {
+        const elements = document.querySelectorAll('.product-data');
+        elements.forEach(element => {
+            const parent = element.parentElement;
+            if (parent) {
+                parent.style.display = 'none';
+            }
+        });
+    }
+});
 </script>
 {% endblock %}
