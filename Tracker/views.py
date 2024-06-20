@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from django.contrib import messages
 from django.urls import reverse
 from rest_framework import status
+from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .forms import *
 from .serializers import *
@@ -195,6 +196,23 @@ def add_comment(request, issue_id):
     else:
         form = CommentForm()
     return render(request, 'addcomment.html', {'form': form, 'issue': issue})
+
+def add_hiring_comment(request, hiring_id):
+    print("entered",hiring_id)
+    hiring = Hiring.objects.get(id=hiring_id)
+    print("hiring",hiring)
+    if request.method == 'POST':
+        form = HiringCommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.hiring =hiring
+            comment.user = request.user
+            comment.save()
+            return redirect('hirings')
+    else:
+        form = HiringCommentForm()
+    return render(request, 'addhiringcomment.html', {'form': form, 'issue': hiring})
+
 def add_feedback(request, issue_id):
     issue = get_object_or_404(Issue, id=issue_id)
     if request.method == 'POST':
@@ -209,16 +227,16 @@ def add_feedback(request, issue_id):
     else:
         form = FeedbackForm()
     return render(request, 'addfeedback.html', {'form': form, 'issue': issue})
-@login_required(login_url='/login/')
-def editFeedback(request, feedback_id):
-    feedback = get_object_or_404(Feedback, id=feedback_id)
-    form = FeedbackForm(request.POST, instance=feedback)
+# @login_required(login_url='/login/')
+# def editFeedback(request, feedback_id):
+#     feedback = get_object_or_404(Feedback, id=feedback_id)
+#     form = FeedbackForm(request.POST, instance=feedback)
 
-    if form.is_valid():
-        form.save()
-        return JsonResponse({'status': 'success', 'message': 'Feedback updated successfully.'})
-    else:
-        return JsonResponse({'status': 'error', 'errors': form.errors})
+#     if form.is_valid():
+#         form.save()
+#         return JsonResponse({'status': 'success', 'message': 'Feedback updated successfully.'})
+#     else:
+#         return JsonResponse({'status': 'error', 'errors': form.errors})
 
 def load_products(request):
     company_id = request.GET.get('company_id')
@@ -326,10 +344,45 @@ def editIssue(request, issue_id):
 
 def editFeedback(request, feedback_id):
     feed = get_object_or_404(Feedback, id=feedback_id)
+    old_values = {
+                'options': feed.options,
+                'bool': feed.bool,
+                'enabled': feed.enabled,
+                'comment': feed.comment,
+                'pinned': feed.pinned
+            }
     if request.method == 'POST':
         form = EditFeedbackForm(request.POST, instance=feed)
         if form.is_valid():
+            # Capture old values
+
             form.save()
+            feed.refresh_from_db()
+            new_values = {
+                'options': feed.options,
+                'bool': feed.bool,
+                'enabled': feed.enabled,
+                'comment': feed.comment,
+                'pinned': feed.pinned
+            }
+
+            # Generate log entry
+            changes = []
+            for field in old_values:
+                if old_values[field] != new_values[field]:
+                    changes.append(f"{field} changed from '{old_values[field]}' to '{new_values[field]}'")
+
+            log_entry = f"Feedback updated by {request.user.username} on {timezone.now().strftime('%Y-%m-%d %H:%M:%S')}. Changes: {'; '.join(changes)}"
+
+            # Create a log entry after the feedback is updated
+            FeedbackLogs.objects.create(
+                feedback=feed,
+                old_values=json.dumps(old_values),
+                new_values=json.dumps(new_values),
+                timestamp=timezone.now(),
+                log_entry=log_entry
+            )
+
             messages.success(request, 'Feedback updated successfully')
             return redirect(reverse('issue', kwargs={'id': feed.issue.id}))  # Redirect to issue detail page after edit
     else:
@@ -454,9 +507,13 @@ def supportList(request):
     queries = Support.objects.all().order_by('-created_at')
     return render(request, 'supportlist.html', {'queries': queries})
 
+
 def hiringList(request):
-    requests = Hiring.objects.all().order_by('-created_at')
-    return render(request, 'hiringlist.html', {'requests': requests})
+    hiring_objects = Hiring.objects.all().order_by('-created_at')
+    hiringcomments=HiringComment.objects.all()
+    
+    return render(request, 'hiringlist.html', {'requests': hiring_objects, 'comments': hiringcomments})
+
 
 
 def viewPrivateIssues(request):
@@ -486,4 +543,10 @@ def viewPrivateIssues(request):
         return render(request, 'privateissue.html', {'data': privateissues, 'filter_form': filter_form,'userid':request.user.id,'user':user})
     except:
         return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
+    
+
+def getLogs(request,id):
+    feedback=Feedback.objects.get(id=id)
+    logs=FeedbackLogs.objects.filter(feedback=feedback).order_by('timestamp')
+    return render(request, 'feedbacklogs.html', {'logs': logs})
     

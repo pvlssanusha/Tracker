@@ -1,9 +1,53 @@
 <!-- hiring_list.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Add Issue{% endblock %}
+
+{% block content %}
 
 <ul>
     {% for request in requests %}
-        <li>{{ request.name }} - {{ request.created_at }}</li>
-        <p>{{ request.description }}</p>
+    <div>
+      {% if request.pinned %}
+        <li>Name :{{ request.name }} - {{ request.created_at }}</li>
+        <p>Description :{{ request.description }}</p>
+        <p>URL :{{ request.description }}</p>
+        <p>Option  :{{ request.options}}</p>
+        <h1>Comments</h1>
+        {% for comment in comments %}
+          {%if request.id == comment.hiring.id %}
+
+            <p>{{comment.description}}</p>
+          {% endif %}
+          {% endfor %}
+      
+        <a id="addComment" href="{% url 'addhiringcomment' request.id %}">Add comment</a></h1>
+    </div>
+    {% endif %}
     {% endfor %}
-    </ul>
+    {% for request in requests %}
+    <div>
+      {% if not  request.pinned %}
+        <li>Name :{{ request.name }} - {{ request.created_at }}</li>
+        <p>Description :{{ request.description }}</p>
+        <p>URL :{{ request.description }}</p>
+        <p>Option  :{{ request.options}}</p>
+        <h1>Comments</h1>
+        {% for comment in comments %}
+          {%if request.id == comment.hiring.id %}
+
+            <p>{{comment.description}}</p>
+          {% endif %}
+          {% endfor %}
+      
+        <a id="addComment" href="{% url 'addhiringcomment' request.id %}">Add comment</a></h1>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+
+</ul>
+
+{% endblock %}
     

@@ -27,8 +27,11 @@ urlpatterns = [
     path('support/', supportForm, name='support'),
     path('hiring/',hiringForm, name='hiring'),
     path('supportlist/',supportList, name='supportlist'),
-    path('hiringlist/',hiringList, name='hiringlist'),
+    path('hirings/',hiringList, name='hirings'),
+    # path('hirings/<str:id>',getHiring, name='hirng'),
     path('supportformsuccess/', supportFormSuccess, name='supportformsuccess'),
-      path('issue/<str:issue_id>/addcomment/', add_comment, name='addcomment'),
+    path('issue/<str:issue_id>/addcomment/', add_comment, name='addcomment'),
+    path('getlogs/<str:id>',getLogs, name='getlogs'),
+    path('hiringissue/<str:hiring_id>/addcomment/', add_hiring_comment, name='addhiringcomment'),
     path('issue/<str:issue_id>/addfeedback/', add_feedback, name='addfeedback')
 ]

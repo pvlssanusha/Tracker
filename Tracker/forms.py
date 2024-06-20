@@ -6,8 +6,8 @@ from .models import *
 from django.utils.safestring import mark_safe
 
 class SignUpForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    confirm_password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput, help_text="Enter a strong password.")
+    confirm_password = forms.CharField(widget=forms.PasswordInput, help_text="Re-enter your password to confirm.")
 
     class Meta:
         model = User
@@ -15,18 +15,26 @@ class SignUpForm(forms.ModelForm):
         widgets = {
             'company': forms.Select(attrs={'class': 'form-control'})
         }
+        help_texts = {
+            'username': "Enter your desired username.",
+            'firstname': "Enter your first name.",
+            'lastname': "Enter your last name.",
+            'email': "Enter your email address.",
+            'company': "Select your company from the list."
+        }
 
-    company_name = forms.CharField(max_length=100, required=False)
-    company_url = forms.URLField(required=False)
-    company_bio = forms.CharField(widget=forms.Textarea, required=False)
-    company_pic = forms.ImageField(required=False)
-    company_email = forms.EmailField(required=False)
-    captcha = CaptchaField()
+    company_name = forms.CharField(max_length=100, required=False, help_text="Enter your company's name.")
+    company_url = forms.URLField(required=False, help_text="Enter your company's website URL.")
+    company_bio = forms.CharField(widget=forms.Textarea, required=False, help_text="Enter a short biography for your company.")
+    company_pic = forms.ImageField(required=False, help_text="Upload a picture for your company.")
+    company_email = forms.EmailField(required=False, help_text="Enter your company's contact email.")
+    captcha = CaptchaField(help_text="Enter the text from the image above.")
 
     def _init_(self, *args, **kwargs):
         super(SignUpForm, self)._init_(*args, **kwargs)
         self.fields['company'].required = False
         self.fields['company'].queryset = Company.objects.all()
+        
         for field_name, field in self.fields.items():
             if field.required:
                 field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
@@ -70,14 +78,17 @@ class SignUpForm(forms.ModelForm):
 
 
 class ProductForm(forms.ModelForm):
-    name = forms.CharField(max_length=30)
-    url = forms.URLField(widget=forms.Textarea)
+    name = forms.CharField(max_length=30, help_text="Enter the product name.")
+    url = forms.URLField(widget=forms.Textarea, help_text="Enter the product URL.")
 
     class Meta:
         model = Product
         fields = "__all__"
         widgets = {
             'company': forms.Select(attrs={'class': 'form-control'})
+        }
+        help_texts = {
+            'company': "Select the company associated with this product."
         }
 
     def _init_(self, *args, **kwargs):
@@ -90,17 +101,24 @@ class ProductForm(forms.ModelForm):
 
 
 class IssueForm(forms.ModelForm):
-    company_name = forms.CharField(max_length=100, required=False)
-    company_url = forms.URLField(required=False)
-    company_bio = forms.CharField(widget=forms.Textarea, required=False)
-    company_pic = forms.ImageField(required=False)
-    company_email = forms.EmailField(required=False)
-    product_name = forms.CharField(max_length=100, required=False)
-    product_url = forms.URLField(required=False)
+    company_name = forms.CharField(max_length=100, required=False, help_text="Enter the company's name if not selecting from the list.")
+    company_url = forms.URLField(required=False, help_text="Enter the company's website URL if not selecting from the list.")
+    company_bio = forms.CharField(widget=forms.Textarea, required=False, help_text="Enter a short biography for the company if not selecting from the list.")
+    company_pic = forms.ImageField(required=False, help_text="Upload a picture for the company if not selecting from the list.")
+    company_email = forms.EmailField(required=False, help_text="Enter the company's contact email if not selecting from the list.")
+    product_name = forms.CharField(max_length=100, required=False, help_text="Enter the product's name if not selecting from the list.")
+    product_url = forms.URLField(required=False, help_text="Enter the product's URL if not selecting from the list.")
 
     class Meta:
         model = Issue
         fields = ['issuename', 'description', 'company', 'product', 'tags']
+        help_texts = {
+            'issuename': "Enter the name of the issue.",
+            'description': "Provide a detailed description of the issue.",
+            'company': "Select the company associated with this issue.",
+            'product': "Select the product associated with this issue.",
+            'tags': "Enter tags related to the issue."
+        }
 
     def __init__(self, *args, **kwargs):
         super(IssueForm, self).__init__(*args, **kwargs)
@@ -111,9 +129,6 @@ class IssueForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             if field.required:
                 field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
-
-        
-        
 
         if 'company' in self.data and self.data.get('company') != '':
             try:
@@ -128,15 +143,11 @@ class IssueForm(forms.ModelForm):
             except Company.DoesNotExist:
                 self.fields['product'].queryset = Product.objects.none()
 
-        
-
-
     def clean(self):
         cleaned_data = super().clean()
         company = cleaned_data.get('company')
         product_list = self.data.getlist('product')
         product = None
-
 
         if product_list and product_list[0] != '':
             try:
@@ -145,7 +156,6 @@ class IssueForm(forms.ModelForm):
                 cleaned_data['product'] = product
             except (Product.DoesNotExist, IndexError):
                 self.add_error('product', "Selected product does not exist.")
-
 
         if not company:
             for field in ['company_name', 'company_url', 'company_email', 'company_bio', 'company_pic']:
@@ -200,16 +210,30 @@ class IssueForm(forms.ModelForm):
             issue.save()
 
         return issue
+
 class CustomPasswordChangeForm(PasswordChangeForm):
     class Meta:
         model = User
         fields = ['old_password', 'new_password1', 'new_password2']
+        help_texts = {
+            'old_password': "Enter your current password.",
+            'new_password1': "Enter a new password.",
+            'new_password2': "Re-enter the new password to confirm."
+        }
 
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['firstname', 'lastname', 'email', 'username', 'image']
+        help_texts = {
+            'firstname': "Enter your first name.",
+            'lastname': "Enter your last name.",
+            'email': "Enter your email address.",
+            'username': "Enter your desired username.",
+            'image': "Upload a profile picture."
+        }
+
     def __init__(self, *args, **kwargs):
         super(UserProfileForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
@@ -221,6 +245,12 @@ class EditIssueForm(forms.ModelForm):
     class Meta:
         model = Issue
         fields = ['issuename', 'description', 'tags']
+        help_texts = {
+            'issuename': "Enter the name of the issue.",
+            'description': "Provide a detailed description of the issue.",
+            'tags': "Enter tags related to the issue."
+        }
+
     def __init__(self, *args, **kwargs):
         super(EditIssueForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
@@ -235,6 +265,10 @@ class IssueStatusForm(forms.ModelForm):
         widgets = {
             'status': forms.Select(attrs={'class': 'form-control'})
         }
+        help_texts = {
+            'status': "Select the current status of the issue."
+        }
+
     def __init__(self, *args, **kwargs):
         super(IssueStatusForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
@@ -242,17 +276,22 @@ class IssueStatusForm(forms.ModelForm):
                 field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
 
 class IssueFilterForm(forms.Form):
-    status = forms.ChoiceField(choices=Issue.STATUS_CHOICES, required=False)
-    created_by = forms.ModelChoiceField(queryset=User.objects.all(), required=False)
-    company = forms.ModelChoiceField(queryset=Company.objects.all(), required=False)
-    product = forms.ModelChoiceField(queryset=Product.objects.all(), required=False)
-    tags = forms.CharField(max_length=255, required=False)
+    status = forms.ChoiceField(choices=Issue.STATUS_CHOICES, required=False, help_text="Filter issues by status.")
+    created_by = forms.ModelChoiceField(queryset=User.objects.all(), required=False, help_text="Filter issues by the creator.")
+    company = forms.ModelChoiceField(queryset=Company.objects.all(), required=False, help_text="Filter issues by company.")
+    product = forms.ModelChoiceField(queryset=Product.objects.all(), required=False, help_text="Filter issues by product.")
+    tags = forms.CharField(max_length=255, required=False, help_text="Filter issues by tags.")
 
 
 class SupportQueryForm(forms.ModelForm):
     class Meta:
         model = Support
         fields = ['type', 'message']
+        help_texts = {
+            'type': "Select the type of support query.",
+            'message': "Enter your support message."
+        }
+
     def __init__(self, *args, **kwargs):
         super(SupportQueryForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
@@ -263,6 +302,13 @@ class HiringRequestForm(forms.ModelForm):
     class Meta:
         model = Hiring
         fields = ['name', 'url', 'options', 'description']
+        help_texts = {
+            'name': "Enter the name of the hiring request.",
+            'url': "Enter the URL for the hiring request.",
+            'options': "Select options for the hiring request.",
+            'description': "Provide a detailed description of the hiring request."
+        }
+
     def __init__(self, *args, **kwargs):
         super(HiringRequestForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
@@ -273,15 +319,28 @@ class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         fields = ['options', 'bool', 'comment']
+        help_texts = {
+            'options': "Select an option for the feedback.",
+            'bool': "Indicate whether the feedback is positive or negative.",
+            'comment': "Provide additional comments for the feedback."
+        }
+
     def __init__(self, *args, **kwargs):
         super(FeedbackForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             if field.required:
                 field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
+
 class EditFeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         fields = ['options', 'bool', 'comment']
+        help_texts = {
+            'options': "Select an option for the feedback.",
+            'bool': "Indicate whether the feedback is positive or negative.",
+            'comment': "Provide additional comments for the feedback."
+        }
+
     def __init__(self, *args, **kwargs):
         super(EditFeedbackForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
@@ -292,8 +351,26 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['description']
+        help_texts = {
+            'description': "Enter your comment here."
+        }
+
     def __init__(self, *args, **kwargs):
         super(CommentForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
+
+class HiringCommentForm(forms.ModelForm):
+    class Meta:
+        model = HiringComment
+        fields = ['description']
+        help_texts = {
+            'description': "Enter your comment here."
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(HiringCommentForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             if field.required:
                 field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
@@ -302,6 +379,12 @@ class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         fields = ['options', 'bool', 'comment']
+        help_texts = {
+            'options': "Select an option for the feedback.",
+            'bool': "Indicate whether the feedback is positive or negative.",
+            'comment': "Provide additional comments for the feedback."
+        }
+
     def __init__(self, *args, **kwargs):
         super(FeedbackForm, self).__init__(*args, **kwargs)
         for field_name, field in self.fields.items():

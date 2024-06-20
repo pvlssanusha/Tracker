@@ -151,6 +151,26 @@ class Hiring(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     pinned = models.BooleanField(default=False)
+    timestamp= models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.name} - {self.created_at}"
+    
+class HiringComment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    hiring = models.ForeignKey(Hiring, on_delete=models.CASCADE,)
+    enabled=models.BooleanField(default=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,)
+    description = models.TextField()
+    pinned=models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'Comment by {self.user.username} on {self.hiring.name}'
+    
+class FeedbackLogs(models.Model):
+    feedback = models.ForeignKey(Feedback, on_delete=models.CASCADE)
+    old_values = models.TextField(null=True,blank=True)
+    new_values = models.TextField(null=True,blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    log_entry = models.TextField(null=True,blank=True)
+
