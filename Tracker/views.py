@@ -231,10 +231,13 @@ def add_feedback(request, issue_id):
 #         return JsonResponse({'status': 'error', 'errors': form.errors})
 
 def load_products(request):
+    
     company_id = request.GET.get('company_id')
-    products = Product.objects.filter(company_id=company_id).all()
-    return JsonResponse(list(products.values('id', 'name')), safe=False)
-
+    print("company_id",company_id)
+    if company_id !="":
+        products = Product.objects.filter(company_id=company_id).all()
+        return JsonResponse(list(products.values('id', 'name')), safe=False)
+    return JsonResponse({},safe=False)
 
 @login_required(login_url='login/')
 def change_password(request):
