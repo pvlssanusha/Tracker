@@ -92,10 +92,10 @@ def getIssue(self,id):
     try:
         object=Issue.objects.get(id=id)
         companyid=object.company.id
+        companyuser=False
         if self.user.company==object.company:
-            companyuser=True
-        else:
-            companyuser=False
+            if self.user.companyuser:
+                companyuser=True
         try:
             view=ViewedBy.objects.get(user=self.user,issue=object)
         except:
@@ -119,7 +119,7 @@ def getIssue(self,id):
             pass
         edit=False
         try:
-            feed=Feedback.objects.filter(issue=object,user=self.user)
+            feed=Feedback.objects.filter(issue=object,user=self.user,enabled=True)
             if len(feed)>0:
                 edit=True
         except:
@@ -139,7 +139,7 @@ def getIssue(self,id):
 @login_required(login_url='/login/')
 def getAllIssues(request):
     try:
-        issues = Issue.objects.filter(private=False).order_by('-created_at')
+        issues = Issue.objects.filter(private=False,enabled=True).order_by('-created_at')
         filter_form = IssueFilterForm(request.GET)
 
         if filter_form.is_valid():
@@ -172,14 +172,103 @@ def getAllIssues(request):
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         print(page_obj)
+        usercompanyid=None 
+        if request.user.companyuser:
+            user=request.user
+            print(user)
+            usercompanyid=user.company.id
+        print(usercompanyid)
 
         return render(request, 'Display.html', {
             'page_obj': page_obj,
             'filter_form': filter_form,
+            'user':request.user,
+            'usercompanyid':usercompanyid,
             'userid': request.user.id
         })
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
+    
+
+def viewPrivateIssues(request):
+    user=request.user
+    try:
+        issues=Issue.objects.filter(company=user.company,private=True,enabled=True)
+        print(issues,user.company)
+        filter_form = IssueFilterForm(request.GET)
+        if filter_form.is_valid():
+            status = filter_form.cleaned_data.get('status')
+            created_by = filter_form.cleaned_data.get('created_by')
+            company = filter_form.cleaned_data.get('company')
+            product = filter_form.cleaned_data.get('product')
+            tags = filter_form.cleaned_data.get('tags')
+
+            if status:
+                issues = issues.filter(status=status)
+            if created_by:
+                issues = issues.filter(created_by=created_by)
+            if company:
+                issues = issues.filter(company=company)
+            if product:
+                issues = issues.filter(product=product)
+            if tags:
+                issues = issues.filter(tags__icontains=tags)
+            
+            paginator = Paginator(issues, 5)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+            print(page_obj)
+            usercompanyid=None 
+            if request.user.companyuser:
+                user=request.user
+                print(user)
+                usercompanyid=user.company.id
+            print(usercompanyid)
+
+        # data = IssueSerializer(issues, many=True).data
+        return render(request, 'privateissue.html', {'page_obj': page_obj, 'filter_form': filter_form,'userid':request.user.id,'user':user,'usercompanyid':usercompanyid})
+    except:
+        return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
+    
+def viewAdminPrivateIssues(request):
+    user=request.user
+    try:
+        issues=Issue.objects.filter(private=True,enabled=True)
+        filter_form = IssueFilterForm(request.GET)
+        if filter_form.is_valid():
+            status = filter_form.cleaned_data.get('status')
+            created_by = filter_form.cleaned_data.get('created_by')
+            company = filter_form.cleaned_data.get('company')
+            product = filter_form.cleaned_data.get('product')
+            tags = filter_form.cleaned_data.get('tags')
+
+            if status:
+                issues = issues.filter(status=status)
+            if created_by:
+                issues = issues.filter(created_by=created_by)
+            if company:
+                issues = issues.filter(company=company)
+            if product:
+                issues = issues.filter(product=product)
+            if tags:
+                issues = issues.filter(tags__icontains=tags)
+            
+            paginator = Paginator(issues, 5)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+            print(page_obj)
+            usercompanyid=None 
+            if request.user.companyuser:
+                user=request.user
+                print(user)
+                usercompanyid=user.company.id
+            print(usercompanyid)
+
+        # data = IssueSerializer(issues, many=True).data
+        return render(request, 'adminprivateissue.html', {'page_obj': page_obj, 'filter_form': filter_form,'userid':request.user.id,'user':user,'usercompanyid':usercompanyid})
+    except:
+        return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
+    
 
 
 def add_comment(request, issue_id):
@@ -272,7 +361,8 @@ def getUser(request,id):
     company=False
     try:
         companyid=request.user.company.id
-        company=True
+        if request.user.companyuser:
+            company=True
     except:
         pass
     issues_created = Issue.objects.filter(created_by=user,enabled=True)
@@ -296,12 +386,13 @@ def getUser(request,id):
 @login_required(login_url='login/')
 def getProfile(request,id):
     user = get_object_or_404(User, id=id)
-    print("user")
+    print("user",user)
     #user=issue.created_by
     company=False
     try:
         companyid=request.user.company.id
-        company=True
+        if request.user.companyuser:
+            company=True
     except:
         companyid=None
     issues_created = Issue.objects.filter(created_by=user,enabled=True)
@@ -411,7 +502,7 @@ def companyDetails(request, company_id):
         context['products'] = None
 
     try:
-        issues = Issue.objects.filter(company=company)
+        issues = Issue.objects.filter(company=company,enabled=True)
         context['issues_count'] = issues.count()
         
         # Get status choices from the Issue model
@@ -457,11 +548,26 @@ def companyDetails(request, company_id):
 
 def changeIssueStatus(request, issue_id):
     issue = get_object_or_404(Issue, id=issue_id)
+    oldstatus= issue.status
+
 
     if request.method == 'POST':
         form = IssueStatusForm(request.POST, instance=issue)
         if form.is_valid():
             form.save()
+            newstatus=form.cleaned_data['status']
+            user=request.user
+            log_entry = f"Issue Status updated by {request.user.username} on {timezone.now().strftime('%Y-%m-%d %H:%M:%S')} from {oldstatus} to {newstatus}"
+            IssueStatusLog.objects.create(
+                oldstatus=oldstatus,
+                newstatus=newstatus,
+                issue=issue,
+                user=user,
+                timestamp=timezone.now(),
+                log_entry=log_entry
+            )
+            messages.success(request, 'Issue Status updated successfully')
+
             return redirect(reverse('issue', args=[issue_id]))  # Redirect to the issue details page
     else:
         form = IssueStatusForm(instance=issue)
@@ -533,37 +639,15 @@ def hiringList(request):
     })
 
 
-def viewPrivateIssues(request):
-    user=request.user
-    try:
-        privateissues=Issue.objects.filter(company=user.company,private=True)
-        filter_form = IssueFilterForm(request.GET)
-        if filter_form.is_valid():
-            status = filter_form.cleaned_data.get('status')
-            created_by = filter_form.cleaned_data.get('created_by')
-            company = filter_form.cleaned_data.get('company')
-            product = filter_form.cleaned_data.get('product')
-            tags = filter_form.cleaned_data.get('tags')
 
-            if status:
-                issues = issues.filter(status=status)
-            if created_by:
-                issues = issues.filter(created_by=created_by)
-            if company:
-                issues = issues.filter(company=company)
-            if product:
-                issues = issues.filter(product=product)
-            if tags:
-                issues = issues.filter(tags__icontains=tags)
-
-        # data = IssueSerializer(issues, many=True).data
-        return render(request, 'privateissue.html', {'data': privateissues, 'filter_form': filter_form,'userid':request.user.id,'user':user})
-    except:
-        return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
-    
 
 def getLogs(request,id):
     feedback=Feedback.objects.get(id=id)
     logs=FeedbackLogs.objects.filter(feedback=feedback).order_by('timestamp')
     return render(request, 'feedbacklogs.html', {'logs': logs})
+
+def getIssueLogs(request,id):
+    issue=Issue.objects.get(id=id)
+    logs=IssueStatusLog.objects.filter(issue=issue).order_by('timestamp')
+    return render(request, 'issuestatuslog.html', {'logs': logs})
     

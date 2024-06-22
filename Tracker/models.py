@@ -174,3 +174,12 @@ class FeedbackLogs(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     log_entry = models.TextField(null=True,blank=True)
 
+class IssueStatusLog(models.Model):
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    oldstatus=models.TextField(null=True,blank=True)
+    newstatus=models.TextField(null=True,blank=True)
+    log_entry = models.TextField(null=True,blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+

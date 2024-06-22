@@ -111,7 +111,7 @@ class IssueForm(forms.ModelForm):
 
     class Meta:
         model = Issue
-        fields = ['issuename', 'description', 'company', 'product', 'tags']
+        fields = ['issuename', 'description', 'company', 'product', 'tags','private']
         help_texts = {
             'issuename': "Enter the name of the issue.",
             'description': "Provide a detailed description of the issue.",
@@ -286,6 +286,9 @@ class IssueStatusForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             if field.required:
                 field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
+        status_choices = self.fields['status'].choices
+        filtered_choices = [choice for choice in status_choices if choice[0] != 'created']
+        self.fields['status'].choices = filtered_choices
 
 class IssueFilterForm(forms.Form):
     status = forms.ChoiceField(choices=Issue.STATUS_CHOICES, required=False, help_text="Filter issues by status.")

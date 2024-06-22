@@ -27,12 +27,12 @@
                         <p><span>Created By:</span> <a href="{% url 'getuser' issue.id %}"> {{ issue.created_by.custom_username }}</a></p>
                     {% endif %}
                     <p><span>Company Name :</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.company }}</a></p>
-                    <p><span>Company URL:</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.company.url }}</a></p>
+                    <p><span>Company URL :</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.company.url }}</a></p>
                     <p><span>Product  Name:</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.product.name }}</a></p>
                     <p><span>Product URL :</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.product.url }}</a></p>
                     <p><span>Status:</span> {{ issue.status }}</p>
                 </div>
-                <div class="issue-desc">Description:{{ issue.description }}</div>
+                <div class="issue-desc">Description: {{ issue.description }}</div>
                 <span class="meta-item">
                     <div class="feedback-stats">
                         <p>Option 1 : {{ issue.option1_count }}</p>
@@ -83,7 +83,7 @@
                     <p><span>Product URL :</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.product.url }}</a></p>
                     <p><span>Status:</span> {{ issue.status }}</p>
                 </div>
-                <div class="issue-desc">Description: {{ issue.description }}</div>
+                <div class="issue-desc">Description:{{ issue.description }}</div>
                 <span class="meta-item">
                     <div class="feedback-stats">
                         <p>Option 1 : {{ issue.option1_count }}</p>

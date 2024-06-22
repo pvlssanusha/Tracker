@@ -19,6 +19,7 @@
                     Comments: <span class="text-bold">{{issue.commentcount}}</span></p>
                 <p>Issue Status:
                     <span class="text-bold">{{issue.status}}</span></p>
+                    <a href="{% url 'getissuestatuslogs' issue.id %}">View IssueStatus Log</a>
                 <div class="issue-btns">
                     {% if companyuser %}
                     <a class="fancy" href="{% url 'changeissuestatus' issue.id %}">
@@ -71,16 +72,19 @@
                     {% if pinnedcomments %}
                     <div class="list-group">
                         {% for comment in pinnedcomments %}
+                        
                         <div href="#" class="comment-item">
+                            
                             <img src="https://i.pinimg.com/564x/3d/91/09/3d910919cf4d41c1114457504dc29201.jpg" />
                             <div>
                                 <div class="d-flex">
                                     <h4>{{comment.user.custom_username}}</h4>
                                     <small>{{comment.timestamp}}</small>
-                                    <h3>Pinned by</h3>
+                                    
                                 </div>
                                 <p class="mb-1">{{comment.description}}</p>
                             </div>
+                            <div class="pinned">Pinned</div>
                         </div>
                         {% endfor %}
                     </div>
@@ -128,14 +132,16 @@
                                         {% else %}
                                         <h4 class="mb-1">{{feed.user.custom_username}}</h4>
                                         {% endif %}
-                                        <h2>Pinned</h2>
+                                        
                                         <small>{{feed.timestamp}}</small>
+                                        <div class="pinned">Pinned</div>
                                     </div>
                                     <div class="d-flex">
                                         <p><span class="text-bold">option :</span>{{feed.options}}</p>
                                         <p><span class="text-bold">bool :</span> {{feed.bool}}</p>
+                                        <p><span class="text-bold">comment :</span> {{feed.comment}}</p>
                                     </div>
-                                    <p><span class="text-bold">comment :</span> {{feed.comment}}</p>
+                                    
                                     {% if userid == feed.user.id %}
                                     <a href="{% url 'editfeedback' feed.id %}">Edit Feedback</a>
                                    

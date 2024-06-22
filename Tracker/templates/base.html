@@ -60,7 +60,7 @@
 						</li>
 						<li
 							class="nav-item {% if request.path == 'profile'%}active{% endif %}">
-							<a class="nav-link" href="{% url 'getprofile' user.id %}">
+							<a class="nav-link" href="{% url 'getprofile' request.user.id %}">
 								Profile
 							</a>
 						</li>
@@ -71,6 +71,12 @@
 						<li
 							class="nav-item {% if request.path == '/hiring/' %}active{% endif %}">
 							<a class="nav-link" href="{% url 'hirings' %}"> Hiring </a>
+						</li>
+						<li class="nav-item">
+							<form method="post" action="{% url 'changepassword' %}">
+								{% csrf_token %}
+								<button type="submit" class="btn btn-link">Change Password</button>
+							</form>
 						</li>
 						<li class="nav-item">
 							<form method="post" action="{% url 'logout' %}">

@@ -12,7 +12,9 @@ urlpatterns = [
     path('issues/<str:id>',getIssue, name='issue'),
     path('issues/', getAllIssues, name='issues'),
     path('privateissues/',viewPrivateIssues, name='privateissues'),
+    path('adminprivateissues/',viewAdminPrivateIssues, name='adminprivateissues'),
     path('privateissues/<str:id>',getIssue, name='privateissues'),
+    path('adminprivateissues/<str:id>',getIssue, name='adminprivateissues'),
     # path('addcomment/',addComment, name='addcomment'),
     # path('addfeedback/',addFeedback, name='addfeedback'),
     path('ajax/load-products/',load_products, name='load_products'),
@@ -32,6 +34,7 @@ urlpatterns = [
     path('supportformsuccess/', supportFormSuccess, name='supportformsuccess'),
     path('issue/<str:issue_id>/addcomment/', add_comment, name='addcomment'),
     path('getlogs/<str:id>',getLogs, name='getlogs'),
+    path('getissuestatuslogs/<str:id>',getIssueLogs, name='getissuestatuslogs'),
     path('hiringissue/<str:hiring_id>/addcomment/', add_hiring_comment, name='addhiringcomment'),
     path('issue/<str:issue_id>/addfeedback/', add_feedback, name='addfeedback')
 ]
