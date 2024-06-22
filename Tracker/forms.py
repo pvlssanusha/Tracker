@@ -108,10 +108,11 @@ class IssueForm(forms.ModelForm):
     company_email = forms.EmailField(required=False, help_text="Enter the company's contact email if not selecting from the list.")
     product_name = forms.CharField(max_length=100, required=False, help_text="Enter the product's name if not selecting from the list.")
     product_url = forms.URLField(required=False, help_text="Enter the product's URL if not selecting from the list.")
+    tags_field = forms.CharField(label='Tags', required=False, widget=forms.TextInput(attrs={'class': 'tag-input'}))
 
     class Meta:
         model = Issue
-        fields = ['issuename', 'description', 'company', 'product', 'tags','private']
+        fields = ['issuename', 'description', 'company', 'product', 'tags_field','private']
         help_texts = {
             'issuename': "Enter the name of the issue.",
             'description': "Provide a detailed description of the issue.",
@@ -178,6 +179,8 @@ class IssueForm(forms.ModelForm):
             for field in ['product_name', 'product_url']:
                 if not cleaned_data.get(field):
                     self.add_error(field, f"{field.replace('_', ' ').capitalize()} is required if no product is selected.")
+        
+        return cleaned_data
 
         return cleaned_data
 
@@ -217,7 +220,14 @@ class IssueForm(forms.ModelForm):
                     company=company 
                 )
                 issue.product = product
-
+        tag_names = self.cleaned_data.get('tags', '')
+        if tag_names:
+            tag_list = tag_names.split(',')
+            tags = []
+            for tag_name in tag_list:
+                tag, created = Tag.objects.get_or_create(name=tag_name.strip())
+                tags.append(tag)
+            issue.tags.set(tags)
         if commit:
             issue.save()
 
@@ -254,9 +264,10 @@ class UserProfileForm(forms.ModelForm):
 
 
 class EditIssueForm(forms.ModelForm):
+    tags_field = forms.CharField(label='Tags', required=False, widget=forms.TextInput(attrs={'class': 'tag-input'}))
     class Meta:
         model = Issue
-        fields = ['issuename', 'description', 'tags']
+        fields = ['issuename', 'description', 'tags_field']
         help_texts = {
             'issuename': "Enter the name of the issue.",
             'description': "Provide a detailed description of the issue.",
@@ -268,6 +279,19 @@ class EditIssueForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             if field.required:
                 field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
+    def save(self, commit=True):
+        issue = super().save(commit=False)
+        tag_names = self.cleaned_data.get('tags', '')
+        if tag_names:
+            tag_list = tag_names.split(',')
+            tags = []
+            for tag_name in tag_list:
+                tag, created = Tag.objects.get_or_create(name=tag_name.strip())
+                tags.append(tag)
+            issue.tags.set(tags)
+        if commit:
+            issue.save()
+
 
 
 class IssueStatusForm(forms.ModelForm):
@@ -295,7 +319,7 @@ class IssueFilterForm(forms.Form):
     created_by = forms.ModelChoiceField(queryset=User.objects.all(), required=False, help_text="Filter issues by the creator.")
     company = forms.ModelChoiceField(queryset=Company.objects.all(), required=False, help_text="Filter issues by company.")
     product = forms.ModelChoiceField(queryset=Product.objects.all(), required=False, help_text="Filter issues by product.")
-    tags = forms.CharField(max_length=255, required=False, help_text="Filter issues by tags.")
+    tags = forms.ModelChoiceField(queryset=Tag.objects.all(), required=False, help_text="Filter issues by product.")
 
 
 class SupportQueryForm(forms.ModelForm):

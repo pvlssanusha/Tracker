@@ -9,4 +9,19 @@
 		<button type="submit">Save Changes</button>
 	</form>
 </div>
+<script>
+    var taglist = {{ taglist|safe }}
+    var input = document.querySelector('input[name=tags_field]');
+    // initialize Tagify on the above input node reference
+    new Tagify(input, {
+        whitelist: taglist,
+        dropdown: {
+            mapValueTo: 'full',
+            classname: 'tagify__dropdown--rtl-example',
+            enabled: 0, // shows the suggestiosn dropdown once field is focused
+            RTL: true,
+            escapeHTML: false // allows HTML inside each suggestion item
+        }
+    })
+</script>   
 {% endblock %}

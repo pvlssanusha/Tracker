@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import *;
 class IssueAdmin(admin.ModelAdmin):
-    list_display = ('id','issuename','description','product','status','tags','created_by','company')
+    list_display = ('id','issuename','description','product','status','created_by','company')
 class ViewedByAdmin(admin.ModelAdmin):
     list_display=('id','timestamp','user','issue',)
 
@@ -10,6 +10,7 @@ class UserAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(User,UserAdmin)
 admin.site.register(Company)
+admin.site.register(Tag)
 admin.site.register(FeedbackLogs)
 admin.site.register(HiringComment)
 admin.site.register(Issue,IssueAdmin)

@@ -2,6 +2,7 @@ from django.db import models
 import json
 from django.contrib.auth.models import AbstractUser
 import uuid
+from django.contrib.postgres.fields import ArrayField
 # Company model
 class Company(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -46,7 +47,12 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+class Tag(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(max_length=255,blank=True,null=True)
 
+    def __str__(self):
+        return self.name
 # Issue model
 class Issue(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -63,7 +69,7 @@ class Issue(models.Model):
     created_by = models.ForeignKey('User', on_delete=models.CASCADE,)
     company = models.ForeignKey('Company', on_delete=models.CASCADE,)
     product = models.ForeignKey('Product', on_delete=models.CASCADE, null=True, blank=True)
-    tags = models.TextField()  # Store tags as a JSON list
+    tags = models.ManyToManyField('Tag')
     status = models.CharField(max_length=50, choices=STATUS_CHOICES,default='created')
     viewcount = models.PositiveIntegerField(default=0)
     feedbackcount = models.PositiveIntegerField(default=0)

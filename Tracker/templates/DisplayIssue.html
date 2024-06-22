@@ -9,7 +9,11 @@
             <div class="issue-details">
                 <p>Created By:<a href="{% url 'getuser' issue.id %}">{{ issue.created_by}}</a></p>
                 <p>Company Name:<a href="{% url 'companydetails' companyid %}">{{issue.company}}</a></p>
-                <p>Tags: <span class="text-bold">{{issue.tags}}</span></p>
+                <p>Tags:
+                    {% for tag in tags %}
+                     <span class="text-bold"> {{tag.name}}      </span>
+                     {% endfor %}
+                    </p>
                 <p id="viewCount" class="view-btn">Views: <span class="text-bold" >{{issue.viewcount}}</span></p>
                 <p>
                     Feedbacks:

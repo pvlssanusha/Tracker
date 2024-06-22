@@ -37,8 +37,8 @@
                 <!-- Display tag counts -->
                 <h3>Total Issues Grouped by Tags:</h3>
                 <ul>
-                    {% for tag_count in tag_counts %}
-                        <li>{{ tag_count.tags }}: {{ tag_count.count }}</li>
+                    {% for tag,count in tag_counts.items %}
+                        <li>{{ tag}}: {{ count}}</li>
                     {% endfor %}
                 </ul>
                 

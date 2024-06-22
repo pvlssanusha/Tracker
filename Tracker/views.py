@@ -66,6 +66,32 @@ def addProduct(request):
     else:
         form=ProductForm()
         return render(request, 'Product.html', {'form': form, 'title': 'Add Product'})
+def save_tags(request, issue):
+    # tags = form.cleaned_data['tags_field']
+    # tag_names = form.cleaned_data['tags_field']
+    # tag_names = [tag.strip() for tag in tags.split(',') if tag.strip()]
+    tag_names = json.loads(request.POST['tags_field'])
+    issue.tags.clear()
+    for tag_name in tag_names:
+        # tag, created = Tag.objects.get_or_create(name=tag_name)
+        tag, created = Tag.objects.get_or_create(name=tag_name['value'])
+        issue.tags.add(tag)   
+
+def get_taglist():
+    taglist = '['
+    total = Tag.objects.all().count()
+    i = 0
+    for tag in Tag.objects.all():
+        description = tag.description
+        if not description:
+            description = tag.name
+        taglist = taglist + '{ value:"' + tag.name + '", full:"' + description + '"}'
+        i = i + 1
+        if i < total:
+            taglist = taglist + ','
+    taglist = taglist + ']'
+    return taglist
+
 
 @login_required(login_url='/login/')
 def addIssue(request):
@@ -79,13 +105,14 @@ def addIssue(request):
             issue = form.save(commit=False)
             issue.created_by = request.user
             issue.save()
+            save_tags(request, issue)
             return redirect('issues')
         else:
             print(f"Form errors: {form.errors}")
     else:
         form = IssueForm()
 
-    return render(request, 'Issue.html', {'form': form, 'title': 'Register Issue'})
+    return render(request, 'Issue.html', {'form': form, 'title': 'Register Issue','taglist': get_taglist()})
 
 @login_required(login_url='/login/')
 def getIssue(self,id):
@@ -131,8 +158,9 @@ def getIssue(self,id):
         else:
             value=False
         form=FeedbackForm()
+        tags=object.tags.all()
 
-        return render(self,'DisplayIssue.html',{'issue':object,'edit':edit,'form':form,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'feedbackCount':len(feedback),'viewedby':viewedobjs,'value':value,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
+        return render(self,'DisplayIssue.html',{'issue':object,'tags':tags,'edit':edit,'form':form,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'feedbackCount':len(feedback),'viewedby':viewedobjs,'value':value,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'},status=status.HTTP_404_NOT_FOUND)
 
@@ -140,6 +168,7 @@ def getIssue(self,id):
 def getAllIssues(request):
     try:
         issues = Issue.objects.filter(private=False,enabled=True).order_by('-created_at')
+        print(issues)
         filter_form = IssueFilterForm(request.GET)
 
         if filter_form.is_valid():
@@ -148,17 +177,20 @@ def getAllIssues(request):
             company = filter_form.cleaned_data.get('company')
             product = filter_form.cleaned_data.get('product')
             tags = filter_form.cleaned_data.get('tags')
-
+            print(tags,type(tags))
             if status:
                 issues = issues.filter(status=status).order_by('-created_at')
+            print(issues,2)
             if created_by:
                 issues = issues.filter(created_by=created_by).order_by('-created_at')
             if company:
                 issues = issues.filter(company=company).order_by('-created_at')
             if product:
                 issues = issues.filter(product=product).order_by('-created_at')
+            print(issues,2)
             if tags:
-                issues = issues.filter(tags__icontains=tags).order_by('-created_at')
+                issues = issues.filter(tags=tags).order_by('-created_at')
+            print(issues,3)
 
         issues = issues.annotate(
             option1_count=Count('feedbacks', filter=Q(feedbacks__options='option1')),
@@ -430,11 +462,13 @@ def editIssue(request, issue_id):
         form = EditIssueForm(request.POST, instance=issue)
         if form.is_valid():
             form.save()
+            save_tags(request,issue)
             messages.success(request, 'Issue updated successfully')
             return redirect(reverse('issue', kwargs={'id': issue_id}))  # Redirect to issue detail page after edit
     else:
         form = EditIssueForm(instance=issue)
-    return render(request, 'editissue.html', {'form': form})
+        form.fields['tags_field'].initial = ','.join([tag.name for tag in issue.tags.all()])
+    return render(request, 'editissue.html', {'form': form,'taglist':get_taglist()})
 
 def editFeedback(request, feedback_id):
     feed = get_object_or_404(Feedback, id=feedback_id)
@@ -512,11 +546,14 @@ def companyDetails(request, company_id):
         # Count issues per status
         status_counts = issues.values('status').annotate(count=Count('id'))
         context['status_counts'] = status_counts
-        
+        print("entered")
         # Count issues per tag
-        tag_counts = issues.values('tags').annotate(count=Count('id'))
-        context['tag_counts'] = tag_counts
-        
+        tag_counts = Tag.objects.filter(issue__in=issues).annotate(count=Count('id')).values('name', 'count')
+        tag_counts_dict = {tag['name']: tag['count'] for tag in tag_counts}
+
+        context['tag_counts'] = tag_counts_dict
+        print('anu')
+        print(tag_counts_dict,"sss")
         context['issues'] = issues
         
         # Specific statistics for each product
