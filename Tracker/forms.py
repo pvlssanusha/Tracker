@@ -6,8 +6,7 @@ from .models import *
 from django.utils.safestring import mark_safe
 
 class SignUpForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput, help_text="Enter a strong password.")
-    confirm_password = forms.CharField(widget=forms.PasswordInput, help_text="Re-enter your password to confirm.")
+    
 
     class Meta:
         model = User
@@ -23,6 +22,8 @@ class SignUpForm(forms.ModelForm):
             'company': "Select your company from the list."
         }
 
+    password = forms.CharField(label="Password",widget=forms.PasswordInput, help_text="Enter a strong password.")
+    confirm_password = forms.CharField(label="Confirm Passowrd",widget=forms.PasswordInput, help_text="Re-enter your password to confirm.")
     company_name = forms.CharField(max_length=100, required=False, help_text="Enter your company's name.")
     company_url = forms.URLField(required=False, help_text="Enter your company's website URL.")
     company_bio = forms.CharField(widget=forms.Textarea, required=False, help_text="Enter a short biography for your company.")
@@ -42,9 +43,9 @@ class SignUpForm(forms.ModelForm):
         self.fields['company_pic'].widget.attrs.update({'class': 'company-data'})
         self.fields['company_email'].widget.attrs.update({'class': 'company-data'})
         
-        # for field_name, field in self.fields.items():
-        #     if field.required:
-        #         field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
 
     def clean(self):
         cleaned_data = super().clean()
