@@ -242,6 +242,35 @@ class CustomPasswordChangeForm(PasswordChangeForm):
             'new_password1': "Enter a new password.",
             'new_password2': "Re-enter the new password to confirm."
         }
+class ReportIssueForm(forms.ModelForm):
+    class Meta:
+        model=ReportIssue
+        fields = ['options','description']
+    def __init__(self, *args, **kwargs):
+        super(ReportIssueForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
+class ReportFeedbackForm(forms.ModelForm):
+    class Meta:
+        model=ReportFeedback
+        fields = ['options','description']
+    def __init__(self, *args, **kwargs):
+        super(ReportFeedbackForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
+class ReportCommentForm(forms.ModelForm):
+    class Meta:
+        model=ReportComment
+        fields = ['options','description']
+    def __init__(self, *args, **kwargs):
+        super(ReportCommentForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
+
+
 
 
 class UserProfileForm(forms.ModelForm):

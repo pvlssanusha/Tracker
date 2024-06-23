@@ -23,7 +23,21 @@
                     Comments: <span class="text-bold">{{issue.commentcount}}</span></p>
                 <p>Issue Status:
                     <span class="text-bold">{{issue.status}}</span></p>
-                    <a href="{% url 'getissuestatuslogs' issue.id %}">View IssueStatus Log</a>
+                    <a  class ='fancy' href="{% url 'getissuestatuslogs' issue.id %}">
+                        
+                            <span class="top-key"></span>
+                            <span class="text">View IssueStatus Log</span>
+                            <span class="bottom-key-1"></span>
+                            <span class="bottom-key-2"></span>
+                    </a>
+                    <a  class ='fancy' href="{% url 'reportissue' issue.id %}">
+                        
+                            <span class="top-key"></span>
+                            <span class="text">Report Issue</span>
+                            <span class="bottom-key-1"></span>
+                            <span class="bottom-key-2"></span>
+                    </a>
+                        
                 <div class="issue-btns">
                     {% if companyuser %}
                     <a class="fancy" href="{% url 'changeissuestatus' issue.id %}">
@@ -90,6 +104,14 @@
                             </div>
                             <div class="pinned">Pinned</div>
                         </div>
+                        <a   href="{% url 'reportcomment' comment.id %}">
+                        
+                            <span class="top-key"></span>
+                            <span class="text">Report Comment</span>
+                            <span class="bottom-key-1"></span>
+                            <span class="bottom-key-2"></span>
+                    </a>
+
                         {% endfor %}
                     </div>
                     {% endif %}
@@ -110,6 +132,13 @@
                                 <p class="mb-1">{{comment.description}}</p>
                             </div>
                         </div>
+                        <a   href="{% url 'reportcomment'  comment.id %}">
+                        
+                            <span class="top-key"></span>
+                            <span class="text">Report Comment</span>
+                            <span class="bottom-key-1"></span>
+                            <span class="bottom-key-2"></span>
+                    </a>
                         {% endfor %}
                     </div>
                     {% endif %}
@@ -150,7 +179,19 @@
                                     <a href="{% url 'editfeedback' feed.id %}">Edit Feedback</a>
                                    
                                     {% endif %}
-                                    <a href="{% url 'getlogs' feed.id %}">View Feedbacklog</a>
+                                    <a href="{% url 'getlogs' feed.id %}">
+                                        <span class="top-key"></span>
+                                        <span class="text">View Feedbacklog</span>
+                                        <span class="bottom-key-1"></span>
+                                        <span class="bottom-key-2"></span>
+                                    </a>
+                                    <a   href="{% url 'reportfeedback' feed.id %}">
+                        
+                                        <span class="top-key"></span>
+                                        <span class="text">Report Feedback</span>
+                                        <span class="bottom-key-1"></span>
+                                        <span class="bottom-key-2"></span>
+                                </a>
                                 </div>
                             </div>
                             {% endif %}
@@ -177,7 +218,19 @@
                                     <a href="{% url 'editfeedback' feed.id %}">Edit Feedback</a>
                                    
                                     {% endif %}
-                                    <a href="{% url 'getlogs' feed.id %}">View Feedbacklog</a>
+                                    <a href="{% url 'getlogs' feed.id %}">
+                                        <span class="top-key"></span>
+                                        <span class="text">View Feedbacklog</span>
+                                        <span class="bottom-key-1"></span>
+                                        <span class="bottom-key-2"></span>
+                                    </a>
+                                    <a   href="{% url 'reportfeedback' feed.id %}">
+                        
+                                        <span class="top-key"></span>
+                                        <span class="text">Report Feedback</span>
+                                        <span class="bottom-key-1"></span>
+                                        <span class="bottom-key-2"></span>
+                                </a>
                                 </div>
                             </div>
                             {% endif %}

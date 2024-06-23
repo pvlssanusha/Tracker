@@ -188,4 +188,37 @@ class IssueStatusLog(models.Model):
     log_entry = models.TextField(null=True,blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+class ReportIssue(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
+    description=models.TextField(null=True,blank=True)
+    CHOICES = [
+        ('option1', 'option1'),
+        ('option2', 'option2'),
+        ('option3', 'option3'),
+    ]
+    options = models.CharField(max_length=100,choices=CHOICES)
+
+class ReportComment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    description=models.TextField(null=True,blank=True)
+    CHOICES = [
+        ('option1', 'option1'),
+        ('option2', 'option2'),
+        ('option3', 'option3'),
+    ]
+    options = models.CharField(max_length=100,choices=CHOICES)
+
+class ReportFeedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    feedback = models.ForeignKey(Feedback, on_delete=models.CASCADE)
+    description=models.TextField(null=True,blank=True)
+    CHOICES = [
+        ('option1', 'option1'),
+        ('option2', 'option2'),
+        ('option3', 'option3'),
+    ]
+    options = models.CharField(max_length=100,choices=CHOICES)
+    
 

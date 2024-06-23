@@ -30,6 +30,10 @@ urlpatterns = [
     path('hiring/',hiringForm, name='hiring'),
     path('supportlist/',supportList, name='supportlist'),
     path('hirings/',hiringList, name='hirings'),
+    path('reportissue<str:id>/',reportIssue, name='reportissue'),
+    path('reportfeedback<str:id>/',reportFeedback, name='reportfeedback'),
+    path('reportcomment<str:id>/',reportComment, name='reportcomment'),
+
     # path('hirings/<str:id>',getHiring, name='hirng'),
     path('supportformsuccess/', supportFormSuccess, name='supportformsuccess'),
     path('issue/<str:issue_id>/addcomment/', add_comment, name='addcomment'),

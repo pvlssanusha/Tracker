@@ -50,7 +50,7 @@
                         <i class="fas fa-comments"></i> {{ issue.commentcount }}
                     </span>
                     <div class="issue-spacing">
-                        <div><a href="{% url 'addfeedback' issue.id %}">Give Feedback</a></div>
+                        
                         <div><a href="{% url 'addcomment' issue.id %}">Add comment</a></div>
                        
                         {% if issue.company.id == usercompanyid %}
@@ -101,7 +101,7 @@
                         <i class="fas fa-comments"></i> {{ issue.commentcount }}
                     </span>
                     <div class="issue-spacing">
-                        <div><a href="{% url 'addfeedback' issue.id %}">Give Feedback</a></div>
+                       
                         <div><a href="{% url 'addcomment' issue.id %}">Add comment</a></div>
                        
                         {% if issue.company.id == usercompanyid %}

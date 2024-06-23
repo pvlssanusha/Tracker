@@ -7,7 +7,10 @@
       <thead>
         <tr>
           <th>Timestamp</th>
-          <th>User</th>
+          <th>Issue Created By</th>
+          <th>Issue Modified By</th>
+          <th>Old Status</th>
+          <th>New Status</th>
           <th>Log Entry</th>
         </tr>
       </thead>
@@ -16,6 +19,9 @@
           <tr>
             <td>{{ log.timestamp }}</td>
             <td>{{ log.issue.created_by.username }}</td>
+            <td>{{ log.user.username }}</td>
+            <td>{{ log.oldstatus}}</td>
+            <td>{{ log.newstatus}}</td>
             <td>{{ log.log_entry }}</td>
           </tr>
         {% endfor %}

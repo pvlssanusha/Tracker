@@ -106,6 +106,7 @@ def addIssue(request):
             issue.created_by = request.user
             issue.save()
             save_tags(request, issue)
+            messages.success(request,'Issue Created Successfully')
             return redirect('issues')
         else:
             print(f"Form errors: {form.errors}")
@@ -283,7 +284,7 @@ def viewAdminPrivateIssues(request):
             if product:
                 issues = issues.filter(product=product)
             if tags:
-                issues = issues.filter(tags__icontains=tags)
+                issues = issues.filter(tags=tags)
             
             paginator = Paginator(issues, 5)
             page_number = request.GET.get('page')
@@ -687,4 +688,54 @@ def getIssueLogs(request,id):
     issue=Issue.objects.get(id=id)
     logs=IssueStatusLog.objects.filter(issue=issue).order_by('timestamp')
     return render(request, 'issuestatuslog.html', {'logs': logs})
+
+
+def reportIssue(request,id):
+    issue=Issue.objects.get(id=id)
+    if request.method == 'POST':
+        form = ReportIssueForm(request.POST)
+        if form.is_valid():
+            report=form.save(commit=False)
+            report.user=request.user
+            report.issue=issue
+            report.save()
+            return redirect(reverse('issue', args=[id]))
+    else:
+        form = ReportIssueForm()
+        return render(request,'reportissue.html', {'form': form})
+    
+def reportComment(request,id):
+    comment=Comment.objects.get(id=id)
+    issue=comment.issue.id
+    if request.method == 'POST':
+        form = ReportCommentForm(request.POST)
+        if form.is_valid():
+            report=form.save(commit=False)
+            report.user=request.user
+            report.comment=comment
+            print("error")
+            report.save()
+            return redirect(reverse('issue', args=[issue]))
+    else:
+        form = ReportCommentForm()
+        return render(request,'reportcomment.html', {'form': form})
+    
+def reportFeedback(request,id):
+    feedback=Feedback.objects.get(id=id)
+    issue=feedback.issue.id
+    if request.method == 'POST':
+        form = ReportFeedbackForm(request.POST)
+        if form.is_valid():
+            report=form.save(commit=False)
+            report.user=request.user
+            report.feedback=feedback
+            report.save()
+            return redirect(reverse('issue', args=[issue]))
+    else:
+        form = ReportCommentForm()
+        return render(request,'reportfeedback.html', {'form': form})
+         
+
+
+
     

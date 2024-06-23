@@ -4,12 +4,13 @@
 {% block title %}Issues{% endblock %}
 {% block content %}
 
+
 <div class="form-container">
-    <h2>Change Password</h2>
+    <h2>Report Feedback</h2>
 <form method="post" class="form">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Change password</button>
+    <button type="submit">Report</button>
 </form>
 </div>
 {% endblock %}
