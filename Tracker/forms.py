@@ -30,14 +30,21 @@ class SignUpForm(forms.ModelForm):
     company_email = forms.EmailField(required=False, help_text="Enter your company's contact email.")
     captcha = CaptchaField(help_text="Enter the text from the image above.")
 
-    def _init_(self, *args, **kwargs):
-        super(SignUpForm, self)._init_(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(SignUpForm, self).__init__(*args, **kwargs)
         self.fields['company'].required = False
         self.fields['company'].queryset = Company.objects.all()
+        self.fields['company'].widget.attrs.update({'class': 'company'})
+
+        self.fields['company_name'].widget.attrs.update({'class': 'company-data'})
+        self.fields['company_url'].widget.attrs.update({'class': 'company-data'})
+        self.fields['company_bio'].widget.attrs.update({'class': 'company-data'})
+        self.fields['company_pic'].widget.attrs.update({'class': 'company-data'})
+        self.fields['company_email'].widget.attrs.update({'class': 'company-data'})
         
-        for field_name, field in self.fields.items():
-            if field.required:
-                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
+        # for field_name, field in self.fields.items():
+        #     if field.required:
+        #         field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -91,8 +98,8 @@ class ProductForm(forms.ModelForm):
             'company': "Select the company associated with this product."
         }
 
-    def _init_(self, *args, **kwargs):
-        super(ProductForm, self)._init_(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(ProductForm, self).__init__(*args, **kwargs)
         self.fields['company'].required = False
         self.fields['company'].queryset = Company.objects.all()
         for field_name, field in self.fields.items():
