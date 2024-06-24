@@ -5,11 +5,18 @@
 
 {% block content %}
 <div class="hiring-list-main">
-  <div class="hiring-list-head">
   
-  <a class="fill-form-link" href="{% url 'hiring' %}">Fill a form for Hiring</a>
+   {% if not page_obj %}
+   <div class="no-data">
+        <div>No Data</div>
+        <a href="{% url 'hiring' %}">Fill a form for Hiring</a>
+   </div>
+{% else %}
+    <div class="hiring-list-head">
+    <a class="fill-form-link" href="{% url 'hiring' %}">Fill a form for Hiring</a>
   </div>
 <ul class="hiring-list">
+   
     {% for request in page_obj %}
     <div class="hiring-item">
         {% if request.pinned %}
@@ -21,7 +28,7 @@
           <p class="hiring-url"><span>URL:</span> {{ request.url }}</p>
           <p class="hiring-options"><span>Option:</span> {{ request.options }}</p>
         </div>
-        <p class="hiring-comment-title">Comments <a class="add-comment-link" href="{% url 'addhiringcomment' request.id %}">Add comment</a></p>
+        <p class="hiring-comment-title">Comments <a class="add-hiring-comment-link" href="{% url 'addhiringcomment' request.id %}">+</a></p>
         <div class="hiring-comments">
             {% for comment in comments %}
             {% if request.id == comment.hiring.id %}
@@ -51,5 +58,6 @@
         {% endif %}
     </span>
 </div>
+{% endif %}
 </div>
 {% endblock %}

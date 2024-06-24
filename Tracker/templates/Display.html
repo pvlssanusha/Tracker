@@ -5,6 +5,12 @@
 <div class="display-main">
     <div class="filter-cont">
         <div class="showfilterbtnn">X</div>
+        {% if usercompanyid %}
+            <a class="private-issues-btn" href="{% url 'privateissues' %}">View Private Issues</a>
+        {% endif %}
+        {% if user.is_superuser %}
+            <a class="private-issues-btn" href="{% url 'adminprivateissues' %}">View All Private Issues</a>
+        {% endif %}
         <form method="get" action="" class="form">
             {{ filter_form.as_p }}
             <p>
@@ -15,13 +21,8 @@
     <div class="issue-main">
         <div class="section-head">Issues</div>
         <div class="showfilterbtn">Apply Filters</div>
+        
         <div class="issues">
-            {% if usercompanyid %}
-            <a class="issue" href="{% url 'privateissues' %}">View Private Issues</a>
-            {% endif %}
-            {% if user.is_superuser %}
-                <a class="issue" href="{% url 'adminprivateissues' %}">View All Private Issues</a>
-                {% endif %}
             {% for issue in page_obj %}
             {% if issue.pinned %}
             <div class="issue">
