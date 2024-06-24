@@ -260,6 +260,8 @@ a {
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+
+
 .issue-title {
 	font-size: 24px;
 	color: #007bff;
@@ -443,6 +445,10 @@ a {
 	list-style: none;
 }
 
+.hide-mobile{
+	display: block;
+}
+
 .header-btns .item {
 	font-size: 16px;
 	color: black;
@@ -512,6 +518,10 @@ a {
 		display: none;
 		width: 100%;
 		background-color: white;
+	}
+
+	.hide-mobile{
+		display: none;
 	}
 
 	.header-menu.show {

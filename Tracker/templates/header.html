@@ -15,7 +15,7 @@
 		Menu
 	</button>
     
-	<div class="header-menu">
+	<div class="header-menu hide-mobile">
 		<ul class="header-btns">
 			<li class="item {% if request.path == '/issues/' %}active{% endif %}">
 				<a class="" href="{% url 'issues' %}">Issues</a>
