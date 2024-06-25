@@ -46,7 +46,6 @@ main {
 	justify-content: center;
 }
 
-/* Login and signup.html */
 
 .signup-main-container {
 	display: flex;
@@ -188,7 +187,6 @@ main {
 	margin: 0 auto;
 }
 
-/* Display.html */
 .issue-main {
 	background-color: #fff;
 	width: 100%;
@@ -208,7 +206,6 @@ main {
 	overflow-y: auto;
 	margin: 20px;
 	padding: 20px;
-	/* justify-content: center; */
 }
 
 .section-head {
@@ -593,7 +590,6 @@ a {
 	}
 }
 
-/* DisplayIssue.html */
 
 .display-issue-main {
 	margin: 40px;
@@ -930,7 +926,6 @@ a {
 	width: 0;
 }
 
-/* Issue.html */
 
 .create-issue-main {
 	height: 100%;
@@ -998,11 +993,12 @@ a {
 	border-radius: 3px;
 	font-size: 16px;
 	margin-top: 0px;
+	height: 45px;
 }
 
 .issue-form-container .form textarea {
 	width: 100%;
-	height: 80px;
+	height: 100px;
 	padding: 10px;
 	border: 1px solid #ccc;
 	border-radius: 3px;
@@ -1081,7 +1077,6 @@ a {
 	background-color: #0056b3;
 }
 
-/* home.html */
 
 .home-main-container {
 	display: flex;
@@ -1243,7 +1238,6 @@ a {
 	width: 50%;
 }
 
-/* hirings.html */
 .hiring-list-main {
 	height: 100%;
 	padding: 20px;
@@ -1375,8 +1369,6 @@ a {
 }
 
 .private-issues-btn:hover {
-	/* background-color: #007bff;
-	color: white; */
 }
 
 .pagination a {
@@ -1708,4 +1700,64 @@ a {
 	.contact-main img {
 		width: 40%;
 	}
+}
+
+
+.issue-status-logs {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.issue-status-logs .title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #007bff;
+}
+
+.log-list {
+  margin-top: 20px;
+}
+
+.log-card {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.log-card-header {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.log-card-title {
+  font-size: 18px;
+  margin: 0;
+  color: #007bff;
+}
+
+.log-card-subtitle {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.log-card-body {
+  padding: 15px;
+}
+
+.log-card-text {
+  color: #495057;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+
+.log-card-entry {
+  color: #212529;
+  font-size: 16px;
+  line-height: 1.5;
 }

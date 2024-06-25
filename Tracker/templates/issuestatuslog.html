@@ -1,31 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container">
-    <h2>Issue Status Logs</h2>
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>Timestamp</th>
-          <th>Issue Created By</th>
-          <th>Issue Modified By</th>
-          <th>Old Status</th>
-          <th>New Status</th>
-          <th>Log Entry</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for log in logs %}
-          <tr>
-            <td>{{ log.timestamp }}</td>
-            <td>{{ log.issue.created_by.username }}</td>
-            <td>{{ log.user.username }}</td>
-            <td>{{ log.oldstatus}}</td>
-            <td>{{ log.newstatus}}</td>
-            <td>{{ log.log_entry }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <div class="issue-status-logs">
+    <h2 class="title">Issue Status Logs</h2>
+    <div class="log-list">
+      {% for log in logs %}
+        <div class="log-card">
+          <div class="log-card-header">
+            <h5 class="log-card-title">Issue by: {{ log.issue.created_by.username }}</h5>
+            <h6 class="log-card-subtitle">Modified by: {{ log.user.username }}</h6>
+          </div>
+          <div class="log-card-body">
+            <p class="log-card-text">
+              <strong>Timestamp:</strong> {{ log.timestamp }}<br>
+              <strong>Old Status:</strong> {{ log.oldstatus }}<br>
+              <strong>New Status:</strong> {{ log.newstatus }}<br>
+            </p>
+            <p class="log-card-entry">{{ log.log_entry }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
   </div>
 {% endblock %}
