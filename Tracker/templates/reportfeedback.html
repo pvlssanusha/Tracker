@@ -5,9 +5,9 @@
 {% block content %}
 
 
-<div class="form-container">
+<div class="issue-form-container">
+    <form method="post" class="form">
     <h2>Report Feedback</h2>
-<form method="post" class="form">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Report</button>

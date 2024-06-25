@@ -30,7 +30,7 @@
                 <div class="issue-title">{{ issue.issuename }} </div>
                 <div class="issue-meta-details">
                     {% if userid == issue.created_by.id %}
-                        <p><span>Created By:</span>  <a href="{% url 'getuser' issue.id %}">{{ user.username }}(Owner)</a></p>
+                        <p><span>Created By:</span>  <a href="{% url 'getuser' issue.id %}">{{ user.username }}(Owner) <i class="fa-solid fa-circle-check"></i></a></p>
                     {% else %}
                         <p><span>Created By:</span> <a href="{% url 'getuser' issue.id %}"> {{ issue.created_by.custom_username }}</a></p>
                     {% endif %}

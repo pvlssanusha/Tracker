@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Issues{% endblock %}
+{% block title %}Edit Profile{% endblock %}
 {% block content %}
-    <h2>Edit Profile</h2>
-    <div class="issue-form-container">
+<div class="issue-form-container">
     <form method="post" class="form" enctype="multipart/form-data">
+        <h2>Edit Profile</h2>
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Save Changes</button>

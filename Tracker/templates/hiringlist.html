@@ -34,17 +34,11 @@
             {% for comment in comments %}
             {% if request.id == comment.hiring.id %}
             {%if comment.pinned %}
-            <p class="comment-description">{{ comment.description }}Pinned</p>
+            <p class="comment-description"> <i class="fa-solid fa-thumbtack"></i> {{ comment.description }}  <a href="{% url 'reporthiringcomment' comment.id %}"> Report</a></p>
             {% else %}
-            <p class="comment-description">{{ comment.description }}</p>
+            <p class="comment-description">{{ comment.description }} <a href="{% url 'reporthiringcomment' comment.id %}"> Report</a></p>
             {% endif %}
-            <a   href="{% url 'reporthiringcomment' comment.id %}">
-                        
-                <span class="top-key"></span>
-                <span class="text">Report Comment</span>
-                <span class="bottom-key-1"></span>
-                <span class="bottom-key-2"></span>
-        </a>
+            
             {% endif %}
             {% endfor %}
         </div>

@@ -1,63 +1,49 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Profile{% endblock %}
+
+{% block title %}
+    User Profile
+{% endblock %}
+
+
 {% block content %}
-    <div class="profile">
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-image">
+            <img src="{{ userr.image.url }}" alt="{{ userr.custom_username }}">
+        </div>
         <div class="profile-info">
-            <img src="{{ user.image.url }}" alt="{{ user.custom_username }}">
-            <h2>{{ user.custom_username }}</h2>
-            <p><span>First Name:</span>{{ user.firstname }} </p>
-            <p><span>Last  Name:</span>{{ user.lastname }}</p>
-            <p><span>Email     :</span> {{ user.email }}</p>
-            {% if company %}
-            {% if user.company %}
-            <p><span>Company Name:</span><a href="{% url 'companydetails' companyid %}">{{user.company}}</a></p>
-            {% endif %}
-            {% if user.company.url %}
-            <p><span>Company URL: </span>{{ user.company.url }}</p>
-            {% endif %}
-            {% if user.company.bio %}
-            <p><span>Company Bio:</span> {{ user.company.bio }}</p>
-            {% endif %}
-            {% endif %}
-            
-        </div>
-        <div class="stats">
-            <div class="stat">
-                <i class="fas fa-bug"></i>
-                <h3>{{ issues_count }}</h3>
-                <p>Issues Created</p>
-            </div>
-            <div class="stat">
-               <i class="fas fa-lightbulb"></i>
-               <h3>{{feedbacks_given }}</h3>
-             <p>Feedbacks Given</p>
-            </div>
-            <div class="stat">
-             <i class="fas fa-comments"></i>
-            <h3>{{ comments_created }}</h3>
-            <p>Comments Created</p>
-            </div>
-            <div class="stat">
-              <i class="fas fa-eye"></i>
-               <h3>{{ issues_viewed }}</h3>
-             <p>Issues Viewed</p>
-            </div>
+            <h1>{{ userr.custom_username }}</h1>
+            <h4>First Name : {{ userr.firstname }}</h4>
+            <h4>Last Name : {{ userr.lastname }}</h4>
+            <p class="bio">{{ userr.bio }}</p>
+            <div class="profile-stats">
                 <div class="stat">
-              <i class="fas fa-eye"></i>
-               <h3>{{ tags_created }}</h3>
-             <p>Tags  Created</p>
+                    
+                    <strong>{{ issues_count }}</strong>
+                    <span><i class="fas fa-bug"></i> Issues Created</span>
+                </div>
+                <div class="stat">
+                    
+                    <strong>{{ feedbacks_given }}</strong>
+                    <span><i class="fas fa-lightbulb"></i> Feedbacks Given</span>
+                </div>
+                <div class="stat">
+                   
+                    <strong>{{ comments_created }}</strong>
+                    <span> <i class="fas fa-comments"></i> Comments Created</span>
+                </div>
             </div>
-           
         </div>
-        <h1>List of Tags Created</h1>
-        <br>
-            {% for tag in tags %}
-        <div>
-        <h2>{{tag.name}}</h2>
-        <br></div>
-    {% endfor %}
-        
     </div>
-    
+
+    <div class="tags-section">
+        <h2>List of Tags Created</h2>
+        <div class="tags">
+            {% for tag in tags %}
+                <span class="tag">{{ tag.name }}</span>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}

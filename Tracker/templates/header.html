@@ -29,11 +29,8 @@
 			<li class="item {% if request.path == '/hirings/' %}active{% endif %}">
 				<a class="" href="{% url 'hirings' %}"> Hiring </a>
 			</li>
-			<li class="item">
-				<form method="post" action="{% url 'changepassword' %}">
-					{% csrf_token %}
-					<button type="submit" class="btn btn-link">Change Password</button>
-				</form>
+			<li class="item {% if request.path == '/changepassword/' %}active{% endif %}">
+				<a class="" href="{% url 'changepassword' %}"> Change Password </a>
 			</li>
 			<li class="item">
 				<form method="post" action="{% url 'logout' %}">

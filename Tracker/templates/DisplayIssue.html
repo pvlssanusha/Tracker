@@ -12,7 +12,7 @@
                 <p>Company Name:<a href="{% url 'companydetails' companyid %}">{{issue.company}}</a></p>
                 <p>Tags:
                     {% for tag in tags %}
-                     <span class="text-bold"> {{tag.name}}      </span>
+                     <span class="tag-item"> {{tag.name}}      </span>
                      {% endfor %}
                     </p>
                 <p id="viewCount" class="view-btn">Views: <span class="text-bold" >{{issue.viewcount}}</span></p>
@@ -24,39 +24,24 @@
                     Comments: <span class="text-bold">{{issue.commentcount}}</span></p>
                 <p>Issue Status:
                     <span class="text-bold">{{issue.status}}</span></p>
-                    <a  class ='fancy' href="{% url 'getissuestatuslogs' issue.id %}">
-                        
-                            <span class="top-key"></span>
+                    <div class="issue-btns">
+                        <a class="issue-action-btn" href="{% url 'getissuestatuslogs' issue.id %}">
                             <span class="text">View IssueStatus Log</span>
-                            <span class="bottom-key-1"></span>
-                            <span class="bottom-key-2"></span>
-                    </a>
-                    <a  class ='fancy' href="{% url 'reportissue' issue.id %}">
-                        
-                            <span class="top-key"></span>
+                        </a>
+                        <a class="issue-action-btn" href="{% url 'reportissue' issue.id %}">
                             <span class="text">Report Issue</span>
-                            <span class="bottom-key-1"></span>
-                            <span class="bottom-key-2"></span>
-                    </a>
-                        
-                <div class="issue-btns">
-                    {% if companyuser %}
-                    <a class="fancy" href="{% url 'changeissuestatus' issue.id %}">
-                        <span class="top-key"></span>
-                        <span class="text">Change Status</span>
-                        <span class="bottom-key-1"></span>
-                        <span class="bottom-key-2"></span>
-                    </a>
-                    {% endif %}
-                    {% if value %}
-                    <a class="fancy" href="{% url 'editissue' issue.id %}">
-                        <span class="top-key"></span>
-                        <span class="text">Edit Issue</span>
-                        <span class="bottom-key-1"></span>
-                        <span class="bottom-key-2"></span>
-                    </a>
-                    {% endif %} 
-                </div>
+                        </a>
+                        {% if companyuser %}
+                            <a class="issue-action-btn" href="{% url 'changeissuestatus' issue.id %}">
+                                <span class="text">Change Status</span>
+                            </a>
+                        {% endif %}
+                        {% if value %}
+                                <a class="issue-action-btn" href="{% url 'editissue' issue.id %}">
+                                    <span class="text">Edit Issue</span>
+                                </a>
+                        {% endif %} 
+                    </div>
             </div>
         </div>
         <div id="viewedbySectionPopup" class="popup-form" style="display: none;">
@@ -99,20 +84,13 @@
                                 <div class="d-flex">
                                     <h4>{{comment.user.custom_username}}</h4>
                                     <small>{{comment.timestamp}}</small>
-                                    
                                 </div>
                                 <p class="mb-1">{{comment.description}}</p>
+                                <a href="{% url 'reportcomment' comment.id %}">Report Comment</a>
                             </div>
                             <div class="pinned">Pinned</div>
+                            
                         </div>
-                        <a   href="{% url 'reportcomment' comment.id %}">
-                        
-                            <span class="top-key"></span>
-                            <span class="text">Report Comment</span>
-                            <span class="bottom-key-1"></span>
-                            <span class="bottom-key-2"></span>
-                    </a>
-
                         {% endfor %}
                     </div>
                     {% endif %}
@@ -131,15 +109,9 @@
                                     <small>{{comment.timestamp}}</small>
                                 </div>
                                 <p class="mb-1">{{comment.description}}</p>
+                                <a href="{% url 'reportcomment' comment.id %}">Report Comment</a>
                             </div>
                         </div>
-                        <a   href="{% url 'reportcomment'  comment.id %}">
-                        
-                            <span class="top-key"></span>
-                            <span class="text">Report Comment</span>
-                            <span class="bottom-key-1"></span>
-                            <span class="bottom-key-2"></span>
-                    </a>
                         {% endfor %}
                     </div>
                     {% endif %}
@@ -170,30 +142,22 @@
                                         <small>{{feed.timestamp}}</small>
                                         <div class="pinned">Pinned</div>
                                     </div>
+                                    <br>
                                     <div class="d-flex">
                                         <p><span class="text-bold">option :</span>{{feed.options}}</p>
                                         <p><span class="text-bold">bool :</span> {{feed.bool}}</p>
                                         <p><span class="text-bold">comment :</span> {{feed.comment}}</p>
                                     </div>
+                                    <div class="feedback-actions">
+                                        {% if userid == feed.user.id %}
+                                        <a href="{% url 'editfeedback' feed.id %}">Edit Feedback</a>
                                     
-                                    {% if userid == feed.user.id %}
-                                    <a href="{% url 'editfeedback' feed.id %}">Edit Feedback</a>
-                                   
-                                    {% endif %}
-                                    <a href="{% url 'getlogs' feed.id %}">
-                                        <span class="top-key"></span>
-                                        <span class="text">View Feedbacklog</span>
-                                        <span class="bottom-key-1"></span>
-                                        <span class="bottom-key-2"></span>
-                                    </a>
-                                    <a   href="{% url 'reportfeedback' feed.id %}">
-                        
-                                        <span class="top-key"></span>
-                                        <span class="text">Report Feedback</span>
-                                        <span class="bottom-key-1"></span>
-                                        <span class="bottom-key-2"></span>
-                                </a>
-                                </div>
+                                        {% endif %}
+                                        <a href="{% url 'getlogs' feed.id %}">
+                                            View Feedback log
+                                        </a>
+                                        <a href="{% url 'reportfeedback' feed.id %}">Report Feedback</a>
+                                    </div>
                             </div>
                             {% endif %}
                         {% endfor %}
@@ -210,28 +174,22 @@
                                         {% endif %}
                                         <small>{{feed.timestamp}}</small>
                                     </div>
+                                    <br>
                                     <div class="d-flex">
                                         <p><span class="text-bold">option :</span>{{feed.options}}</p>
                                         <p><span class="text-bold">bool :</span> {{feed.bool}}</p>
+                                        <p><span class="text-bold">comment :</span> {{feed.comment}}</p>
                                     </div>
-                                    <p><span class="text-bold">comment :</span> {{feed.comment}}</p>
-                                    {% if userid == feed.user.id %}
-                                    <a href="{% url 'editfeedback' feed.id %}">Edit Feedback</a>
-                                   
-                                    {% endif %}
-                                    <a href="{% url 'getlogs' feed.id %}">
-                                        <span class="top-key"></span>
-                                        <span class="text">View Feedbacklog</span>
-                                        <span class="bottom-key-1"></span>
-                                        <span class="bottom-key-2"></span>
-                                    </a>
-                                    <a   href="{% url 'reportfeedback' feed.id %}">
-                        
-                                        <span class="top-key"></span>
-                                        <span class="text">Report Feedback</span>
-                                        <span class="bottom-key-1"></span>
-                                        <span class="bottom-key-2"></span>
-                                </a>
+                                    <div class="feedback-actions">
+                                        {% if userid == feed.user.id %}
+                                        <a href="{% url 'editfeedback' feed.id %}">Edit Feedback</a>
+                                    
+                                        {% endif %}
+                                        <a href="{% url 'getlogs' feed.id %}">
+                                            View Feedback log
+                                        </a>
+                                        <a href="{% url 'reportfeedback' feed.id %}">Report Feedback</a>
+                                    </div>
                                 </div>
                             </div>
                             {% endif %}

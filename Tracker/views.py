@@ -464,7 +464,7 @@ def getUser(request,id):
     tags_created=len(Tag.objects.filter(user=user))
     tags=Tag.objects.filter(user=user)
     context = {
-        'user': user,
+        'userr': user,
         'tags':tags,
         'tags_created':tags_created,
         'issues_count': issues_count,

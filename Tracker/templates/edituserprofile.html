@@ -1,84 +1,50 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}User Profile{% endblock %}
-{% block content %}
-<div class="profile">
-	<div class="profile-info">
-		<img src="{{ user.image.url }}" alt="{{ user.custom_username }}" />
-		<div class="user-profile-details">
-			<h2>{{ user.custom_username }}</h2>
-			<p><span>First Name:</span>{{ user.firstname }}</p>
-			<p><span>Last Name:</span>{{ user.lastname }}</p>
-			<p><span>Email :</span> {{ user.email }}</p>
-			{% if company %} {% if user.company %}
-			<p>
-				<span>Company Name:</span
-				><a href="{% url 'companydetails' companyid %}">{{user.company}}</a>
-			</p>
-			{% endif %} {% if user.company.url %}
-			<p><span>Company URL: </span>{{ user.company.url }}</p>
-			{% endif %} {% if user.company.bio %}
-			<p><span>Company Bio:</span> {{ user.company.bio }}</p>
-			{% endif %} {% endif %}
 
-			<a class="fancy" href="{% url 'editprofile' %}">
-				<span class="top-key"></span>
-				<span class="text">Edit Profile</span>
-				<span class="bottom-key-1"></span>
-				<span class="bottom-key-2"></span>
-			</a>
-		</div>
-	</div>
-	<div class="stats">
-		<div class="stat">
-			<i class="fas fa-bug"></i>
-			<h3>{{ issues_count }}</h3>
-			<p>Issues Created</p>
-		</div>
-		<div class="stat">
-			<i class="fas fa-lightbulb"></i>
-			<h3>{{feedbacks_given }}</h3>
-		  <p>Feedbacks Given</p>
-		 </div>
-		 <div class="stat">
-		  <i class="fas fa-comments"></i>
-		 <h3>{{ comments_created }}</h3>
-		 <p>Comments Created</p>
-		 </div>
-		 <div class="stat">
-		   <i class="fas fa-eye"></i>
-			<h3>{{ issues_viewed }}</h3>
-		  <p>Issues Viewed</p>
-		 </div>
-			 <div class="stat">
-		   <i class="fas fa-eye"></i>
-			<h3>{{ tags_created }}</h3>
-		  <p>Tags  Created</p>
-		 </div>
-		
-	 </div>
-	 <h1>List of Tags Created</h1>
-	 <br>
-		 {% for tag in tags %}
-	 <div>
-	 <h2>{{tag.name}}</h2>
-	 <br></div>
- {% endfor %}
-		<!--<div class="stat">-->
-		<!--    <i class="fas fa-lightbulb"></i>-->
-		<!--    <h3>{{ feedback_count }}</h3>-->
-		<!--    <p>Feedback Count</p>-->
-		<!--</div>-->
-		<!--<div class="stat">-->
-		<!--    <i class="fas fa-comments"></i>-->
-		<!--    <h3>{{ comment_count }}</h3>-->
-		<!--    <p>Comments Count</p>-->
-		<!--</div>-->
-		<!--<div class="stat">-->
-		<!--    <i class="fas fa-eye"></i>-->
-		<!--    <h3>{{view_count }}</h3>-->
-		<!--    <p>Views Count</p>-->
-		<!--</div>-->
-	</div>
+{% block title %}
+    User Profile
+{% endblock %}
+
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-image">
+            <img src="{{ user.image.url }}" alt="{{ user.custom_username }}">
+        </div>
+        <div class="profile-info">
+			<a href="{% url 'editprofile' %}" class="btn btn-primary">Edit Profile</a>
+            <h1>{{ user.custom_username }}</h1>
+            <h4>First Name : {{ user.firstname }}</h4>
+            <h4>Last Name : {{ user.lastname }}</h4>
+            <p class="bio">{{ user.bio }}</p>
+            <div class="profile-stats">
+                <div class="stat">
+                    <strong>{{ issues_count }}</strong>
+                    <span><i class="fas fa-bug"></i> Issues Created</span>
+                </div>
+                <div class="stat">
+                    
+                    <strong>{{ feedbacks_given }}</strong>
+                    <span><i class="fas fa-lightbulb"></i> Feedbacks Given</span>
+                </div>
+                <div class="stat">
+                   
+                    <strong>{{ comments_created }}</strong>
+                    <span> <i class="fas fa-comments"></i> Comments Created</span>
+                </div>
+            </div>
+        </div>
+		 
+    </div>
+
+    <div class="tags-section">
+        <h2>List of Tags Created</h2>
+        <div class="tags">
+            {% for tag in tags %}
+                <span class="tag">{{ tag.name }}</span>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 {% endblock %}
