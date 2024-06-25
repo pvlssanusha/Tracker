@@ -34,7 +34,7 @@ class User(AbstractUser):
         if self.is_staff:  # Assuming admin users are flagged with is_staff
             return f"{self.username} (Admin)"
         elif self.companyuser:
-            return f"{self.username} (CompanyUser)"
+            return f"{self.username} ({self.company.name})"
         else:
             return self.username
 
@@ -50,6 +50,7 @@ class Product(models.Model):
 class Tag(models.Model):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(max_length=255,blank=True,null=True)
+    user = models.ForeignKey(User, null=True,on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

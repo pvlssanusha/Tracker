@@ -8,6 +8,7 @@
             <p>desc : {{issue.description}}</p>
             <div class="issue-details">
                 <p>Created By:<a href="{% url 'getuser' issue.id %}">{{ issue.created_by}}</a></p>
+                <p>Created At:{{ issue.created_at}}</a></p>
                 <p>Company Name:<a href="{% url 'companydetails' companyid %}">{{issue.company}}</a></p>
                 <p>Tags:
                     {% for tag in tags %}

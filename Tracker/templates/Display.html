@@ -33,6 +33,7 @@
                     {% else %}
                         <p><span>Created By:</span> <a href="{% url 'getuser' issue.id %}"> {{ issue.created_by.custom_username }}</a></p>
                     {% endif %}
+                    <p>Created At:{{ issue.created_at}}</a></p>
                     <p><span>Company Name :</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.company }}</a></p>
                     <p><span>Company URL:</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.company.url }}</a></p>
                     <p><span>Product  Name:</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.product.name }}</a></p>
@@ -59,6 +60,7 @@
                     <div class="issue-spacing">
                         
                         <div><a href="{% url 'addcomment' issue.id %}">Add comment</a></div>
+                        <div><a href="{% url 'addfeedback' issue.id %}">Give Feedback</a></div>
                        
                         {% if issue.company.id == usercompanyid %}
                         <div><a href="{% url 'changeissuestatus' issue.id %}">Change Status</a></div>
@@ -84,6 +86,8 @@
                     {% else %}
                         <p><span>Created By:</span> <a href="{% url 'getuser' issue.id %}"> {{ issue.created_by.custom_username }}</a></p>
                     {% endif %}
+                    <p>Created At:{{ issue.created_at}}</a></p>
+
                     <p><span>Company Name :</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.company }}</a></p>
                     <p><span>Company :</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.company.url }}</a></p>
                     <p><span>Product  Name:</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.product.name }}</a></p>
@@ -109,6 +113,7 @@
                     </span>
                     <div class="issue-spacing">
                         <div><a href="{% url 'addcomment' issue.id %}">Add comment</a></div>
+                        <div><a href="{% url 'addfeedback' issue.id %}">Give Feedback</a></div>
                        
                         {% if issue.company.id == usercompanyid %}
                         <div><a href="{% url 'changeissuestatus' issue.id %}">Change Status</a></div>
