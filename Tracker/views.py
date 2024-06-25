@@ -130,16 +130,16 @@ def getIssue(self,id):
             view=ViewedBy.objects.get(user=self.user,issue=object)
         except:
             ViewedBy.objects.create(user=self.user,issue=object)
-            if self.user.companyuser:
-                    log_entry="Issue is Viewed By Company"
-                    IssueStatusLog.objects.create(
-                        oldstatus=object.status,
-                        newstatus="Viewed",
-                        issue=object,
-                        user=self.user,
-                        timestamp=timezone.now(),
-                        log_entry=log_entry
-                    )
+            # if self.user.companyuser:
+            #         log_entry="Issue is Viewed By Company"
+            #         IssueStatusLog.objects.create(
+            #             oldstatus=object.status,
+            #             newstatus="Viewed",
+            #             issue=object,
+            #             user=self.user,
+            #             timestamp=timezone.now(),
+            #             log_entry=log_entry
+            #         )
             object.viewcount+=1
         object.save()
         comments=None
@@ -176,7 +176,6 @@ def getIssue(self,id):
         return render(self,'DisplayIssue.html',{'issue':object,'tags':tags,'edit':edit,'form':form,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'feedbackCount':len(feedback),'viewedby':viewedobjs,'value':value,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'},status=status.HTTP_404_NOT_FOUND)
-
 @login_required(login_url='/login/')
 def getAllIssues(request):
     try:
@@ -189,6 +188,7 @@ def getAllIssues(request):
             company = filter_form.cleaned_data.get('company')
             product = filter_form.cleaned_data.get('product')
             tags = filter_form.cleaned_data.get('tags')
+            user_issues = filter_form.cleaned_data.get('user_issues')
 
             if status:
                 issues = issues.filter(status=status).order_by('-created_at')
@@ -199,8 +199,9 @@ def getAllIssues(request):
             if product:
                 issues = issues.filter(product=product).order_by('-created_at')
             if tags:
-                issues = issues.filter(tags__in=filter_form.cleaned_data['tags']).distinct().order_by('-created_at')
-            print(issues,3)
+                issues = issues.filter(tags__in=tags).distinct().order_by('-created_at')
+            if user_issues:
+                issues = issues.filter(created_by=request.user).order_by('-created_at')
 
         issues = issues.annotate(
             option1_count=Count('feedbacks', filter=Q(feedbacks__options='option1')),
@@ -232,6 +233,7 @@ def getAllIssues(request):
         })
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
+
 
 def viewPrivateIssues(request):
     user=request.user
@@ -641,12 +643,41 @@ def companyDetails(request, company_id):
     return render(request, 'companydetails.html', context)
 
 
+def productStatsView(request, product_id):
+    # Get the product
+    product = get_object_or_404(Product, id=product_id)
+    
+    # Filter issues related to this product
+    product_issues = Issue.objects.filter(product=product)
+    
+    # Count tags for issues related to this product
+    product_tag_counts = Tag.objects.filter(issue__in=product_issues).annotate(count=Count('id')).values('name', 'count')
+    product_tag_counts_dict = {tag['name']: tag['count'] for tag in product_tag_counts}
+    
+    # Status choices (assuming you have defined these in your Issue model)
+    status_choices = Issue.STATUS_CHOICES
+    
+    # Calculate the stats
+    product_stat = {
+        'product': product,
+        'total_issues': product_issues.count(),
+        'status_counts': {
+            status: product_issues.filter(status=status).count() for status, _ in status_choices
+        },
+        'tag_counts': product_tag_counts_dict  # Tag counts specific to this product
+    }
+    
+    context = {
+        'product_stat': product_stat
+    }
+    
+    return render(request, 'productstats.html', context)
+
+
 
 def changeIssueStatus(request, issue_id):
     issue = get_object_or_404(Issue, id=issue_id)
     oldstatus= issue.status
-
-
     if request.method == 'POST':
         form = IssueStatusForm(request.POST, instance=issue)
         if form.is_valid():
@@ -721,8 +752,11 @@ def hiringList(request):
     pinned_hirings = [hiring for hiring in all_hirings if hiring.pinned]
     non_pinned_hirings = [hiring for hiring in all_hirings if not hiring.pinned]
 
+    pinned_comments = [comment for comment in hiringcomments if comment.pinned]
+    non_pinned_comments = [comment for comment in hiringcomments if not  comment.pinned]
     # Combine pinned and non-pinned hirings for pagination
     combined_hirings = pinned_hirings + non_pinned_hirings
+    hiringcomments=pinned_comments + non_pinned_comments
     paginator = Paginator(combined_hirings, 5)  # Show 5 hiring requests per page
 
     page_number = request.GET.get('page')
@@ -774,6 +808,22 @@ def reportComment(request,id):
             print("error")
             report.save()
             return redirect(reverse('issue', args=[issue]))
+    else:
+        form = ReportCommentForm()
+        return render(request,'reportcomment.html', {'form': form})
+    
+def reportHiringComment(request,id):
+    comment=HiringComment.objects.get(id=id)
+    issue=comment.hiring.id
+    if request.method == 'POST':
+        form = ReportHiringCommentForm(request.POST)
+        if form.is_valid():
+            report=form.save(commit=False)
+            report.user=request.user
+            report.comment=comment
+            print("error")
+            report.save()
+            return redirect(reverse('hirings'))
     else:
         form = ReportCommentForm()
         return render(request,'reportcomment.html', {'form': form})

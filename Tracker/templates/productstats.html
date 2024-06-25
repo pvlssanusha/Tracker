@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Hirings{% endblock %}
+
+{% block content %}
+    <h1>Statistics for {{ product_stat.product.name }}</h1>
+    <p>Total Issues: {{ product_stat.total_issues }}</p>
+    
+    <h2>Issue Status Counts</h2>
+    <ul>
+        {% for status, count in product_stat.status_counts.items %}
+            <li>{{ status }}: {{ count }}</li>
+        {% endfor %}
+    </ul>
+    
+    <h2>Tag Counts</h2>
+    <ul>
+        {% for tag, count in product_stat.tag_counts.items %}
+            <li>{{ tag }}: {{ count }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
