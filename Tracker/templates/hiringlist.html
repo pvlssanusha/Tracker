@@ -25,6 +25,7 @@
         <li class="hiring-name">Name: {{ request.name }} - {{ request.created_at }}</li>
         <div class="meta-info">
           <p class="hiring-description"><span>Description:</span> {{ request.description }}</p>
+          <p class="hiring-description"><span>Created By:</span> {{ request.user }}</p>
           <p class="hiring-url"><span>URL:</span> {{ request.url }}</p>
           <p class="hiring-options"><span>Option:</span> {{ request.options }}</p>
         </div>
