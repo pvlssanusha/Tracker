@@ -180,8 +180,7 @@ def getIssue(self,id):
 @login_required(login_url='/login/')
 def getAllIssues(request):
     try:
-        issues = Issue.objects.filter(private=False,enabled=True).order_by('-created_at')
-        print(issues)
+        issues = Issue.objects.filter(private=False, enabled=True).order_by('-created_at')
         filter_form = IssueFilterForm(request.GET)
 
         if filter_form.is_valid():
@@ -190,17 +189,15 @@ def getAllIssues(request):
             company = filter_form.cleaned_data.get('company')
             product = filter_form.cleaned_data.get('product')
             tags = filter_form.cleaned_data.get('tags')
-            print(tags,type(tags))
+
             if status:
                 issues = issues.filter(status=status).order_by('-created_at')
-            print(issues,2)
             if created_by:
                 issues = issues.filter(created_by=created_by).order_by('-created_at')
             if company:
                 issues = issues.filter(company=company).order_by('-created_at')
             if product:
                 issues = issues.filter(product=product).order_by('-created_at')
-            print(issues,2)
             if tags:
                 issues = issues.filter(tags__in=filter_form.cleaned_data['tags']).distinct().order_by('-created_at')
             print(issues,3)
@@ -213,27 +210,28 @@ def getAllIssues(request):
             bool_false_count=Count('feedbacks', filter=Q(feedbacks__bool=False))
         )
 
-        paginator = Paginator(issues, 5)
+        pinned_issues = issues.filter(pinned=True)
+        non_pinned_issues = issues.filter(pinned=False)
+
+        combined_issues = list(pinned_issues) + list(non_pinned_issues)
+        paginator = Paginator(combined_issues, 5) 
+
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        print(page_obj)
-        usercompanyid=None 
+
+        usercompanyid = None
         if request.user.companyuser:
-            user=request.user
-            print(user)
-            usercompanyid=user.company.id
-        print(usercompanyid)
+            usercompanyid = request.user.company.id
 
         return render(request, 'Display.html', {
             'page_obj': page_obj,
             'filter_form': filter_form,
-            'user':request.user,
-            'usercompanyid':usercompanyid,
+            'user': request.user,
+            'usercompanyid': usercompanyid,
             'userid': request.user.id
         })
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
-    
 
 def viewPrivateIssues(request):
     user=request.user

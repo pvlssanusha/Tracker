@@ -26,82 +26,12 @@ body {
 	background-color: #f0f0f0;
 }
 
-nav.navbar {
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-	padding: 10px 20px;
-	transition: background 0.3s ease;
-}
-
 main {
 	position: absolute;
 	top: 80px;
 	height: calc(100vh - 80px);
 	width: 100vw;
 	overflow: auto;
-}
-
-.navbar-nav {
-	display: flex;
-	align-items: center;
-	height: 60px;
-}
-
-.navbar-brand {
-	display: flex;
-	align-items: center;
-	gap: 20px;
-	font-size: 24px;
-}
-
-.btn-link {
-	text-decoration: none !important;
-}
-
-.nav-item,
-.btn-link {
-	font-size: 18px !important;
-	color: black !important;
-	opacity: 0.7 !important;
-	margin-right: 20px;
-	padding: 0px;
-}
-
-.nav-item:hover,
-.btn-link:hover {
-	font-size: 18px !important;
-	color: black !important;
-	opacity: 1 !important;
-}
-
-.navbar-collapse {
-	justify-content: flex-end;
-}
-
-.navbar-brand {
-	margin-right: auto;
-}
-
-.nav-item.active .nav-link {
-	font-weight: 800;
-	opacity: 1 !important;
-	color: black;
-	font-size: 20px;
-}
-
-@media (min-width: 768px) and (max-width: 998px) {
-	.navbar-collapse.collapse {
-		display: none !important;
-	}
-	.navbar-collapse.collapse.show {
-		display: block !important;
-	}
-}
-
-@media (max-width: 786px) {
-	.navbar-nav {
-		display: flex;
-		align-items: flex-start !important;
-	}
 }
 
 .issue-content {
@@ -231,8 +161,23 @@ main {
 	flex: 1;
 }
 
+.no-data{
+	font-size: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.add-hiring-comment-link{
+	font-size: 16px;
+	border:1px solid #007bff ;
+	border-radius: 50%;
+	padding: 2px 4px;
+}
+
 .form button[type="submit"] {
-	background-color: #4caf50;
+	background-color: #007bff;
 	color: white;
 	padding: 10px 20px;
 	border: none;
@@ -259,10 +204,9 @@ main {
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
-	height: calc(100vh - 200px);
-	overflow: auto;
+	overflow-x: hidden;
+	overflow-y: auto;
 	margin: 20px;
-	width: 100%;
 	padding: 20px;
 	/* justify-content: center; */
 }
@@ -316,6 +260,8 @@ a {
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+
+
 .issue-title {
 	font-size: 24px;
 	color: #007bff;
@@ -325,20 +271,20 @@ a {
 	font-weight: 600;
 }
 
-.issue-meta-details{
+.issue-meta-details {
 	display: flex;
 	flex-wrap: wrap;
 }
-.issue-meta-details p{
+.issue-meta-details p {
 	width: max-content;
 	margin-right: 16px;
 	font-size: 16px;
 }
-.issue-meta-details p span{
+.issue-meta-details p span {
 	font-size: 12px;
 }
 
-.view-issue-btn{
+.view-issue-btn {
 	float: right;
 	background-color: #007bff;
 	border-radius: 10px;
@@ -352,19 +298,18 @@ a {
 	justify-content: center;
 }
 
-
 .issues .issue {
 	cursor: pointer;
 	transition: 400ms;
 }
 
-.issue .status{
+.issue .status {
 	display: flex;
-	gap:10px;
+	gap: 10px;
 }
 .issue-spacing {
 	display: flex;
-	gap:20px;
+	gap: 20px;
 	align-items: flex-end;
 }
 .issues .issue:hover {
@@ -375,8 +320,8 @@ a {
 	margin-left: 5px;
 }
 
-
-.showfilterbtn,.showfilterbtnn {
+.showfilterbtn,
+.showfilterbtnn {
 	display: none;
 }
 
@@ -418,19 +363,19 @@ a {
 	color: #777;
 }
 
-.issue .pinned{
+.issue .pinned {
 	float: right;
 	background-color: #ccc;
 	border-radius: 10px;
 	padding: 5px 10px;
 }
-.comment-item .pinned{
+.comment-item .pinned {
 	float: left;
 	background-color: #ccc;
 	border-radius: 10px;
 	padding: 5px 10px;
 }
-.feedback-item .pinned{
+.feedback-item .pinned {
 	float: left;
 	background-color: #ccc;
 	border-radius: 10px;
@@ -441,7 +386,6 @@ a {
 	display: flex;
 	align-items: center;
 	gap: 5px;
-	
 }
 
 .meta-item i {
@@ -459,14 +403,144 @@ a {
 	flex-wrap: wrap;
 }
 
-.feedback-stats p{
+.feedback-stats p {
 	margin-right: 16px;
 	font-size: 12px;
 }
 
+.header-main {
+	position: fixed;
+	top: 0px;
+	z-index: 999;
+	padding: 10px 20px;
+	width: 100%;
+	box-shadow: rgba(33, 35, 38, 0.3) 0px 10px 10px -10px;
+}
 
+.header-flex{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.header-main .header-logo {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	font-size: 22px;
+}
+
+.header-btns {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	list-style: none;
+}
+
+.header-menu{
+	display: none;
+	align-items: center;
+	flex-direction: column;
+	gap: 20px;
+	list-style: none;
+}
+
+.hide-mobile{
+	display: block;
+}
+
+.header-btns .item {
+	font-size: 16px;
+	color: black;
+	padding: 0;
+	margin: 0;
+}
+
+.header-btns .item img{
+	height: 36px;
+	width: auto;
+	border-radius: 50%;
+}
+
+.header-btns a {
+	text-decoration: none;
+	color: black;
+}
+
+.header-btns .active a {
+	background-color: #007bff;
+	padding: 5px 10px;
+	border-radius: 10px;
+	color: white !important;
+}
+
+.header-btns button {
+	text-decoration: none;
+	color: black;
+	font-size: 16px;
+	padding: 0;
+	margin: 0;
+}
+
+.header-btns .user-img {
+	display: flex;
+	align-items: center;
+}
+
+.header-btns .user-img p {
+	text-decoration: none;
+	color: black;
+	font-size: 16px;
+	padding: 0;
+	margin: 0;
+}
+
+.header-btns .active button {
+	background-color: #007bff;
+	padding: 5px 10px;
+	border-radius: 10px;
+	color: white !important;
+}
+
+.mobile-toggler {
+	display: none;
+	background: none;
+	border: none;
+	font-size: 18px;
+	cursor: pointer;
+}
 @media (max-width: 768px) {
-	.showfilterbtn,.showfilterbtnn {
+	.mobile-toggler {
+		display: block;
+	}
+
+	.header-menu {
+		display: none;
+		width: 100%;
+		background-color: white;
+	}
+
+	.hide-mobile{
+		display: none;
+	}
+
+	.header-menu.show {
+		display: block;
+		background-color: white;
+	}
+
+	.header-btns {
+		flex-direction: column;
+		width: 100%;
+	}
+
+	.header-btns .item {
+		margin: 10px 0;
+	}
+}
+@media (max-width: 768px) {
+	.showfilterbtn,
+	.showfilterbtnn {
 		display: block;
 		background-color: #007bff;
 		border-radius: 10px;
@@ -480,14 +554,6 @@ a {
 	.showfilterbtnn {
 		background-color: red;
 		border-radius: 50%;
-	}
-
-	.navbar-nav{
-		height: max-content;
-	}
-
-	.navbar-nav .btn{
-		padding: 0;
 	}
 	.filter-cont {
 		display: none;
@@ -519,7 +585,7 @@ a {
 		transition: transform 0.2s, box-shadow 0.2s;
 		margin: 0px;
 	}
-	.section-head{
+	.section-head {
 		margin-top: 0;
 	}
 	.issues .issue:hover {
@@ -866,7 +932,7 @@ a {
 
 /* Issue.html */
 
-.create-issue-main{
+.create-issue-main {
 	height: 100%;
 	overflow: auto;
 	padding: 20px;
@@ -955,7 +1021,7 @@ a {
 }
 
 .issue-form-container .form button[type="submit"] {
-	background-color: #4caf50;
+	background-color: #007bff;
 	color: white;
 	padding: 10px 20px;
 	border: none;
@@ -1074,13 +1140,13 @@ a {
 	border-radius: 12px;
 }
 
-.user-profile-details{
+.user-profile-details {
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 	padding: 20px;
 	border-radius: 20px;
 	display: flex;
 	flex-direction: column;
-    align-items: flex-start;
+	align-items: flex-start;
 	padding-top: 50px;
 	width: 60%;
 }
@@ -1177,82 +1243,82 @@ a {
 	width: 50%;
 }
 
-
 /* hirings.html */
-.hiring-list-main{
+.hiring-list-main {
 	height: 100%;
 	padding: 20px;
 	overflow: auto;
 }
 
-
 .hiring-list {
-    list-style-type: none;
-    padding: 0;
+	list-style-type: none;
+	padding: 0;
 }
 
 .hiring-item {
-    border: 1px solid #ddd;
-    padding: 20px;
-    border-radius: 5px;
+	border: 1px solid #ddd;
+	padding: 20px;
+	border-radius: 5px;
 	width: 80%;
 	margin: 10px auto;
 }
 
-.hiring-item .pinned{
+.hiring-item .pinned {
 	float: right;
 	background-color: #ccc;
 	border-radius: 10px;
 	padding: 5px 10px;
 }
 
-
 .hiring-name {
-    font-size: 20px;
-    margin-bottom: 10px;
+	font-size: 20px;
+	margin-bottom: 10px;
 	color: #007bff;
 }
 
-.hiring-description, .hiring-url, .hiring-options {
-    margin-right: 16px;
+.hiring-description,
+.hiring-url,
+.hiring-options {
+	margin-right: 16px;
 	font-size: 16px;
 	font-weight: 700;
 }
 
-.hiring-description span, .hiring-url span, .hiring-options span{
-    font-weight: 400;
+.hiring-description span,
+.hiring-url span,
+.hiring-options span {
+	font-weight: 400;
 	font-size: 12px;
 }
 
 .hiring-comments {
-    margin-top: 5px;
+	margin-top: 5px;
 }
 
 .comment-description {
-    margin-left: 20px;
-    font-style: italic;
+	margin-left: 20px;
+	font-style: italic;
 }
 
-.hiring-comment-title{
+.hiring-comment-title {
 	font-size: 14px;
 	font-weight: 700;
 }
 
-.hiring-item .meta-info{
+.hiring-item .meta-info {
 	display: flex;
 	flex-wrap: wrap;
 }
 
-
 .add-comment-link {
-    display: inline-block;
-    color: #007bff;
-    text-decoration: none;
+	display: inline-block;
+	color: #007bff;
+	text-decoration: none;
 	margin-left: 16px;
 }
 
-.fill-form-link{
-	border:1px solid #007bff;
+.fill-form-link {
+	border: 1px solid #007bff;
 	color: #007bff;
 	padding: 5px 10px;
 	display: flex;
@@ -1264,60 +1330,83 @@ a {
 	font-size: 16px;
 }
 
-.hiring-list-head{
+.hiring-list-head {
 	display: flex;
 	justify-content: flex-end;
-	gap:20px;
+	gap: 20px;
 	flex-wrap: wrap;
 	align-items: flex-end;
 }
 
-.fill-form-link:hover{
+.fill-form-link:hover {
 	font-weight: 700;
 }
 
-
 .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 20px;
 }
 
 .pagination .step-links {
-    display: flex;
-    gap: 10px;
+	display: flex;
+	gap: 10px;
+}
+
+.hiring-form p{
+	display: flex;
+	flex-direction: column;
+}
+
+.hiring-form button[type="submit"]{
+	width: 100%;
+	background-color: #007bff;
+}
+
+.private-issues-btn {
+	font-size: 16px;
+	text-align: center;
+	width: 100%;
+    display: block;
+    margin-bottom: -20px;
+    margin-top: 10px;
+
+}
+
+.private-issues-btn:hover {
+	/* background-color: #007bff;
+	color: white; */
 }
 
 .pagination a {
-    color: #007bff;
-    text-decoration: none;
-    padding: 8px 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+	color: #007bff;
+	text-decoration: none;
+	padding: 8px 16px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
 	font-size: 12px;
-    background-color: #f8f9fa;
-    transition: background-color 0.3s ease;
+	background-color: #f8f9fa;
+	transition: background-color 0.3s ease;
 }
 
 .pagination a:hover {
-    background-color: #e2e6ea;
+	background-color: #e2e6ea;
 }
 
 .pagination .current {
-    padding: 8px 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #e9ecef;
-    font-weight: bold;
+	padding: 8px 16px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	background-color: #e9ecef;
+	font-weight: bold;
 }
 
 .pagination a:disabled {
-    color: #6c757d;
-    background-color: #e9ecef;
-    pointer-events: none;
+	color: #6c757d;
+	background-color: #e9ecef;
+	pointer-events: none;
 }
-
 
 @media (max-width: 768px) {
 	.profile {
@@ -1421,7 +1510,7 @@ a {
 	}
 
 	.form button[type="submit"] {
-		background-color: #4caf50;
+		background-color: #007bff;
 		color: white;
 		padding: 10px 20px;
 		border: none;

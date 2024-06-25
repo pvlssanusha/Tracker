@@ -3,8 +3,8 @@
 {% block title %}Add Comment{% endblock %}
 {% block content %}
 <div class="form-container">
-    <h1>Add Comment</h1>
-    <form method="post" class="form">
+    <form method="post" class="form hiring-form">
+        <h1>Add Comment</h1>
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Submit Comment</button>
