@@ -34,7 +34,7 @@ class User(AbstractUser):
         if self.is_staff:  # Assuming admin users are flagged with is_staff
             return f"{self.username} (Admin)"
         elif self.companyuser:
-            return f"{self.username} (CompanyUser)"
+            return f"{self.username} ({self.company.name})"
         else:
             return self.username
 
@@ -50,6 +50,7 @@ class Product(models.Model):
 class Tag(models.Model):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(max_length=255,blank=True,null=True)
+    user = models.ForeignKey(User, null=True,on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -58,6 +59,7 @@ class Issue(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     STATUS_CHOICES = [
         ('created', 'Created'),
+         ('viewed', 'Viewed'),
         ('investigating', 'Investigating'),
         ('fixed', 'Fixed'),
         ('cannotfix','CannotFix')
@@ -202,6 +204,17 @@ class ReportIssue(models.Model):
 class ReportComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    description=models.TextField(null=True,blank=True)
+    CHOICES = [
+        ('option1', 'option1'),
+        ('option2', 'option2'),
+        ('option3', 'option3'),
+    ]
+    options = models.CharField(max_length=100,choices=CHOICES)
+
+class ReportHiringComment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.ForeignKey(HiringComment, on_delete=models.CASCADE)
     description=models.TextField(null=True,blank=True)
     CHOICES = [
         ('option1', 'option1'),

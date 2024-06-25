@@ -64,7 +64,7 @@
                             {% endif %}
                         {% endfor %}
                         <br>
-                        <strong>Status Counts:</strong>
+                        <h2><strong>Total Issues Grouped By Status:</strong></h2>
                         <ul>
                             {% for product_stat in product_stats %}
                                 {% if product_stat.product.id == product.id %}
@@ -74,6 +74,7 @@
                                 {% endif %}
                             {% endfor %}
                         </ul>
+                        <h2><strong>Total Issues Grouped By Tags:</strong></h2>
                         <ul>
                             {% for product_stat in product_stats %}
                                 {% if product_stat.product.id == product.id %}

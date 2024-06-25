@@ -73,8 +73,10 @@ def save_tags(request, issue):
     tag_names = json.loads(request.POST['tags_field'])
     issue.tags.clear()
     for tag_name in tag_names:
-        # tag, created = Tag.objects.get_or_create(name=tag_name)
-        tag, created = Tag.objects.get_or_create(name=tag_name['value'])
+        try:
+            tag= Tag.objects.get(name=tag_name['value'])
+        except:
+            tag= Tag.objects.create(name=tag_name['value'],user=request.user)
         issue.tags.add(tag)   
 
 def get_taglist():
@@ -128,6 +130,16 @@ def getIssue(self,id):
             view=ViewedBy.objects.get(user=self.user,issue=object)
         except:
             ViewedBy.objects.create(user=self.user,issue=object)
+            # if self.user.companyuser:
+            #         log_entry="Issue is Viewed By Company"
+            #         IssueStatusLog.objects.create(
+            #             oldstatus=object.status,
+            #             newstatus="Viewed",
+            #             issue=object,
+            #             user=self.user,
+            #             timestamp=timezone.now(),
+            #             log_entry=log_entry
+            #         )
             object.viewcount+=1
         object.save()
         comments=None
@@ -164,7 +176,6 @@ def getIssue(self,id):
         return render(self,'DisplayIssue.html',{'issue':object,'tags':tags,'edit':edit,'form':form,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'feedbackCount':len(feedback),'viewedby':viewedobjs,'value':value,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'},status=status.HTTP_404_NOT_FOUND)
-
 @login_required(login_url='/login/')
 def getAllIssues(request):
     try:
@@ -177,6 +188,7 @@ def getAllIssues(request):
             company = filter_form.cleaned_data.get('company')
             product = filter_form.cleaned_data.get('product')
             tags = filter_form.cleaned_data.get('tags')
+            user_issues = filter_form.cleaned_data.get('user_issues')
 
             if status:
                 issues = issues.filter(status=status).order_by('-created_at')
@@ -187,7 +199,9 @@ def getAllIssues(request):
             if product:
                 issues = issues.filter(product=product).order_by('-created_at')
             if tags:
-                issues = issues.filter(tags=tags).order_by('-created_at')
+                issues = issues.filter(tags__in=tags).distinct().order_by('-created_at')
+            if user_issues:
+                issues = issues.filter(created_by=request.user).order_by('-created_at')
 
         issues = issues.annotate(
             option1_count=Count('feedbacks', filter=Q(feedbacks__options='option1')),
@@ -220,6 +234,7 @@ def getAllIssues(request):
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
 
+
 def viewPrivateIssues(request):
     user=request.user
     try:
@@ -242,7 +257,7 @@ def viewPrivateIssues(request):
             if product:
                 issues = issues.filter(product=product)
             if tags:
-                issues = issues.filter(tags__icontains=tags)
+                issues = issues.filter(tags__in=filter_form.cleaned_data['tags']).distinct()
             
             paginator = Paginator(issues, 5)
             page_number = request.GET.get('page')
@@ -334,6 +349,55 @@ def add_hiring_comment(request, hiring_id):
 
 def add_feedback(request, issue_id):
     issue = get_object_or_404(Issue, id=issue_id)
+    try:
+        feed=Feedback.objects.get(issue=issue,user=request.user)
+        print("feedback is already there")
+        if request.method == 'POST':
+            form=EditFeedbackForm(request.POST,instance=feed)
+            old_values = {
+                'options': feed.options,
+                'bool': feed.bool,
+                'enabled': feed.enabled,
+                'comment': feed.comment,
+                'pinned': feed.pinned
+            }
+            if form.is_valid():
+            # Capture old values
+                form.save()
+                feed.refresh_from_db()
+                new_values = {
+                    'options': feed.options,
+                    'bool': feed.bool,
+                    'enabled': feed.enabled,
+                    'comment': feed.comment,
+                    'pinned': feed.pinned
+                }
+
+
+                # Generate log entry
+                changes = []
+                for field in old_values:
+                    if old_values[field] != new_values[field]:
+                        changes.append(f"{field} changed from '{old_values[field]}' to '{new_values[field]}'")
+
+                log_entry = f"Feedback updated by {request.user.username} on {timezone.now().strftime('%Y-%m-%d %H:%M:%S')}. Changes: {'; '.join(changes)}"
+
+            # Create a log entry after the feedback is updated
+            FeedbackLogs.objects.create(
+                feedback=feed,
+                old_values=json.dumps(old_values),
+                new_values=json.dumps(new_values),
+                timestamp=timezone.now(),
+                log_entry=log_entry
+            )
+
+            form.save()
+            return redirect(reverse('issue', kwargs={'id': issue_id}))
+        else:
+            form=EditFeedbackForm(instance=feed)
+            
+    except:
+        form = FeedbackForm()
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
         if form.is_valid():
@@ -342,9 +406,6 @@ def add_feedback(request, issue_id):
             feedback.user = request.user
             feedback.save()
             return redirect(reverse('issue', kwargs={'id': issue_id}))
-            return redirect('issue', id=issue.id)
-    else:
-        form = FeedbackForm()
     return render(request, 'addfeedback.html', {'form': form, 'issue': issue})
 # @login_required(login_url='/login/')
 # def editFeedback(request, feedback_id):
@@ -397,16 +458,19 @@ def getUser(request,id):
         pass
     issues_created = Issue.objects.filter(created_by=user,enabled=True)
     issues_count = issues_created.count()
-    # feedback_count = len(Feedback.objects.filter(user=user,enabled=True))
-    comment_count = issues_created.aggregate(total_comments=models.Sum('commentcount'))['total_comments'] or 0
-    view_count = issues_created.aggregate(total_views=models.Sum('viewcount'))['total_views'] or 0
-
+    feedback_count = len(Feedback.objects.filter(user=user))
+    comment_count = len(Comment.objects.filter(user=user))
+    view_count = len(ViewedBy.objects.filter(user=user))
+    tags_created=len(Tag.objects.filter(user=user))
+    tags=Tag.objects.filter(user=user)
     context = {
         'user': user,
+        'tags':tags,
+        'tags_created':tags_created,
         'issues_count': issues_count,
-        # 'feedback_count': feedback_count,
-        'comment_count': comment_count,
-        'view_count': view_count,
+        'feedbacks_given': feedback_count,
+        'comments_created': comment_count,
+        'issues_viewed': view_count,
         'companyid':companyid,
         'company':company
     }
@@ -427,15 +491,19 @@ def getProfile(request,id):
         companyid=None
     issues_created = Issue.objects.filter(created_by=user,enabled=True)
     issues_count = issues_created.count()
-    # feedback_count = len(Feedback.objects.filter(user=user,enabled=True))
-    comment_count = issues_created.aggregate(total_comments=models.Sum('commentcount'))['total_comments'] or 0
-    view_count = issues_created.aggregate(total_views=models.Sum('viewcount'))['total_views'] or 0
-
+    feedback_count = len(Feedback.objects.filter(user=user))
+    comment_count = len(Comment.objects.filter(user=user))
+    view_count = len(ViewedBy.objects.filter(user=user))
+    tags_created=len(Tag.objects.filter(user=user))
+    tags=Tag.objects.filter(user=user)
     context = {
         'user': user,
+        'tags':tags,
+        'tags_created':tags_created,
         'issues_count': issues_count,
-        'comment_count': comment_count,
-        'view_count': view_count,
+        'feedbacks_given': feedback_count,
+        'comments_created': comment_count,
+        'issues_viewed': view_count,
         'companyid':companyid,
         'company':company
     }
@@ -524,17 +592,17 @@ def companyDetails(request, company_id):
     try:
         users = User.objects.filter(company=company, companyuser=True, enabled=True)
         context['users'] = users
-    except:
+    except User.DoesNotExist:
         context['users'] = None
     
     try:
         products = Product.objects.filter(company=company)
         context['products'] = products
-    except:
+    except Product.DoesNotExist:
         context['products'] = None
 
     try:
-        issues = Issue.objects.filter(company=company,enabled=True)
+        issues = Issue.objects.filter(company=company, enabled=True)
         context['issues_count'] = issues.count()
         
         # Get status choices from the Issue model
@@ -544,22 +612,22 @@ def companyDetails(request, company_id):
         # Count issues per status
         status_counts = issues.values('status').annotate(count=Count('id'))
         context['status_counts'] = status_counts
-        print("entered")
-        # Count issues per tag
+        
+        # Count issues per tag for the entire company
         tag_counts = Tag.objects.filter(issue__in=issues).annotate(count=Count('id')).values('name', 'count')
         tag_counts_dict = {tag['name']: tag['count'] for tag in tag_counts}
-
         context['tag_counts'] = tag_counts_dict
-        print('anu')
-        print(tag_counts_dict,"sss")
+        
         context['issues'] = issues
         
         # Specific statistics for each product
         product_stats = []
         for product in products:
             product_issues = issues.filter(product=product)
-            product_status_counts = product_issues.values('status').annotate(count=Count('id'))
-            product_tags_counts = product_issues.values('tags').annotate(count=Count('id'))
+            
+            # Count tags for issues related to this product
+            product_tag_counts = Tag.objects.filter(issue__in=product_issues).annotate(count=Count('id')).values('name', 'count')
+            product_tag_counts_dict = {tag['name']: tag['count'] for tag in product_tag_counts}
             
             product_stat = {
                 'product': product,
@@ -567,25 +635,53 @@ def companyDetails(request, company_id):
                 'status_counts': {
                     status: product_issues.filter(status=status).count() for status in status_choices.keys()
                 },
-                # 'tag_counts':{
-                #     tag: product_issues.filter(tags=tag).count() for tag in tag_counts
-                # }
+                'tag_counts': product_tag_counts_dict  # Tag counts specific to this product
             }
             product_stats.append(product_stat)
         
         context['product_stats'] = product_stats
         
-    except:
+    except Issue.DoesNotExist:
         context['issues'] = None
+    
     return render(request, 'companydetails.html', context)
+
+
+def productStatsView(request, product_id):
+    # Get the product
+    product = get_object_or_404(Product, id=product_id)
+    
+    # Filter issues related to this product
+    product_issues = Issue.objects.filter(product=product)
+    
+    # Count tags for issues related to this product
+    product_tag_counts = Tag.objects.filter(issue__in=product_issues).annotate(count=Count('id')).values('name', 'count')
+    product_tag_counts_dict = {tag['name']: tag['count'] for tag in product_tag_counts}
+    
+    # Status choices (assuming you have defined these in your Issue model)
+    status_choices = Issue.STATUS_CHOICES
+    
+    # Calculate the stats
+    product_stat = {
+        'product': product,
+        'total_issues': product_issues.count(),
+        'status_counts': {
+            status: product_issues.filter(status=status).count() for status, _ in status_choices
+        },
+        'tag_counts': product_tag_counts_dict  # Tag counts specific to this product
+    }
+    
+    context = {
+        'product_stat': product_stat
+    }
+    
+    return render(request, 'productstats.html', context)
 
 
 
 def changeIssueStatus(request, issue_id):
     issue = get_object_or_404(Issue, id=issue_id)
     oldstatus= issue.status
-
-
     if request.method == 'POST':
         form = IssueStatusForm(request.POST, instance=issue)
         if form.is_valid():
@@ -660,8 +756,11 @@ def hiringList(request):
     pinned_hirings = [hiring for hiring in all_hirings if hiring.pinned]
     non_pinned_hirings = [hiring for hiring in all_hirings if not hiring.pinned]
 
+    pinned_comments = [comment for comment in hiringcomments if comment.pinned]
+    non_pinned_comments = [comment for comment in hiringcomments if not  comment.pinned]
     # Combine pinned and non-pinned hirings for pagination
     combined_hirings = pinned_hirings + non_pinned_hirings
+    hiringcomments=pinned_comments + non_pinned_comments
     paginator = Paginator(combined_hirings, 5)  # Show 5 hiring requests per page
 
     page_number = request.GET.get('page')
@@ -713,6 +812,22 @@ def reportComment(request,id):
             print("error")
             report.save()
             return redirect(reverse('issue', args=[issue]))
+    else:
+        form = ReportCommentForm()
+        return render(request,'reportcomment.html', {'form': form})
+    
+def reportHiringComment(request,id):
+    comment=HiringComment.objects.get(id=id)
+    issue=comment.hiring.id
+    if request.method == 'POST':
+        form = ReportHiringCommentForm(request.POST)
+        if form.is_valid():
+            report=form.save(commit=False)
+            report.user=request.user
+            report.comment=comment
+            print("error")
+            report.save()
+            return redirect(reverse('hirings'))
     else:
         form = ReportCommentForm()
         return render(request,'reportcomment.html', {'form': form})

@@ -25,6 +25,7 @@
         <li class="hiring-name">Name: {{ request.name }} - {{ request.created_at }}</li>
         <div class="meta-info">
           <p class="hiring-description"><span>Description:</span> {{ request.description }}</p>
+          <p class="hiring-description"><span>Created By:</span> {{ request.user }}</p>
           <p class="hiring-url"><span>URL:</span> {{ request.url }}</p>
           <p class="hiring-options"><span>Option:</span> {{ request.options }}</p>
         </div>
@@ -32,7 +33,18 @@
         <div class="hiring-comments">
             {% for comment in comments %}
             {% if request.id == comment.hiring.id %}
+            {%if comment.pinned %}
+            <p class="comment-description">{{ comment.description }}Pinned</p>
+            {% else %}
             <p class="comment-description">{{ comment.description }}</p>
+            {% endif %}
+            <a   href="{% url 'reporthiringcomment' comment.id %}">
+                        
+                <span class="top-key"></span>
+                <span class="text">Report Comment</span>
+                <span class="bottom-key-1"></span>
+                <span class="bottom-key-2"></span>
+        </a>
             {% endif %}
             {% endfor %}
         </div>

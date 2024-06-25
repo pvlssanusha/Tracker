@@ -5,6 +5,29 @@ from django.contrib.auth.forms import PasswordChangeForm
 from .models import *
 from django.utils.safestring import mark_safe
 
+
+class IssueStatusForm(forms.ModelForm):
+    class Meta:
+        model = Issue
+        fields = ['status']
+        widgets = {
+            'status': forms.Select(attrs={'class': 'form-control'})
+        }
+        help_texts = {
+            'status': "Select the current status of the issue."
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(IssueStatusForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
+        status_choices = self.fields['status'].choices
+        filtered_choices = [choice for choice in status_choices if choice[0] != 'created']
+        self.fields['status'].choices = filtered_choices
+      
+
+
 class SignUpForm(forms.ModelForm):
     
 
@@ -278,13 +301,24 @@ class ReportCommentForm(forms.ModelForm):
             if field.required:
                 field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
 
+class ReportHiringCommentForm(forms.ModelForm):
+    class Meta:
+        model=ReportHiringComment
+        fields = ['options','description']
+    def __init__(self, *args, **kwargs):
+        super(ReportHiringCommentForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
+
+
 
 
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['firstname', 'lastname', 'email', 'username', 'image']
+        fields = ['image']
         help_texts = {
             'firstname': "Enter your first name.",
             'lastname': "Enter your last name.",
@@ -329,36 +363,38 @@ class EditIssueForm(forms.ModelForm):
         if commit:
             issue.save()
 
-
-
-class IssueStatusForm(forms.ModelForm):
-    class Meta:
-        model = Issue
-        fields = ['status']
-        widgets = {
-            'status': forms.Select(attrs={'class': 'form-control'})
-        }
-        help_texts = {
-            'status': "Select the current status of the issue."
-        }
-
-    def __init__(self, *args, **kwargs):
-        super(IssueStatusForm, self).__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            if field.required:
-                field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
-        status_choices = self.fields['status'].choices
-        filtered_choices = [choice for choice in status_choices if choice[0] != 'created']
-        self.fields['status'].choices = filtered_choices
-
 class IssueFilterForm(forms.Form):
-    status = forms.ChoiceField(choices=Issue.STATUS_CHOICES, required=False, help_text="Filter issues by status.")
-    created_by = forms.ModelChoiceField(queryset=User.objects.all(), required=False, help_text="Filter issues by the creator.")
-    company = forms.ModelChoiceField(queryset=Company.objects.all(), required=False, help_text="Filter issues by company.")
-    product = forms.ModelChoiceField(queryset=Product.objects.all(), required=False, help_text="Filter issues by product.")
-    tags = forms.ModelChoiceField(queryset=Tag.objects.all(), required=False, help_text="Filter issues by product.")
-
-
+    status = forms.ChoiceField(
+        choices=Issue.STATUS_CHOICES, 
+        required=False, 
+        help_text="Filter issues by status."
+    )
+    created_by = forms.ModelChoiceField(
+        queryset=User.objects.all(), 
+        required=False, 
+        help_text="Filter issues by the creator."
+    )
+    company = forms.ModelChoiceField(
+        queryset=Company.objects.all(), 
+        required=False, 
+        help_text="Filter issues by company."
+    )
+    product = forms.ModelChoiceField(
+        queryset=Product.objects.all(), 
+        required=False, 
+        help_text="Filter issues by product."
+    )
+    tags = forms.ModelMultipleChoiceField(
+        queryset=Tag.objects.all(), 
+        required=False, 
+        help_text="Filter issues by tags.",
+        widget=forms.SelectMultiple(attrs={'size': 5})  # Adjust size as needed
+    )
+    user_issues = forms.BooleanField(
+        required=False, 
+        help_text="Filter issues created by the logged-in user."
+    )
+    
 class SupportQueryForm(forms.ModelForm):
     class Meta:
         model = Support
