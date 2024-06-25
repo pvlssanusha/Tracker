@@ -491,15 +491,19 @@ def getProfile(request,id):
         companyid=None
     issues_created = Issue.objects.filter(created_by=user,enabled=True)
     issues_count = issues_created.count()
-    # feedback_count = len(Feedback.objects.filter(user=user,enabled=True))
-    comment_count = issues_created.aggregate(total_comments=models.Sum('commentcount'))['total_comments'] or 0
-    view_count = issues_created.aggregate(total_views=models.Sum('viewcount'))['total_views'] or 0
-
+    feedback_count = len(Feedback.objects.filter(user=user))
+    comment_count = len(Comment.objects.filter(user=user))
+    view_count = len(ViewedBy.objects.filter(user=user))
+    tags_created=len(Tag.objects.filter(user=user))
+    tags=Tag.objects.filter(user=user)
     context = {
         'user': user,
+        'tags':tags,
+        'tags_created':tags_created,
         'issues_count': issues_count,
-        'comment_count': comment_count,
-        'view_count': view_count,
+        'feedbacks_given': feedback_count,
+        'comments_created': comment_count,
+        'issues_viewed': view_count,
         'companyid':companyid,
         'company':company
     }
