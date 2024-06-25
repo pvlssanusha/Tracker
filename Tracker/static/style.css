@@ -46,7 +46,6 @@ main {
 	justify-content: center;
 }
 
-
 .signup-main-container {
 	display: flex;
 	align-items: center;
@@ -160,7 +159,7 @@ main {
 	flex: 1;
 }
 
-.no-data{
+.no-data {
 	font-size: 36px;
 	display: flex;
 	align-items: center;
@@ -168,9 +167,9 @@ main {
 	flex-direction: column;
 }
 
-.add-hiring-comment-link{
+.add-hiring-comment-link {
 	font-size: 16px;
-	border:1px solid #007bff ;
+	border: 1px solid #007bff;
 	border-radius: 50%;
 	padding: 2px 4px;
 }
@@ -256,8 +255,6 @@ a {
 	text-decoration: none;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-
-
 
 .issue-title {
 	font-size: 24px;
@@ -414,7 +411,7 @@ a {
 	box-shadow: rgba(33, 35, 38, 0.3) 0px 10px 10px -10px;
 }
 
-.header-flex{
+.header-flex {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -434,7 +431,7 @@ a {
 	list-style: none;
 }
 
-.header-menu{
+.header-menu {
 	display: none;
 	align-items: center;
 	flex-direction: column;
@@ -442,7 +439,7 @@ a {
 	list-style: none;
 }
 
-.hide-mobile{
+.hide-mobile {
 	display: block;
 }
 
@@ -453,7 +450,7 @@ a {
 	margin: 0;
 }
 
-.header-btns .item img{
+.header-btns .item img {
 	height: 36px;
 	width: auto;
 	border-radius: 50%;
@@ -517,7 +514,7 @@ a {
 		background-color: white;
 	}
 
-	.hide-mobile{
+	.hide-mobile {
 		display: none;
 	}
 
@@ -589,7 +586,6 @@ a {
 		transform: scale(1.01, 1.01);
 	}
 }
-
 
 .display-issue-main {
 	margin: 40px;
@@ -926,7 +922,6 @@ a {
 	width: 0;
 }
 
-
 .create-issue-main {
 	height: 100%;
 	overflow: auto;
@@ -1076,7 +1071,6 @@ a {
 #acceptTerms:hover {
 	background-color: #0056b3;
 }
-
 
 .home-main-container {
 	display: flex;
@@ -1348,12 +1342,12 @@ a {
 	gap: 10px;
 }
 
-.hiring-form p{
+.hiring-form p {
 	display: flex;
 	flex-direction: column;
 }
 
-.hiring-form button[type="submit"]{
+.hiring-form button[type="submit"] {
 	width: 100%;
 	background-color: #007bff;
 }
@@ -1362,10 +1356,9 @@ a {
 	font-size: 16px;
 	text-align: center;
 	width: 100%;
-    display: block;
-    margin-bottom: -20px;
-    margin-top: 10px;
-
+	display: block;
+	margin-bottom: -20px;
+	margin-top: 10px;
 }
 
 .private-issues-btn:hover {
@@ -1702,62 +1695,61 @@ a {
 	}
 }
 
-
 .issue-status-logs {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-  border-radius: 8px;
+	max-width: 800px;
+	margin: 40px auto;
+	padding: 20px;
+	border-radius: 8px;
 }
 
 .issue-status-logs .title {
-  font-size: 24px;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #007bff;
+	font-size: 24px;
+	margin-bottom: 20px;
+	text-align: center;
+	color: #007bff;
 }
 
 .log-list {
-  margin-top: 20px;
+	margin-top: 20px;
 }
 
 .log-card {
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+	background-color: #fff;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	margin-bottom: 20px;
 }
 
 .log-card-header {
-  background-color: #f8f9fa;
-  padding: 15px;
-  border-bottom: 1px solid #e0e0e0;
+	background-color: #f8f9fa;
+	padding: 15px;
+	border-bottom: 1px solid #e0e0e0;
 }
 
 .log-card-title {
-  font-size: 18px;
-  margin: 0;
-  color: #007bff;
+	font-size: 18px;
+	margin: 0;
+	color: #007bff;
 }
 
 .log-card-subtitle {
-  font-size: 14px;
-  color: #6c757d;
+	font-size: 14px;
+	color: #6c757d;
 }
 
 .log-card-body {
-  padding: 15px;
+	padding: 15px;
 }
 
 .log-card-text {
-  color: #495057;
-  margin-bottom: 10px;
-  font-size: 12px;
+	color: #495057;
+	margin-bottom: 10px;
+	font-size: 12px;
 }
 
 .log-card-entry {
-  color: #212529;
-  font-size: 16px;
-  line-height: 1.5;
+	color: #212529;
+	font-size: 16px;
+	line-height: 1.5;
 }
