@@ -112,6 +112,7 @@ main {
 .signup-main-container .form .helptext{
 	font-size: 12px;
 	opacity: 0.8;
+	width: 300px;
 }
 
 .signup-main-container .form .captcha{
