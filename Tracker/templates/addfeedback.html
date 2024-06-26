@@ -2,9 +2,9 @@
 {% load static %}
 {% block title %}Add Feedback{% endblock %}
 {% block content %}
-<div class="form-container">
-    <h1>Add Feedback</h1>
+<div class="issue-form-container">
     <form method="post" class="form">
+        <h1>Add Feedback</h1>
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Submit Feedback</button>

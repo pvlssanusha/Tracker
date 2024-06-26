@@ -28,4 +28,14 @@
 			</div>
 		</div>
 	</body>
+	<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				var labels = document.querySelectorAll("form label");
+
+				labels.forEach(function(label) {
+					var labelText = label.innerHTML; 
+					label.innerHTML = labelText.replace(':', '');
+				});
+			});
+		</script>
 </html>

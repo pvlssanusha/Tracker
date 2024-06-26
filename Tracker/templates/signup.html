@@ -1,7 +1,16 @@
-{% extends "base.html" %}
-{% load static %}
-{% block title %}Issues{% endblock %}
-{% block content %}
+<!DOCTYPE html>
+<html>
+	<head>
+		{% load static %}
+		<title>Sign Up</title>
+		<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Tangerine:wght@400;700&display=swap"
+			rel="stylesheet" />
+	</head>
+	<body>
 		<div class="signup-main-container">
 			<div class="inner-cont">
 				<div class="left-section">
@@ -21,28 +30,38 @@
 			</div>
 		</div>
 		<script type="text/javascript">
+			document
+				.querySelector(".company")
+				.addEventListener("change", function () {
+					if (!this.value) {
+						const elements = document.querySelectorAll(".company-data");
+						elements.forEach((element) => {
+							const parent = element.parentElement;
+							if (parent) {
+								parent.style.display = "block";
+							}
+						});
+					}
+					if (this.value && this.value != "") {
+						const elements = document.querySelectorAll(".company-data");
+						elements.forEach((element) => {
+							const parent = element.parentElement;
+							if (parent) {
+								parent.style.display = "none";
+							}
+						});
+					}
+				});
+		</script>
+		<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				var labels = document.querySelectorAll("form label");
 
-			
-document.querySelector('.company').addEventListener('change', function() {
-    if(!this.value){
-        const elements = document.querySelectorAll('.company-data');
-        elements.forEach(element => {
-            const parent = element.parentElement;
-            if (parent) {
-                parent.style.display = 'block';
-            }
-        });
-    }
-    if (this.value && this.value!='') {
-        const elements = document.querySelectorAll('.company-data');
-        elements.forEach(element => {
-            const parent = element.parentElement;
-            if (parent) {
-                parent.style.display = 'none';
-            }
-        });
-    }
-});
-			</script>
-
-{% endblock %}
+				labels.forEach(function(label) {
+					var labelText = label.innerHTML; 
+					label.innerHTML = labelText.replace(':', '');
+				});
+			});
+		</script>
+	</body>
+</html>

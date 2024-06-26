@@ -138,9 +138,7 @@
                                         {% else %}
                                         <h4 class="mb-1">{{feed.user.custom_username}}</h4>
                                         {% endif %}
-                                        
                                         <small>{{feed.timestamp}}</small>
-                                        <div class="pinned">Pinned</div>
                                     </div>
                                     <br>
                                     <div class="d-flex">
@@ -158,6 +156,8 @@
                                         </a>
                                         <a href="{% url 'reportfeedback' feed.id %}">Report Feedback</a>
                                     </div>
+                                </div>
+                                <div class="pinned">Pinned</div>
                             </div>
                             {% endif %}
                         {% endfor %}
