@@ -42,17 +42,17 @@ class SignUpForm(forms.ModelForm):
             'firstname': "Enter your first name.",
             'lastname': "Enter your last name.",
             'email': "Enter your email address.",
-            'company': "Select your company from the list."
+            'company': "Select your company from the dropdown list or Create New Company by entering the below fields"
         }
-
-    password = forms.CharField(label="Password",widget=forms.PasswordInput, help_text="Enter a strong password.")
-    confirm_password = forms.CharField(label="Confirm Passowrd",widget=forms.PasswordInput, help_text="Re-enter your password to confirm.")
     company_name = forms.CharField(max_length=100, required=False, help_text="Enter your company's name.")
     company_url = forms.URLField(required=False, help_text="Enter your company's website URL.")
     company_bio = forms.CharField(widget=forms.Textarea, required=False, help_text="Enter a short biography for your company.")
     company_pic = forms.ImageField(required=False, help_text="Upload a picture for your company.")
-    company_email = forms.EmailField(required=False, help_text="Enter your company's contact email.")
-    captcha = CaptchaField(help_text="Enter the text from the image above.")
+    company_email = forms.EmailField(label="Company Email",required=False, help_text="Enter your company's contact email.")
+    password = forms.CharField(label="Password",widget=forms.PasswordInput, help_text="Enter a strong password.")
+    confirm_password = forms.CharField(label="Confirm Password",widget=forms.PasswordInput, help_text="Re-enter your password to confirm.")
+    
+    captcha = CaptchaField(label="Captcha",help_text="Enter the text from the image above.")
 
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
@@ -65,6 +65,14 @@ class SignUpForm(forms.ModelForm):
         self.fields['company_bio'].widget.attrs.update({'class': 'company-data'})
         self.fields['company_pic'].widget.attrs.update({'class': 'company-data'})
         self.fields['company_email'].widget.attrs.update({'class': 'company-data'})
+        self.fields['username'].label="User Name"
+        self.fields['firstname'].label="First  Name"
+        self.fields['lastname'].label="Last  Name"
+        self.fields['company_name'].label="Company Name"
+        self.fields['company_url'].label="Company URL"
+        self.fields['company_bio'].label="Company Bio"
+        self.fields['company_pic'].label="Company Pic"
+
         
         for field_name, field in self.fields.items():
             if field=="username":
@@ -135,13 +143,13 @@ class ProductForm(forms.ModelForm):
 
 
 class IssueForm(forms.ModelForm):
-    company_name = forms.CharField(max_length=100, required=False, help_text="Enter the company's name if not selecting from the list.")
-    company_url = forms.URLField(required=False, help_text="Enter the company's website URL if not selecting from the list.")
-    company_bio = forms.CharField(widget=forms.Textarea, required=False, help_text="Enter a short biography for the company if not selecting from the list.")
-    company_pic = forms.ImageField(required=False, help_text="Upload a picture for the company if not selecting from the list.")
-    company_email = forms.EmailField(required=False, help_text="Enter the company's contact email if not selecting from the list.")
-    product_name = forms.CharField(max_length=100, required=False, help_text="Enter the product's name if not selecting from the list.")
-    product_url = forms.URLField(required=False, help_text="Enter the product's URL if not selecting from the list.")
+    company_name = forms.CharField(label="Company Name",max_length=100, required=False, help_text="Enter the company's name if not selecting from the list.")
+    company_url = forms.URLField(label="Company URL",required=False, help_text="Enter the company's website URL if not selecting from the list.")
+    company_bio = forms.CharField(label="Company Bio",widget=forms.Textarea, required=False, help_text="Enter a short biography for the company if not selecting from the list.")
+    company_pic = forms.ImageField(label="Company Pic",required=False, help_text="Upload a picture for the company if not selecting from the list.")
+    company_email = forms.EmailField(label="Company Email",required=False, help_text="Enter the company's contact email if not selecting from the list.")
+    product_name = forms.CharField(label="Product Name",max_length=100, required=False, help_text="Enter the product's name if not selecting from the list.")
+    product_url = forms.URLField(label="Product URL",required=False, help_text="Enter the product's URL if not selecting from the list.")
     tags_field = forms.CharField(label='Tags', required=False, widget=forms.TextInput(attrs={'class': 'tag-input'}))
 
     class Meta:
@@ -163,14 +171,14 @@ class IssueForm(forms.ModelForm):
         self.fields['product'].queryset = Product.objects.none()
         
         self.fields['company'].widget.attrs.update({'class': 'company'})
-        self.fields['product'].widget.attrs.update({'class': 'product'})
-        self.fields['product_name'].widget.attrs.update({'class': 'product-data'})
         self.fields['product_url'].widget.attrs.update({'class': 'product-data'})
         self.fields['company_name'].widget.attrs.update({'class': 'company-data'})
         self.fields['company_url'].widget.attrs.update({'class': 'company-data'})
         self.fields['company_bio'].widget.attrs.update({'class': 'company-data'})
         self.fields['company_pic'].widget.attrs.update({'class': 'company-data'})
         self.fields['company_email'].widget.attrs.update({'class': 'company-data'})
+        self.fields['product'].widget.attrs.update({'class': 'product'})
+        self.fields['product_name'].widget.attrs.update({'class': 'product-data'})
 
         
         for field_name, field in self.fields.items():
