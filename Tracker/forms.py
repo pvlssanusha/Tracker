@@ -42,7 +42,7 @@ class SignUpForm(forms.ModelForm):
             'firstname': "Enter your first name.",
             'lastname': "Enter your last name.",
             'email': "Enter your email address.",
-            'company': "Select your company from the dropdown list or Create New Company by entering the below fields"
+            'company': "Select your company from the dropdown list or Create new company by entering the below fields"
         }
     company_name = forms.CharField(max_length=100, required=False, help_text="Enter your company's name.")
     company_url = forms.URLField(required=False, help_text="Enter your company's website URL.")
@@ -158,8 +158,9 @@ class IssueForm(forms.ModelForm):
         help_texts = {
             'issuename': "Enter the name of the issue.",
             'description': "Provide a detailed description of the issue.",
-            'company': "Select the company associated with this issue.",
-            'product': "Select the product associated with this issue.",
+            'company': "Select your company from the dropdown list or Create new company by entering the below fields",
+
+            'product': "Select the product associated with this issue from the dropdown or Create new product by entering the below fields.",
             'tags': "Enter tags related to the issue."
         }
 
@@ -179,6 +180,7 @@ class IssueForm(forms.ModelForm):
         self.fields['company_email'].widget.attrs.update({'class': 'company-data'})
         self.fields['product'].widget.attrs.update({'class': 'product'})
         self.fields['product_name'].widget.attrs.update({'class': 'product-data'})
+        self.fields['issuename'].label="Issue Name"
 
         
         for field_name, field in self.fields.items():

@@ -82,7 +82,15 @@
                             <img src={{comment.user.image.url}} />
                             <div>
                                 <div class="d-flex">
-                                    <h4>{{comment.user.custom_username}}</h4>
+                                    {% if comment.user.id == issue.created_by.id %}
+                                    <h4>{{comment.user.username}}(Owner)</h4>
+                                    {% else %}
+                                    {% if comment.user.companyuser %}
+                        <p><span>Created By:</span> {{ comment.user.custom_username }}<i class="fa-solid fa-circle-check"></i></p>
+                        {% else %}
+                        <p><span>Created By:</span>  {{ comment.user.custom_username }}</a></p>
+                        {% endif %}
+                                    {% endif %}
                                     <small>{{comment.timestamp}}</small>
                                 </div>
                                 <p class="mb-1">{{comment.description}}</p>
@@ -104,7 +112,11 @@
                                     {% if comment.user.id == issue.created_by.id %}
                                     <h4>{{comment.user.username}}(Owner)</h4>
                                     {% else %}
-                                    <h4>{{comment.user.custom_username}}</h4>
+                                    {% if comment.user.companyuser %}
+                        <p><span>Created By:</span> {{ comment.user.custom_username }}<i class="fa-solid fa-circle-check"></i></p>
+                        {% else %}
+                        <p><span>Created By:</span>  {{ comment.user.custom_username }}</a></p>
+                        {% endif %}
                                     {% endif %}
                                     <small>{{comment.timestamp}}</small>
                                 </div>
@@ -136,8 +148,15 @@
                                         {% if feed.user.id == issue.created_by.id %}
                                         <h4>{{feed.user.username}}(Owner)</h4>
                                         {% else %}
-                                        <h4 class="mb-1">{{feed.user.custom_username}}</h4>
+                                        
+                                        {% if feedback.user.companyuser %}
+                                        <p>{{feedback.user.companyuser}}</p>
+                                        <p><span>Created By:</span> {{ feedback.user.custom_username }}<i class="fa-solid fa-circle-check"></i></p>
+                                        {% else %}
+                                        <p><span>Created By:</span>  {{ feedback.user.custom_username }}</a></p>
                                         {% endif %}
+                                        {% endif %}
+                            
                                         <small>{{feed.timestamp}}</small>
                                     </div>
                                     <br>
@@ -170,7 +189,13 @@
                                         {% if feed.user.id == issue.created_by.id %}
                                         <h4>{{feed.user.username}}(Owner)</h4>
                                         {% else %}
-                                        <h4 class="mb-1">{{feed.user.custom_username}}</h4>
+                                        
+                                        {% if feed.user.companyuser %}
+                                
+                                        <p><span>Created By:</span> {{ feed.user.custom_username }}<i class="fa-solid fa-circle-check"></i></p>
+                                        {% else %}
+                                        <p><span>Created By:</span>  {{ feed.user.custom_username }}</a></p>
+                                        {% endif %}
                                         {% endif %}
                                         <small>{{feed.timestamp}}</small>
                                     </div>
