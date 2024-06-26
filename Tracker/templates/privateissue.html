@@ -17,19 +17,24 @@
         <div class="showfilterbtn">Apply Filters</div>
         <div class="issues">
             {% for issue in page_obj %}
-            {% if issue.pinned %}
             <div class="issue">
+                {% if issue.pinned %}
+                <div class="pinned">Pinned</div>
+                {% endif %}
                 <div class="issue-title">{{ issue.issuename }} </div>
                 <div class="issue-meta-details">
                     {% if userid == issue.created_by.id %}
                         <p><span>Created By:</span>  <a href="{% url 'getuser' issue.id %}">{{ user.username }}(Owner)</a></p>
                     {% else %}
-                        <p><span>Created By:</span> <a href="{% url 'getuser' issue.id %}"> {{ issue.created_by.custom_username }}</a></p>
-                    {% endif %}
+                    {% if issue.created_by.companyuser %}
+                    <p><span>Created By:</span> <a href="{% url 'getuser' issue.id %}"> {{ issue.created_by.custom_username }}<i class="fa-solid fa-circle-check"></i></a></p>
+                    {% else %}
+                    <p><span>Created By:</span> <a href="{% url 'getuser' issue.id %}"> {{ issue.created_by.custom_username }}</a></p>
+                    {% endif %}                    {% endif %}
                     <p><span>Company Name :</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.company }}</a></p>
                     <p><span>Company URL:</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.company.url }}</a></p>
-                    <p><span>Product  Name:</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.product.name }}</a></p>
-                    <p><span>Product URL :</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.product.url }}</a></p>
+                    <p><span>Product  Name:</span> <a href="{% url 'productstats' issue.product.id %}">{{ issue.product.name }}</a></p>
+                    <p><span>Product URL :</span> <a href="{% url 'productstats' issue.product.id %}">{{ issue.product.url }}</a></p>
                     <p><span>Status:</span> {{ issue.status }}</p>
                 </div>
                 <div class="issue-desc">Description:{{ issue.description }}</div>
@@ -52,6 +57,7 @@
                     <div class="issue-spacing">
                         
                         <div><a href="{% url 'addcomment' issue.id %}">Add comment</a></div>
+                        <div><a href="{% url 'addfeedback' issue.id %}">Give Feedback</a></div>
                        
                         {% if issue.company.id == usercompanyid %}
                         <div><a href="{% url 'changeissuestatus' issue.id %}">Change Status</a></div>
@@ -59,65 +65,15 @@
                     </div>
                 </div>
                 <div>
-                    <a class="view-issue-btn" href="{{ issue.id }}">
+                    <a class="view-issue-btn" href="/issues/{{ issue.id }}">
                         <span class="text">View Issue</span>
                     </a>
                 </div>
             </div>
-            {% endif %}
+            
             {% endfor %}
 
-            {% for issue in page_obj %}
-            {% if not issue.pinned %}
-            <div class="issue">
-                <div class="issue-title">{{ issue.issuename }} </div>
-                <div class="issue-meta-details">
-                    {% if userid == issue.created_by.id %}
-                        <p><span>Created By:</span>  <a href="{% url 'getuser' issue.id %}">{{ user.username }}(Owner)</a></p>
-                    {% else %}
-                        <p><span>Created By:</span> <a href="{% url 'getuser' issue.id %}"> {{ issue.created_by.custom_username }}</a></p>
-                    {% endif %}
-                    <p><span>Company Name :</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.company }}</a></p>
-                    <p><span>Company URL :</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.company.url }}</a></p>
-                    <p><span>Product  Name:</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.product.name }}</a></p>
-                    <p><span>Product URL :</span> <a href="{% url 'companydetails' issue.company.id %}">{{ issue.product.url }}</a></p>
-                    <p><span>Status:</span> {{ issue.status }}</p>
-                </div>
-                <div class="issue-desc">Description: {{ issue.description }}</div>
-                <span class="meta-item">
-                    <div class="feedback-stats">
-                        <p>Option 1 : {{ issue.option1_count }}</p>
-                        <p>Option 2 : {{ issue.option2_count }}</p>
-                        <p>Option 3 : {{ issue.option3_count }}</p>
-                        <p>Bool True : {{ issue.bool_true_count }}</p>
-                        <p>Bool False : {{ issue.bool_false_count }}</p>
-                    </div>
-                </span>
-                <div class="issue-meta">
-                    <span class="meta-item">
-                        <i class="fas fa-eye"></i> {{ issue.viewcount }}
-                    </span>
-                    <span class="meta-item">
-                        <i class="fas fa-comments"></i> {{ issue.commentcount }}
-                    </span>
-                    <div class="issue-spacing">
-                      
-                        
-                        <div><a href="{% url 'addcomment' issue.id %}">Add comment</a></div>
-                       
-                        {% if issue.company.id == usercompanyid %}
-                        <div><a href="{% url 'changeissuestatus' issue.id %}">Change Status</a></div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div>
-                    <a class="view-issue-btn" href="{{ issue.id }}">
-                        <span class="text">View Issue</span>
-                    </a>
-                </div>
-            </div>
-            {% endif %}
-            {% endfor %}
+           
         </div>
         <div class="pagination">
             <span class="step-links">

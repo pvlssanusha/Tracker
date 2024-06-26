@@ -1,7 +1,9 @@
 from django.contrib import admin
 from .models import *;
 class IssueAdmin(admin.ModelAdmin):
-    list_display = ('id','issuename','description','product','status','created_by','company')
+    list_display = ('id','issuename','description','product','status','get_tags','created_by','company')
+    def get_tags(request,obj):
+        return ",".join([tag.name for tag in obj.tags.all()])
 class ViewedByAdmin(admin.ModelAdmin):
     list_display=('id','timestamp','user','issue',)
 

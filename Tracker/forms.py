@@ -67,6 +67,9 @@ class SignUpForm(forms.ModelForm):
         self.fields['company_email'].widget.attrs.update({'class': 'company-data'})
         
         for field_name, field in self.fields.items():
+            if field=="username":
+                field.label="User Name"
+
             if field.required:
                 field.label = mark_safe(f'<span>{field.label}<span class="required-label">&nbsp;*</span></span>')
 
@@ -365,7 +368,7 @@ class EditIssueForm(forms.ModelForm):
 
 class IssueFilterForm(forms.Form):
     status = forms.ChoiceField(
-        choices=Issue.STATUS_CHOICES, 
+        choices=[('', '--------')]+Issue.STATUS_CHOICES, 
         required=False, 
         help_text="Filter issues by status."
     )

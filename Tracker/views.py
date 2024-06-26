@@ -221,8 +221,11 @@ def getAllIssues(request):
         page_obj = paginator.get_page(page_number)
 
         usercompanyid = None
+        companyuser=False
         if request.user.companyuser:
             usercompanyid = request.user.company.id
+            companyuser=True
+
 
         return render(request, 'Display.html', {
             'page_obj': page_obj,
@@ -230,6 +233,7 @@ def getAllIssues(request):
             'user': request.user,
             'usercompanyid': usercompanyid,
             'userid': request.user.id
+
         })
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
@@ -247,17 +251,20 @@ def viewPrivateIssues(request):
             company = filter_form.cleaned_data.get('company')
             product = filter_form.cleaned_data.get('product')
             tags = filter_form.cleaned_data.get('tags')
+            user_issues = filter_form.cleaned_data.get('user_issues')
 
             if status:
-                issues = issues.filter(status=status)
+                issues = issues.filter(status=status).order_by('-created_at')
             if created_by:
-                issues = issues.filter(created_by=created_by)
+                issues = issues.filter(created_by=created_by).order_by('-created_at')
             if company:
-                issues = issues.filter(company=company)
+                issues = issues.filter(company=company).order_by('-created_at')
             if product:
-                issues = issues.filter(product=product)
+                issues = issues.filter(product=product).order_by('-created_at')
             if tags:
-                issues = issues.filter(tags__in=filter_form.cleaned_data['tags']).distinct()
+                issues = issues.filter(tags__in=tags).distinct().order_by('-created_at')
+            if user_issues:
+                issues = issues.filter(created_by=request.user).order_by('-created_at')
             
             paginator = Paginator(issues, 5)
             page_number = request.GET.get('page')
