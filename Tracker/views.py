@@ -117,7 +117,7 @@ def addIssue(request):
 
     return render(request, 'Issue.html', {'form': form, 'title': 'Register Issue','taglist': get_taglist()})
 
-@login_required(login_url='/login/')
+
 def getIssue(self,id):
     try:
         object=Issue.objects.get(id=id)
@@ -176,7 +176,7 @@ def getIssue(self,id):
         return render(self,'DisplayIssue.html',{'issue':object,'tags':tags,'edit':edit,'form':form,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'feedbackCount':len(feedback),'viewedby':viewedobjs,'value':value,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'},status=status.HTTP_404_NOT_FOUND)
-@login_required(login_url='/login/')
+
 def getAllIssues(request):
     try:
         issues = Issue.objects.filter(private=False, enabled=True).order_by('-created_at')
