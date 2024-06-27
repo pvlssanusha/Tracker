@@ -1,4 +1,6 @@
 {% load static %}
+
+{% if not user.is_anonymous %}
 <div class="header-main">
     <div class="header-flex">
 	<a class="header-logo" href="{% url 'home' %}">
@@ -82,9 +84,68 @@
             </ul>
     </div>
 </div>
+{% else %}
+{% load static %}
+<div class="header-main">
+    <div class="header-flex">
+	<a class="header-logo" href="{% url 'home' %}">
+		<img
+			src="{% static 'img/logo.png' %}"
+			alt="Logo"
+			width="30"
+			height="30"
+			style="border-radius: 10px"
+			class="d-inline-block align-text-top" />
+		Issue Tracker
+	</a>
+	<button class="mobile-toggler" onclick="toggleMenu()">
+		Menu
+	</button>
+    
+	<div class="header-menu hide-mobile">
+		<ul class="header-btns">
+			<li class="item {% if request.path == '/issues/' %}active{% endif %}">
+				<a class="" href="{% url 'issues' %}">Issues</a>
+			</li>
+			<li class="item {% if request.path == '/support/' %}active{% endif %}">
+				<a class="" href="{% url 'support' %}"> Contact </a>
+			</li>
+			<li class="item {% if request.path == '/hirings/' %}active{% endif %}">
+				<a class="" href="{% url 'hirings' %}"> Hiring </a>
+			</li>
+			<li class="item">
+                    <a class="" href="{% url 'login' %}"> Login </a>
+            </li>
+			<li class="item">
+                </li>
+				<li class="item">
+                </li>
+		</ul>
+	</div>
+    </div>
+    <div class="header-menu" id="navbar">
+            <ul class="header-btns">
+                <li class="item {% if request.path == '/issues/' %}active{% endif %}">
+                    <a class="" href="{% url 'issues' %}">Issues</a>
+                </li>
+                <li class="item {% if request.path == '/support/' %}active{% endif %}">
+                    <a class="" href="{% url 'support' %}"> Contact </a>
+                </li>
+                <li class="item {% if request.path == '/hirings/' %}active{% endif %}">
+                    <a class="" href="{% url 'hirings' %}"> Hiring </a>
+                </li>
+                <li class="item">
+                    <a class="" href="{% url 'login' %}"> Login </a>
+                </li>
+				<li class="item">
+                </li>
+				<li class="item">
+                </li>
+            </ul>
+    </div>
+</div>
 
-
-
+{% endif %}
 <script>
 function toggleMenu() {
 	var navbar = document.getElementById('navbar');

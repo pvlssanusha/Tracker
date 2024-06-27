@@ -5,7 +5,6 @@ from django.contrib.auth.forms import PasswordChangeForm
 from .models import *
 from django.utils.safestring import mark_safe
 
-
 class IssueStatusForm(forms.ModelForm):
     class Meta:
         model = Issue
@@ -25,8 +24,6 @@ class IssueStatusForm(forms.ModelForm):
         status_choices = self.fields['status'].choices
         filtered_choices = [choice for choice in status_choices if choice[0] != 'created']
         self.fields['status'].choices = filtered_choices
-      
-
 
 class SignUpForm(forms.ModelForm):
     
@@ -118,7 +115,6 @@ class SignUpForm(forms.ModelForm):
 
         return user
 
-
 class ProductForm(forms.ModelForm):
     name = forms.CharField(max_length=30, help_text="Enter the product name.")
     url = forms.URLField(widget=forms.Textarea, help_text="Enter the product URL.")
@@ -140,7 +136,6 @@ class ProductForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             if field.required:
                 field.label = mark_safe(f'<span><span class="required-label">*</span>{field.label}</span>')
-
 
 class IssueForm(forms.ModelForm):
     company_name = forms.CharField(label="Company Name",max_length=100, required=False, help_text="Enter the company's name if not selecting from the list.")
@@ -287,6 +282,7 @@ class CustomPasswordChangeForm(PasswordChangeForm):
             'new_password1': "Enter a new password.",
             'new_password2': "Re-enter the new password to confirm."
         }
+
 class ReportIssueForm(forms.ModelForm):
     class Meta:
         model=ReportIssue
@@ -296,6 +292,7 @@ class ReportIssueForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             if field.required:
                 field.label = mark_safe(f'<span><span class="required-label">*</span>{field.label}</span>')
+
 class ReportFeedbackForm(forms.ModelForm):
     class Meta:
         model=ReportFeedback
@@ -305,6 +302,7 @@ class ReportFeedbackForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             if field.required:
                 field.label = mark_safe(f'<span><span class="required-label">*</span>{field.label}</span>')
+
 class ReportCommentForm(forms.ModelForm):
     class Meta:
         model=ReportComment
@@ -325,10 +323,6 @@ class ReportHiringCommentForm(forms.ModelForm):
             if field.required:
                 field.label = mark_safe(f'<span><span class="required-label">*</span>{field.label}</span>')
 
-
-
-
-
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
@@ -346,7 +340,6 @@ class UserProfileForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             if field.required:
                 field.label = mark_safe(f'<span><span class="required-label">*</span>{field.label}</span>')
-
 
 class EditIssueForm(forms.ModelForm):
     tags_field = forms.CharField(label='Tags', required=False, widget=forms.TextInput(attrs={'class': 'tag-input'}))
@@ -408,7 +401,35 @@ class IssueFilterForm(forms.Form):
         required=False, 
         help_text="Filter issues created by the logged-in user."
     )
-    
+
+class IssueFilterFormNotLoggedIn(forms.Form):
+    status = forms.ChoiceField(
+        choices=[('', '--------')]+Issue.STATUS_CHOICES, 
+        required=False, 
+        help_text="Filter issues by status."
+    )
+    created_by = forms.ModelChoiceField(
+        queryset=User.objects.all(), 
+        required=False, 
+        help_text="Filter issues by the creator."
+    )
+    company = forms.ModelChoiceField(
+        queryset=Company.objects.all(), 
+        required=False, 
+        help_text="Filter issues by company."
+    )
+    product = forms.ModelChoiceField(
+        queryset=Product.objects.all(), 
+        required=False, 
+        help_text="Filter issues by product."
+    )
+    tags = forms.ModelMultipleChoiceField(
+        queryset=Tag.objects.all(), 
+        required=False, 
+        help_text="Filter issues by tags.",
+        widget=forms.SelectMultiple(attrs={'size': 5})  # Adjust size as needed
+    )
+
 class SupportQueryForm(forms.ModelForm):
     class Meta:
         model = Support

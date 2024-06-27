@@ -123,24 +123,15 @@ def getIssue(self,id):
         object=Issue.objects.get(id=id)
         companyid=object.company.id
         companyuser=False
-        if self.user.company==object.company:
-            if self.user.companyuser:
-                companyuser=True
-        try:
-            view=ViewedBy.objects.get(user=self.user,issue=object)
-        except:
-            ViewedBy.objects.create(user=self.user,issue=object)
-            # if self.user.companyuser:
-            #         log_entry="Issue is Viewed By Company"
-            #         IssueStatusLog.objects.create(
-            #             oldstatus=object.status,
-            #             newstatus="Viewed",
-            #             issue=object,
-            #             user=self.user,
-            #             timestamp=timezone.now(),
-            #             log_entry=log_entry
-            #         )
-            object.viewcount+=1
+        if not self.user.is_anonymous:
+            if self.user.company==object.company:
+                if self.user.companyuser:
+                    companyuser=True
+            try:
+                view=ViewedBy.objects.get(user=self.user,issue=object)
+            except:
+                ViewedBy.objects.create(user=self.user,issue=object)
+                object.viewcount+=1
         object.save()
         comments=None
         feedback=None
@@ -158,30 +149,35 @@ def getIssue(self,id):
         except:
             pass
         edit=False
-        try:
-            feed=Feedback.objects.filter(issue=object,user=self.user,enabled=True)
-            if len(feed)>0:
-                edit=True
-        except:
-            pass
-        #data=IssueSerializer(object).data
-        print(object.created_by,self.user,object.created_by.is_superuser)
-        if object.created_by==self.user or self.user.is_superuser==True:
-            value=True
-        else:
-            value=False
+        if not self.user.is_anonymous:
+            try:
+                feed=Feedback.objects.filter(issue=object,user=self.user,enabled=True)
+                if len(feed)>0:
+                    edit=True
+            except:
+                pass
+            if object.created_by==self.user or self.user.is_superuser==True:
+                value=True
+            else:
+                value=False
         form=FeedbackForm()
         tags=object.tags.all()
+        if not self.user.is_anonymous:
+            return render(self,'DisplayIssue.html',{'issue':object,'tags':tags,'edit':edit,'form':form,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'feedbackCount':len(feedback),'viewedby':viewedobjs,'value':value,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
+        else:
+            return render(self,'DisplayIssue.html',{'issue':object,'tags':tags,'edit':edit,'form':form,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'feedbackCount':len(feedback),'viewedby':viewedobjs,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
 
-        return render(self,'DisplayIssue.html',{'issue':object,'tags':tags,'edit':edit,'form':form,'pinnedcomments':pinnedcomments,'comments':comments,'feedback':feedback,'feedbackCount':len(feedback),'viewedby':viewedobjs,'value':value,'companyid':companyid,'companyuser':companyuser,'userid':self.user.id})
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'},status=status.HTTP_404_NOT_FOUND)
 
 def getAllIssues(request):
+    
     try:
         issues = Issue.objects.filter(private=False, enabled=True).order_by('-created_at')
-        filter_form = IssueFilterForm(request.GET)
-
+        if not request.user.is_anonymous:
+            filter_form = IssueFilterForm(request.GET)
+        else:
+            filter_form = IssueFilterFormNotLoggedIn(request.GET)
         if filter_form.is_valid():
             status = filter_form.cleaned_data.get('status')
             created_by = filter_form.cleaned_data.get('created_by')
@@ -200,7 +196,7 @@ def getAllIssues(request):
                 issues = issues.filter(product=product).order_by('-created_at')
             if tags:
                 issues = issues.filter(tags__in=tags).distinct().order_by('-created_at')
-            if user_issues:
+            if user_issues and not request.user.is_anonymous:
                 issues = issues.filter(created_by=request.user).order_by('-created_at')
 
         issues = issues.annotate(
@@ -222,28 +218,31 @@ def getAllIssues(request):
 
         usercompanyid = None
         companyuser=False
-        if request.user.companyuser:
-            usercompanyid = request.user.company.id
-            companyuser=True
-
-
-        return render(request, 'Display.html', {
-            'page_obj': page_obj,
-            'filter_form': filter_form,
-            'user': request.user,
-            'usercompanyid': usercompanyid,
-            'userid': request.user.id
-
-        })
+        if not request.user.is_anonymous:
+            if request.user.companyuser:
+                usercompanyid = request.user.company.id
+                companyuser=True
+            return render(request, 'Display.html', {
+                'page_obj': page_obj,
+                'filter_form': filter_form,
+                'user': request.user,
+                'usercompanyid': usercompanyid,
+                'userid': request.user.id
+            })
+        else:
+            return render(request, 'Display.html', {
+                'page_obj': page_obj,
+                'filter_form': filter_form,
+            })
     except Issue.DoesNotExist:
         return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
 
-
+@login_required(login_url='/login/')
 def viewPrivateIssues(request):
     user=request.user
     try:
         issues=Issue.objects.filter(company=user.company,private=True,enabled=True)
-        print(issues,user.company)
+        
         filter_form = IssueFilterForm(request.GET)
         if filter_form.is_valid():
             status = filter_form.cleaned_data.get('status')
@@ -281,7 +280,8 @@ def viewPrivateIssues(request):
         return render(request, 'privateissue.html', {'page_obj': page_obj, 'filter_form': filter_form,'userid':request.user.id,'user':user,'usercompanyid':usercompanyid})
     except:
         return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
-    
+
+@login_required(login_url='/login/')
 def viewAdminPrivateIssues(request):
     user=request.user
     try:
@@ -322,7 +322,7 @@ def viewAdminPrivateIssues(request):
         return Response({'error': 'No Data Found'}, status=status.HTTP_404_NOT_FOUND)
     
 
-
+@login_required(login_url='/login/')
 def add_comment(request, issue_id):
     issue = get_object_or_404(Issue, id=issue_id)
     if request.method == 'POST':
@@ -337,7 +337,7 @@ def add_comment(request, issue_id):
     else:
         form = CommentForm()
     return render(request, 'addcomment.html', {'form': form, 'issue': issue})
-
+@login_required(login_url='/login/')
 def add_hiring_comment(request, hiring_id):
     print("entered",hiring_id)
     hiring = Hiring.objects.get(id=hiring_id)
@@ -353,7 +353,7 @@ def add_hiring_comment(request, hiring_id):
     else:
         form = HiringCommentForm()
     return render(request, 'addhiringcomment.html', {'form': form, 'issue': hiring})
-
+@login_required(login_url='/login/')
 def add_feedback(request, issue_id):
     issue = get_object_or_404(Issue, id=issue_id)
     try:
@@ -434,7 +434,7 @@ def load_products(request):
         return JsonResponse(list(products.values('id', 'name')), safe=False)
     return JsonResponse({},safe=False)
 
-@login_required(login_url='login/')
+@login_required(login_url='/login/')
 def change_password(request):
     if request.method == 'POST':
         form = CustomPasswordChangeForm(request.user, request.POST)
@@ -451,7 +451,7 @@ def change_password(request):
         'form': form
     })
 
-@login_required(login_url='login/')
+@login_required(login_url='/login/')
 def getUser(request,id):
     issue = get_object_or_404(Issue, id=id)
     user=issue.created_by
@@ -484,7 +484,7 @@ def getUser(request,id):
     return render(request, 'userprofile.html', context)
 
 
-@login_required(login_url='login/')
+@login_required(login_url='/login/')
 def getProfile(request,id):
     user = get_object_or_404(User, id=id)
     print("user",user)
@@ -516,7 +516,7 @@ def getProfile(request,id):
     }
     return render(request, 'edituserprofile.html', context)
 
-
+@login_required(login_url='/login/')
 def editProfile(request):
     user = request.user
     if request.method == 'POST':
@@ -528,7 +528,7 @@ def editProfile(request):
     else:
         form = UserProfileForm(instance=user)
     return render(request, 'editprofile.html', {'form': form})
-
+@login_required(login_url='/login/')
 def editIssue(request, issue_id):
     issue = get_object_or_404(Issue, id=issue_id)
     if request.method == 'POST':
@@ -542,7 +542,7 @@ def editIssue(request, issue_id):
         form = EditIssueForm(instance=issue)
         form.fields['tags_field'].initial = ','.join([tag.name for tag in issue.tags.all()])
     return render(request, 'editissue.html', {'form': form,'taglist':get_taglist()})
-
+@login_required(login_url='/login/')
 def editFeedback(request, feedback_id):
     feed = get_object_or_404(Feedback, id=feedback_id)
     old_values = {
@@ -685,7 +685,7 @@ def productStatsView(request, product_id):
     return render(request, 'productstats.html', context)
 
 
-
+@login_required(login_url='/login/')
 def changeIssueStatus(request, issue_id):
     issue = get_object_or_404(Issue, id=issue_id)
     oldstatus= issue.status
@@ -736,6 +736,7 @@ def supportForm(request):
 def supportFormSuccess(request):
     return render(request, 'supportformsuccess.html')
 
+@login_required(login_url='/login/')
 def hiringForm(request):
     if request.method == 'POST':
         form = HiringRequestForm(request.POST)
@@ -792,7 +793,7 @@ def getIssueLogs(request,id):
     logs=IssueStatusLog.objects.filter(issue=issue).order_by('timestamp')
     return render(request, 'issuestatuslog.html', {'logs': logs})
 
-
+@login_required(login_url='/login/')
 def reportIssue(request,id):
     issue=Issue.objects.get(id=id)
     if request.method == 'POST':
@@ -806,7 +807,8 @@ def reportIssue(request,id):
     else:
         form = ReportIssueForm()
         return render(request,'reportissue.html', {'form': form})
-    
+
+@login_required(login_url='/login/')
 def reportComment(request,id):
     comment=Comment.objects.get(id=id)
     issue=comment.issue.id
@@ -822,7 +824,7 @@ def reportComment(request,id):
     else:
         form = ReportCommentForm()
         return render(request,'reportcomment.html', {'form': form})
-    
+@login_required(login_url='/login/')
 def reportHiringComment(request,id):
     comment=HiringComment.objects.get(id=id)
     issue=comment.hiring.id
@@ -838,7 +840,7 @@ def reportHiringComment(request,id):
     else:
         form = ReportCommentForm()
         return render(request,'reportcomment.html', {'form': form})
-    
+@login_required(login_url='/login/')
 def reportFeedback(request,id):
     feedback=Feedback.objects.get(id=id)
     issue=feedback.issue.id
@@ -853,8 +855,3 @@ def reportFeedback(request,id):
     else:
         form = ReportCommentForm()
         return render(request,'reportfeedback.html', {'form': form})
-         
-
-
-
-    
